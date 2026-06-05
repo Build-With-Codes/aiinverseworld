@@ -1,0 +1,309 @@
+import Link from "next/link";
+
+import { CategoryCard } from "@/components/category-card";
+import { SectionHeading } from "@/components/section-heading";
+import { ToolCard } from "@/components/tool-card";
+import { categories, comparisons, finderQuestions, tools } from "@/lib/site-data";
+
+const spotlightMetrics = [
+  { label: "Indexed tools", value: "4,200+" },
+  { label: "Fresh updates weekly", value: "1,100+" },
+  { label: "Average discovery time", value: "< 90 sec" },
+];
+
+const aiFinderOptions = [
+  {
+    title: "Growth teams",
+    description: "Find writing, SEO, image, and analytics tools in one flow.",
+  },
+  {
+    title: "Builders",
+    description: "Compare copilots, agents, code search, and automation stacks.",
+  },
+  {
+    title: "Creators",
+    description: "Explore tools for visuals, video, voice, and campaign production.",
+  },
+];
+
+const discoveryBands = [
+  {
+    title: "For marketers",
+    description: "Find content, SEO, image, and campaign tools with faster shortlist paths.",
+    accent: "from-cyan-400/16 via-sky-500/10 to-transparent",
+  },
+  {
+    title: "For builders",
+    description: "Compare copilots, agents, dev platforms, and workflow automation stacks.",
+    accent: "from-violet-400/16 via-indigo-500/10 to-transparent",
+  },
+  {
+    title: "For teams",
+    description: "Evaluate productivity, research, support, and operations tools in one place.",
+    accent: "from-emerald-400/16 via-teal-500/10 to-transparent",
+  },
+];
+
+export default function Home() {
+  const trendingTools = tools.slice(0, 3);
+  const newTools = tools.slice(3, 6);
+  const freeTools = tools.filter((tool) => tool.pricing === "Free" || tool.pricing === "Freemium");
+  const sponsoredTools = tools.filter((tool) => tool.sponsored);
+
+  return (
+    <div className="space-y-20 pb-10 pt-10 sm:space-y-24 sm:pt-14">
+      <section className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+        <div className="space-y-8">
+          <div className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-cyan-100 uppercase">
+            Enterprise-grade AI discovery
+          </div>
+          <div className="space-y-6">
+            <h1 className="max-w-5xl text-5xl font-semibold tracking-tight text-white sm:text-6xl lg:text-7xl">
+              Discover the Perfect AI Tool
+            </h1>
+            <p className="max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
+              AiverseWorld is your curated search engine for AI products across writing,
+              coding, video, research, and operations. Compare real tools, filter fast,
+              and move from exploration to adoption with confidence.
+            </p>
+          </div>
+
+          <div className="rounded-[32px] border border-white/10 bg-white/8 p-4 shadow-[0_24px_120px_rgba(8,15,35,0.45)] backdrop-blur-2xl">
+            <div className="grid gap-3 sm:grid-cols-[1fr_auto_auto]">
+              <input
+                aria-label="Search tools"
+                placeholder="Search AI tools by use case, pricing, or team"
+                className="rounded-2xl border border-white/10 bg-[#071120] px-5 py-4 text-sm text-slate-300 outline-none placeholder:text-slate-500"
+              />
+              <button className="rounded-2xl border border-white/10 bg-white/6 px-5 py-4 text-sm font-medium text-white transition hover:border-cyan-300/30 hover:bg-white/10">
+                AI Finder
+              </button>
+              <Link
+                href="/search"
+                className="rounded-2xl bg-white px-5 py-4 text-center text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
+              >
+                Search Now
+              </Link>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {["AI for Sales", "Free Image Tools", "Code Assistants", "Education"].map((item) => (
+                <span
+                  key={item}
+                  className="rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs text-slate-300"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            {spotlightMetrics.map((metric) => (
+              <div
+                key={metric.label}
+                className="rounded-[26px] border border-white/10 bg-white/5 p-5"
+              >
+                <p className="text-3xl font-semibold text-white">{metric.value}</p>
+                <p className="mt-2 text-sm text-slate-400">{metric.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid gap-4">
+          <div className="rounded-[32px] border border-cyan-300/18 bg-linear-to-br from-cyan-400/14 via-blue-500/10 to-violet-500/10 p-7">
+            <p className="text-xs font-semibold tracking-[0.28em] text-cyan-200 uppercase">
+              AI Finder
+            </p>
+            <h2 className="mt-3 text-2xl font-semibold text-white">
+              Answer a few questions and get a shortlist in seconds
+            </h2>
+            <div className="mt-6 space-y-3">
+              {finderQuestions.map((question, index) => (
+                <div
+                  key={question}
+                  className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#091322] px-4 py-3"
+                >
+                  <span className="text-sm text-slate-200">{question}</span>
+                  <span className="text-xs text-slate-500">0{index + 1}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[32px] border border-white/10 bg-white/6 p-7">
+            <p className="text-sm font-medium text-slate-300">Built for every operator</p>
+            <div className="mt-5 space-y-4">
+              {aiFinderOptions.map((option) => (
+                <div key={option.title} className="rounded-2xl border border-white/8 bg-white/5 p-4">
+                  <h3 className="font-semibold text-white">{option.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-400">
+                    {option.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-5 lg:grid-cols-3">
+        {discoveryBands.map((band) => (
+          <div
+            key={band.title}
+            className={`rounded-[30px] border border-white/10 bg-linear-to-br ${band.accent} p-6 shadow-[0_20px_60px_rgba(3,8,22,0.28)]`}
+          >
+            <p className="text-sm font-semibold text-white">{band.title}</p>
+            <p className="mt-3 text-sm leading-7 text-slate-300">{band.description}</p>
+          </div>
+        ))}
+      </section>
+
+      <section>
+        <SectionHeading
+          eyebrow="Trending"
+          title="Tools teams are evaluating right now"
+          description="Curated picks with strong momentum, useful reviews, and practical workflows across major AI categories."
+        />
+        <div className="grid gap-6 lg:grid-cols-3">
+          {trendingTools.map((tool) => (
+            <ToolCard key={tool.slug} tool={tool} />
+          ))}
+        </div>
+      </section>
+
+      {sponsoredTools.length > 0 ? (
+        <section>
+          <SectionHeading
+            eyebrow="Sponsored"
+            title="Promoted tools with clear disclosure"
+            description="This section demonstrates how paid placements can appear separately from organic discovery results."
+          />
+          <div className="mb-5 rounded-[26px] border border-amber-300/15 bg-amber-300/8 p-4 text-sm leading-7 text-amber-100">
+            Sponsored listings are paid placements and should be clearly disclosed.
+            Placement here does not imply exclusive editorial endorsement.
+          </div>
+          <div className="grid gap-6 lg:grid-cols-3">
+            {sponsoredTools.map((tool) => (
+              <ToolCard key={tool.slug} tool={tool} />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <section>
+        <SectionHeading
+          eyebrow="Fresh Listings"
+          title="New AI launches worth your attention"
+          description="Newly surfaced products and rising tools added to the index this week."
+        />
+        <div className="grid gap-6 lg:grid-cols-3">
+          {newTools.map((tool) => (
+            <ToolCard key={tool.slug} tool={tool} />
+          ))}
+        </div>
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-[0.88fr_1.12fr]">
+        <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+          <SectionHeading
+            eyebrow="Explore"
+            title="Browse by category"
+            description="Move from broad discovery to a focused shortlist with categories optimized for real use cases."
+          />
+          <div className="grid gap-4 sm:grid-cols-2">
+            {categories.map((category) => (
+              <CategoryCard key={category.slug} category={category} />
+            ))}
+          </div>
+        </div>
+        <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+          <SectionHeading
+            eyebrow="Compare"
+            title="Popular AI tool matchups"
+            description="Jump into high-intent comparisons people use before purchase and rollout decisions."
+          />
+          <div className="space-y-4">
+            {comparisons.map((comparison) => (
+              <Link
+                key={comparison.slug}
+                href={`/compare/${comparison.slug}`}
+                className="flex flex-col gap-2 rounded-[24px] border border-white/10 bg-[#081222] p-5 transition hover:border-cyan-300/30 hover:bg-[#0a1628]"
+              >
+                <span className="text-lg font-semibold text-white">{comparison.title}</span>
+                <span className="text-sm leading-6 text-slate-400">
+                  {comparison.summary}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <SectionHeading
+          eyebrow="Top Rated"
+          title="Highest rated tools in the index"
+          description="Consistently strong performer tools chosen for quality, support, and adoption readiness."
+        />
+        <div className="grid gap-6 lg:grid-cols-3">
+          {[...tools]
+            .sort((left, right) => right.rating - left.rating)
+            .slice(0, 3)
+            .map((tool) => (
+              <ToolCard key={tool.slug} tool={tool} />
+            ))}
+        </div>
+      </section>
+
+      <section>
+        <SectionHeading
+          eyebrow="Free Tools"
+          title="Start with no-cost and flexible options"
+          description="Free and freemium tools to validate workflows before procurement and deeper integrations."
+        />
+        <div className="grid gap-6 lg:grid-cols-3">
+          {freeTools.map((tool) => (
+            <ToolCard key={tool.slug} tool={tool} />
+          ))}
+        </div>
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
+        <div className="rounded-[34px] border border-white/10 bg-linear-to-br from-white/8 to-white/4 p-8">
+          <SectionHeading
+            eyebrow="Newsletter"
+            title="Stay on top of new AI releases and pricing changes"
+            description="Get a sharp weekly digest with new tools, rising categories, and product updates."
+          />
+          <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+            <input
+              aria-label="Email address"
+              placeholder="team@company.com"
+              className="rounded-2xl border border-white/10 bg-[#071120] px-5 py-4 text-sm text-slate-300 outline-none"
+            />
+            <button className="rounded-2xl bg-white px-5 py-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200">
+              Join Newsletter
+            </button>
+          </div>
+        </div>
+        <div className="grid gap-4">
+          <div className="rounded-[28px] border border-white/10 bg-white/6 p-6">
+            <p className="text-sm text-slate-400">Review momentum</p>
+            <p className="mt-3 text-4xl font-semibold text-white">12,840</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              Verified community reviews powering smarter AI tool selection.
+            </p>
+          </div>
+          <div className="rounded-[28px] border border-white/10 bg-white/6 p-6">
+            <p className="text-sm text-slate-400">Bookmark activity</p>
+            <p className="mt-3 text-4xl font-semibold text-white">38K</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              Teams save, compare, and revisit tools before making buying decisions.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
