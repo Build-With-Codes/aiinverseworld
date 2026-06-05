@@ -1,28 +1,40 @@
 "use client";
 
-import { useState } from "react";
+import { useSyncExternalStore } from "react";
 
 type ThemeMode = "dark" | "light";
 
 function applyTheme(nextTheme: ThemeMode) {
   document.documentElement.setAttribute("data-theme", nextTheme);
   window.localStorage.setItem("aiverse-theme", nextTheme);
+  window.dispatchEvent(new CustomEvent("aiverse-theme-change"));
+}
+
+function subscribe(onStoreChange: () => void) {
+  window.addEventListener("aiverse-theme-change", onStoreChange);
+  window.addEventListener("storage", onStoreChange);
+
+  return () => {
+    window.removeEventListener("aiverse-theme-change", onStoreChange);
+    window.removeEventListener("storage", onStoreChange);
+  };
+}
+
+function getSnapshot(): ThemeMode {
+  return document.documentElement.getAttribute("data-theme") === "light"
+    ? "light"
+    : "dark";
+}
+
+function getServerSnapshot(): ThemeMode {
+  return "dark";
 }
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<ThemeMode>(() => {
-    if (typeof document !== "undefined") {
-      return document.documentElement.getAttribute("data-theme") === "light"
-        ? "light"
-        : "dark";
-    }
-
-    return "dark";
-  });
+  const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   function handleToggle() {
     const nextTheme = theme === "dark" ? "light" : "dark";
-    setTheme(nextTheme);
     applyTheme(nextTheme);
   }
 

@@ -1,5 +1,6 @@
 import { authOptions } from "@/auth";
 import { AuthDialog } from "@/components/auth-dialog";
+import { FaviconBadge } from "@/components/favicon-badge";
 import { ReviewForm } from "@/components/review-form";
 import { googleAuthEnabled } from "@/lib/auth-config";
 import { SectionHeading } from "@/components/section-heading";
@@ -53,14 +54,21 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
       <section className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
           <div className="flex flex-wrap items-center gap-3">
+            <FaviconBadge
+              name={tool.name}
+              faviconUrl={tool.faviconUrl}
+              className="h-12 w-12 rounded-2xl"
+              imgClassName="p-2"
+              labelClassName="text-sm"
+            />
             <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-semibold tracking-[0.24em] text-cyan-100 uppercase">
               {tool.category}
             </span>
             <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-300">
-              {tool.pricing}
+              {tool.free === "Yes" ? "Free available" : tool.free === "Limited" ? "Limited free" : "Paid only"}
             </span>
             <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-300">
-              {tool.rating.toFixed(1)} rating
+              Starts {tool.startingPrice === "Usage" || tool.startingPrice === "Included" ? tool.startingPrice : `$${tool.startingPrice}/mo`}
             </span>
           </div>
 
@@ -90,18 +98,20 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
 
           <div className="mt-10 grid gap-4 sm:grid-cols-3">
             <div className="rounded-[24px] border border-white/10 bg-[#081222] p-5">
-              <p className="text-sm text-slate-400">Monthly Visits</p>
-              <p className="mt-3 text-3xl font-semibold text-white">{tool.monthlyVisits}</p>
+              <p className="text-sm text-slate-400">Official Site</p>
+              <p className="mt-3 text-lg font-semibold text-white">{tool.website.replace(/^https?:\/\//, "")}</p>
             </div>
             <div className="rounded-[24px] border border-white/10 bg-[#081222] p-5">
-              <p className="text-sm text-slate-400">Platforms</p>
+              <p className="text-sm text-slate-400">Starting Price</p>
               <p className="mt-3 text-lg font-semibold text-white">
-                {tool.platform.join(", ")}
+                {tool.startingPrice === "Usage" || tool.startingPrice === "Included" ? tool.startingPrice : `$${tool.startingPrice}/mo`}
               </p>
             </div>
             <div className="rounded-[24px] border border-white/10 bg-[#081222] p-5">
-              <p className="text-sm text-slate-400">Founded</p>
-              <p className="mt-3 text-3xl font-semibold text-white">{tool.founded}</p>
+              <p className="text-sm text-slate-400">Free Access</p>
+              <p className="mt-3 text-lg font-semibold text-white">
+                {tool.free}
+              </p>
             </div>
           </div>
         </div>
@@ -113,7 +123,7 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
             description={tool.tagline}
           />
           <div className="space-y-4">
-            {tool.features.map((feature) => (
+            {tool.useCases.map((feature) => (
               <div
                 key={feature}
                 className="rounded-[22px] border border-white/10 bg-[#081222] px-5 py-4 text-sm text-slate-200"
@@ -140,29 +150,25 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
           </div>
         </div>
         <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
-          <h2 className="text-xl font-semibold text-white">Pros</h2>
+          <h2 className="text-xl font-semibold text-white">Description</h2>
           <div className="mt-5 space-y-3">
-            {tool.pros.map((item) => (
-              <div
-                key={item}
-                className="rounded-2xl border border-emerald-300/15 bg-emerald-300/8 px-4 py-3 text-sm text-emerald-100"
-              >
-                {item}
-              </div>
-            ))}
+            <div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/8 px-4 py-3 text-sm text-emerald-100">
+              {tool.description}
+            </div>
           </div>
         </div>
         <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
-          <h2 className="text-xl font-semibold text-white">Cons</h2>
+          <h2 className="text-xl font-semibold text-white">Brand Mark</h2>
           <div className="mt-5 space-y-3">
-            {tool.cons.map((item) => (
-              <div
-                key={item}
-                className="rounded-2xl border border-amber-300/15 bg-amber-300/8 px-4 py-3 text-sm text-amber-100"
-              >
-                {item}
-              </div>
-            ))}
+            <div className="flex min-h-36 items-center justify-center overflow-hidden rounded-2xl border border-amber-300/15 bg-amber-300/8 p-4">
+              <FaviconBadge
+                name={tool.name}
+                faviconUrl={tool.faviconUrl}
+                className="h-24 w-24 rounded-3xl"
+                imgClassName="p-4"
+                labelClassName="text-3xl"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -170,22 +176,24 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
           <SectionHeading
-            eyebrow="Screenshots"
-            title="Product preview"
-            description="Dummy visual placeholders standing in for future cloud screenshots and logos."
+            eyebrow="Brand"
+            title="Favicon-based listing"
+            description="This tool entry now uses the official favicon only, with alphabet fallback if the icon does not load."
           />
-          <div className="grid gap-4 sm:grid-cols-2">
-            {tool.screenshots.map((item, index) => (
-              <div
-                key={`${item}-${index}`}
-                className="flex min-h-44 items-end rounded-[26px] border border-white/10 bg-linear-to-br from-cyan-400/10 via-blue-500/10 to-violet-500/10 p-5"
-              >
-                <div>
-                  <p className="text-sm font-medium text-white">Preview {index + 1}</p>
-                  <p className="mt-2 text-sm text-slate-400">{item}</p>
-                </div>
+          <div className="rounded-[26px] border border-white/10 bg-[#081222] p-6">
+            <div className="flex items-center gap-4">
+              <FaviconBadge
+                name={tool.name}
+                faviconUrl={tool.faviconUrl}
+                className="h-16 w-16 rounded-3xl"
+                imgClassName="p-3"
+                labelClassName="text-2xl"
+              />
+              <div>
+                <p className="text-lg font-semibold text-white">{tool.name}</p>
+                <p className="mt-1 text-sm text-slate-400">{tool.faviconUrl}</p>
               </div>
-            ))}
+            </div>
           </div>
         </div>
         <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">

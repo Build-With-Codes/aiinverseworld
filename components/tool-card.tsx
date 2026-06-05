@@ -1,3 +1,4 @@
+import { FaviconBadge } from "@/components/favicon-badge";
 import Link from "next/link";
 
 import type { Tool } from "@/lib/site-data";
@@ -5,10 +6,6 @@ import type { Tool } from "@/lib/site-data";
 type ToolCardProps = {
   tool: Tool;
 };
-
-function ratingWidth(rating: number) {
-  return `${(rating / 5) * 100}%`;
-}
 
 export function ToolCard({ tool }: ToolCardProps) {
   return (
@@ -19,9 +16,13 @@ export function ToolCard({ tool }: ToolCardProps) {
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <div className="mb-3 flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-cyan-400/80 via-blue-500/80 to-indigo-500/80 text-sm font-semibold text-white shadow-[0_0_40px_rgba(34,211,238,0.28)]">
-              {tool.name.slice(0, 2)}
-            </div>
+            <FaviconBadge
+              name={tool.name}
+              faviconUrl={tool.faviconUrl}
+              className="h-12 w-12 rounded-2xl shadow-[0_0_40px_rgba(34,211,238,0.18)]"
+              imgClassName="p-2"
+              labelClassName="text-sm"
+            />
             <div>
               <p className="font-semibold text-white">{tool.name}</p>
               <p className="text-sm text-slate-400">{tool.category}</p>
@@ -49,32 +50,24 @@ export function ToolCard({ tool }: ToolCardProps) {
       </div>
 
       <div className="mb-5 flex flex-wrap gap-2">
-        {tool.tags.map((tag) => (
+        {tool.useCases.slice(0, 3).map((useCase) => (
           <span
-            key={tag}
+            key={useCase}
             className="rounded-full border border-white/8 bg-white/6 px-3 py-1 text-xs text-slate-300"
           >
-            {tag}
+            {useCase}
           </span>
         ))}
       </div>
 
       <div className="mt-auto space-y-4">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-slate-400">{tool.pricing}</span>
-          <span className="text-slate-400">{tool.monthlyVisits} monthly visits</span>
-        </div>
-        <div className="space-y-2">
-          <div className="h-2 rounded-full bg-white/8">
-            <div
-              className="h-2 rounded-full bg-linear-to-r from-cyan-300 via-blue-400 to-violet-400"
-              style={{ width: ratingWidth(tool.rating) }}
-            />
-          </div>
-          <div className="flex items-center justify-between text-sm text-slate-300">
-            <span>{tool.rating.toFixed(1)} / 5</span>
-            <span>{tool.reviewsCount} reviews</span>
-          </div>
+          <span className="text-slate-400">
+            {tool.free === "Yes" ? "Free plan" : tool.free === "Limited" ? "Limited free" : "Paid"}
+          </span>
+          <span className="text-slate-400">
+            From {tool.startingPrice === "Usage" || tool.startingPrice === "Included" ? tool.startingPrice : `$${tool.startingPrice}/mo`}
+          </span>
         </div>
       </div>
     </Link>

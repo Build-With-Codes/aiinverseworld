@@ -45,9 +45,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         <div className="grid gap-4 lg:grid-cols-4">
           {[
             "Pricing: All",
-            "Rating: 4.5+",
-            "Platform: Web & API",
-            "Sort: Most Reviewed",
+            "Free Tier: Any",
+            "Website: Official",
+            "Sort: Featured",
           ].map((filter) => (
             <div
               key={filter}

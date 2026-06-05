@@ -23,7 +23,7 @@ export async function generateMetadata({
 
   return {
     title: `${pair.left.name} vs ${pair.right.name} | AiverseWorld`,
-    description: `Compare ${pair.left.name} and ${pair.right.name} across pricing, features, ratings, and use cases.`,
+    description: `Compare ${pair.left.name} and ${pair.right.name} across category, description, website, and use cases.`,
   };
 }
 
@@ -41,28 +41,28 @@ export default async function ComparePage({ params }: ComparePageProps) {
         <SectionHeading
           eyebrow="Compare"
           title={`${pair.left.name} vs ${pair.right.name}`}
-          description="Feature, pricing, and adoption comparison designed for high-intent software evaluation."
+          description="A direct comparison using the real catalog fields currently available for both products."
         />
         <ComparisonTable left={pair.left} right={pair.right} />
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
-          <h2 className="text-2xl font-semibold text-white">{pair.left.name} strengths</h2>
+          <h2 className="text-2xl font-semibold text-white">{pair.left.name} use cases</h2>
           <div className="mt-5 space-y-3">
-            {pair.left.pros.map((pro) => (
-              <div key={pro} className="rounded-2xl border border-emerald-300/15 bg-emerald-300/8 px-4 py-3 text-sm text-emerald-100">
-                {pro}
+            {pair.left.useCases.map((useCase) => (
+              <div key={useCase} className="rounded-2xl border border-emerald-300/15 bg-emerald-300/8 px-4 py-3 text-sm text-emerald-100">
+                {useCase}
               </div>
             ))}
           </div>
         </div>
         <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
-          <h2 className="text-2xl font-semibold text-white">{pair.right.name} strengths</h2>
+          <h2 className="text-2xl font-semibold text-white">{pair.right.name} use cases</h2>
           <div className="mt-5 space-y-3">
-            {pair.right.pros.map((pro) => (
-              <div key={pro} className="rounded-2xl border border-emerald-300/15 bg-emerald-300/8 px-4 py-3 text-sm text-emerald-100">
-                {pro}
+            {pair.right.useCases.map((useCase) => (
+              <div key={useCase} className="rounded-2xl border border-emerald-300/15 bg-emerald-300/8 px-4 py-3 text-sm text-emerald-100">
+                {useCase}
               </div>
             ))}
           </div>

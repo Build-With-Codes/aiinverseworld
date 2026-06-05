@@ -24,12 +24,12 @@ export default function SearchPage() {
         <SectionHeading
           eyebrow="Search"
           title="Instant discovery with practical filters"
-          description="A search results shell designed for fast shortlist creation and better product evaluation."
+          description="Search across real tools, official websites, price signals, and use cases from the live catalog."
         />
         <div className="grid gap-4 xl:grid-cols-[1fr_0.9fr]">
           <input
             aria-label="Search query"
-            placeholder="best AI tools for product teams"
+            placeholder="best AI coding tools under $20"
             className="rounded-2xl border border-white/10 bg-[#071120] px-5 py-4 text-sm text-slate-300 outline-none"
           />
           <div className="grid gap-3 sm:grid-cols-5">

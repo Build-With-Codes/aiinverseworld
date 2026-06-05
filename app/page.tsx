@@ -45,9 +45,11 @@ const discoveryBands = [
 ];
 
 export default function Home() {
-  const trendingTools = tools.slice(0, 3);
-  const newTools = tools.slice(3, 6);
-  const freeTools = tools.filter((tool) => tool.pricing === "Free" || tool.pricing === "Freemium");
+  const trendingTools = tools.slice(0, 6);
+  const codingTools = tools.filter((tool) => tool.category === "Coding AI").slice(0, 6);
+  const creativeTools = tools
+    .filter((tool) => ["Image AI", "Video AI", "Design AI"].includes(tool.category))
+    .slice(0, 6);
   const sponsoredTools = tools.filter((tool) => tool.sponsored);
 
   return (
@@ -62,9 +64,9 @@ export default function Home() {
               Discover the Perfect AI Tool
             </h1>
             <p className="max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
-              AiverseWorld is your curated search engine for AI products across writing,
-              coding, video, research, and operations. Compare real tools, filter fast,
-              and move from exploration to adoption with confidence.
+              AiverseWorld is your curated search engine for AI products across
+              assistants, coding, video, research, automation, and enterprise
+              platforms. Compare real tools, pricing signals, and use cases fast.
             </p>
           </div>
 
@@ -72,7 +74,7 @@ export default function Home() {
             <div className="grid gap-3 sm:grid-cols-[1fr_auto_auto]">
               <input
                 aria-label="Search tools"
-                placeholder="Search AI tools by use case, pricing, or team"
+                placeholder="Search AI tools by use case, price, or category"
                 className="rounded-2xl border border-white/10 bg-[#071120] px-5 py-4 text-sm text-slate-300 outline-none placeholder:text-slate-500"
               />
               <button className="rounded-2xl border border-white/10 bg-white/6 px-5 py-4 text-sm font-medium text-white transition hover:border-cyan-300/30 hover:bg-white/10">
@@ -161,9 +163,9 @@ export default function Home() {
 
       <section>
         <SectionHeading
-          eyebrow="Trending"
-          title="Tools teams are evaluating right now"
-          description="Curated picks with strong momentum, useful reviews, and practical workflows across major AI categories."
+          eyebrow="Featured"
+          title="Live AI tools from the current market"
+          description="AiverseWorld now showcases the real tools you provided across assistants, coding, creative, productivity, research, and enterprise AI."
         />
         <div className="grid gap-6 lg:grid-cols-3">
           {trendingTools.map((tool) => (
@@ -193,12 +195,12 @@ export default function Home() {
 
       <section>
         <SectionHeading
-          eyebrow="Fresh Listings"
-          title="New AI launches worth your attention"
-          description="Newly surfaced products and rising tools added to the index this week."
+          eyebrow="Builders"
+          title="Coding tools for modern software teams"
+          description="From AI-native IDEs to autonomous coding agents, these are the development-focused tools in the live catalog."
         />
         <div className="grid gap-6 lg:grid-cols-3">
-          {newTools.map((tool) => (
+          {codingTools.map((tool) => (
             <ToolCard key={tool.slug} tool={tool} />
           ))}
         </div>
@@ -242,28 +244,12 @@ export default function Home() {
 
       <section>
         <SectionHeading
-          eyebrow="Top Rated"
-          title="Highest rated tools in the index"
-          description="Consistently strong performer tools chosen for quality, support, and adoption readiness."
+          eyebrow="Creative"
+          title="Image, design, and video tools in one view"
+          description="Creative teams can explore image generation, design assistance, and video production tools from the provided live catalog."
         />
         <div className="grid gap-6 lg:grid-cols-3">
-          {[...tools]
-            .sort((left, right) => right.rating - left.rating)
-            .slice(0, 3)
-            .map((tool) => (
-              <ToolCard key={tool.slug} tool={tool} />
-            ))}
-        </div>
-      </section>
-
-      <section>
-        <SectionHeading
-          eyebrow="Free Tools"
-          title="Start with no-cost and flexible options"
-          description="Free and freemium tools to validate workflows before procurement and deeper integrations."
-        />
-        <div className="grid gap-6 lg:grid-cols-3">
-          {freeTools.map((tool) => (
+          {creativeTools.map((tool) => (
             <ToolCard key={tool.slug} tool={tool} />
           ))}
         </div>

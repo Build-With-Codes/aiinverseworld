@@ -6,11 +6,12 @@ type ComparisonTableProps = {
 };
 
 const rows = [
-  { label: "Pricing", key: "pricing" },
-  { label: "Rating", key: "rating" },
-  { label: "Platforms", key: "platform" },
+  { label: "Category", key: "category" },
+  { label: "Free Tier", key: "free" },
+  { label: "Starting Price", key: "startingPrice" },
+  { label: "Description", key: "description" },
   { label: "Best For", key: "useCases" },
-  { label: "Key Features", key: "features" },
+  { label: "Website", key: "website" },
 ];
 
 function readValue(tool: Tool, key: string) {
@@ -22,6 +23,10 @@ function readValue(tool: Tool, key: string) {
 
   if (typeof value === "number") {
     return value.toFixed(1);
+  }
+
+  if (key === "website" && typeof value === "string") {
+    return value.replace(/^https?:\/\//, "");
   }
 
   return value;
