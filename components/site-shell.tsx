@@ -1,14 +1,15 @@
 import { authOptions } from "@/auth";
 import { AccountMenu } from "@/components/account-menu";
 import { AuthDialog } from "@/components/auth-dialog";
+import { MobileMenu } from "@/components/mobile-menu";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { googleAuthEnabled } from "@/lib/auth-config";
 import { monetizationPages } from "@/lib/site-data";
+import logoImage from "@/public/logo.png";
 import Image from "next/image";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import type { ReactNode } from "react";
-import { ThemeToggle } from "@/components/theme-toggle";
-import logoImage from "@/public/logo.png";
 
 type SiteShellProps = {
   children: ReactNode;
@@ -54,8 +55,8 @@ export async function SiteShell({ children }: SiteShellProps) {
     <div className="app-shell min-h-screen text-white">
       <div className="mx-auto flex min-h-screen w-full max-w-[1600px] flex-col px-4 pb-10 sm:px-6 lg:px-8">
         <header className="sticky top-0 z-40 pt-4">
-          <div className="app-glass flex items-center justify-between rounded-full border border-white/10 bg-white/6 px-4 py-3 shadow-[0_12px_40px_rgba(2,6,23,0.35)] backdrop-blur-xl">
-            <Link href="/" className="flex items-center gap-3">
+          <div className="app-glass flex items-center justify-between rounded-full border border-white/10 bg-white/6 px-3 py-3 shadow-[0_12px_40px_rgba(2,6,23,0.35)] backdrop-blur-xl sm:px-4">
+            <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
               <div className="brand-logo-frame relative h-11 w-11 overflow-hidden rounded-full">
                 <Image
                   src={logoImage}
@@ -66,11 +67,11 @@ export async function SiteShell({ children }: SiteShellProps) {
                   priority
                 />
               </div>
-              <div>
-                <p className="font-semibold tracking-[0.24em] text-cyan-200 uppercase">
+              <div className="min-w-0">
+                <p className="truncate text-xs font-semibold tracking-[0.18em] text-cyan-200 uppercase sm:text-sm sm:tracking-[0.24em]">
                   AiverseWorld
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="hidden text-xs text-slate-400 sm:block">
                   Discover the right AI stack
                 </p>
               </div>
@@ -88,21 +89,33 @@ export async function SiteShell({ children }: SiteShellProps) {
               ))}
             </nav>
 
-            <div className="flex items-center gap-3">
+            <div className="flex shrink-0 items-center gap-2 sm:gap-3">
               <ThemeToggle />
-              {session?.user ? (
-                <AccountMenu
-                  name={session.user.name}
-                  email={session.user.email}
-                  image={session.user.image}
-                />
-              ) : (
-                <AuthDialog
-                  callbackUrl="/"
-                  enabled={googleAuthEnabled}
-                  triggerClassName="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
-                />
-              )}
+
+              <div className="hidden md:block">
+                {session?.user ? (
+                  <AccountMenu
+                    name={session.user.name}
+                    email={session.user.email}
+                    image={session.user.image}
+                  />
+                ) : (
+                  <AuthDialog
+                    callbackUrl="/"
+                    enabled={googleAuthEnabled}
+                    triggerClassName="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
+                  />
+                )}
+              </div>
+
+              <MobileMenu
+                navItems={navItems}
+                authEnabled={googleAuthEnabled}
+                isSignedIn={Boolean(session?.user)}
+                userName={session?.user?.name}
+                userEmail={session?.user?.email}
+                userImage={session?.user?.image}
+              />
             </div>
           </div>
         </header>
