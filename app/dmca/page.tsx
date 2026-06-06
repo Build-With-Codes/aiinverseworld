@@ -36,7 +36,7 @@ export default function DmcaPage() {
         <h2 className="text-2xl font-semibold text-white">Contact for notices</h2>
         <p className="text-base leading-8 text-slate-300">
           Send infringement notices and related legal correspondence to
-          legal@aiverseworld.example.
+          legal@aiverseworld.com.
         </p>
       </div>
     </ContentPage>

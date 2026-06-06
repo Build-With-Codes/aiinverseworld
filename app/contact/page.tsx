@@ -21,25 +21,25 @@ export default function ContactPage() {
         <div className="rounded-[24px] border border-white/10 bg-[#081222] p-6">
           <h2 className="text-2xl font-semibold text-white">Support</h2>
           <p className="mt-3 text-base leading-8 text-slate-300">
-            help@aiverseworld.example
+            support@aiverseworld.com
           </p>
         </div>
         <div className="rounded-[24px] border border-white/10 bg-[#081222] p-6">
           <h2 className="text-2xl font-semibold text-white">Enterprise Sales</h2>
           <p className="mt-3 text-base leading-8 text-slate-300">
-            sales@aiverseworld.example
+            sales@aiverseworld.com
           </p>
         </div>
         <div className="rounded-[24px] border border-white/10 bg-[#081222] p-6">
           <h2 className="text-2xl font-semibold text-white">Security</h2>
           <p className="mt-3 text-base leading-8 text-slate-300">
-            security@aiverseworld.example
+            support@aiverseworld.com
           </p>
         </div>
         <div className="rounded-[24px] border border-white/10 bg-[#081222] p-6">
           <h2 className="text-2xl font-semibold text-white">Legal</h2>
           <p className="mt-3 text-base leading-8 text-slate-300">
-            legal@aiverseworld.example
+            legal@aiverseworld.com
           </p>
         </div>
       </div>
