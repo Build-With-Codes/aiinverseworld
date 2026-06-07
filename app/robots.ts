@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://aiverseworld.example/sitemap.xml",
+    sitemap: "https://aiverseworld.com/sitemap.xml",
   };
 }

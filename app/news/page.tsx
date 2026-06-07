@@ -1,12 +1,52 @@
+import type { Metadata } from "next";
 import { NewsCard } from "@/components/news-card";
 import { SectionHeading } from "@/components/section-heading";
 import { getNewsArticles } from "@/lib/news";
+import { buildUrl } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  title: "AI News | AiverseWorld",
+  description:
+    "Enterprise AI news with short summaries, source attribution, and links back to original publishers.",
+  alternates: {
+    canonical: buildUrl("/news"),
+  },
+  openGraph: {
+    title: "AI News | AiverseWorld",
+    description:
+      "Enterprise AI news with short summaries, source attribution, and links back to original publishers.",
+    url: buildUrl("/news"),
+    type: "website",
+  },
+};
 
 export default async function NewsPage() {
   const articles = await getNewsArticles(9);
 
   return (
     <div className="space-y-14 pb-10 pt-10 sm:space-y-16 sm:pt-14">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: "AiverseWorld AI News",
+            url: buildUrl("/news"),
+            hasPart: articles.slice(0, 10).map((article) => ({
+              "@type": "NewsArticle",
+              headline: article.title,
+              datePublished: article.publishedAt,
+              dateModified: article.processedAt,
+              url: article.sourceUrl,
+              publisher: {
+                "@type": "Organization",
+                name: article.sourceName,
+              },
+            })),
+          }),
+        }}
+      />
       <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
         <div className="space-y-6">
           <div className="inline-flex rounded-full border border-emerald-300/20 bg-emerald-300/10 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-emerald-100 uppercase">

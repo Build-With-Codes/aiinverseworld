@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import { NewsCard } from "@/components/news-card";
@@ -5,7 +6,17 @@ import { CategoryCard } from "@/components/category-card";
 import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
 import { getNewsArticles } from "@/lib/news";
+import { buildUrl } from "@/lib/seo";
 import { categories, comparisons, finderQuestions, tools } from "@/lib/site-data";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: buildUrl("/"),
+  },
+  openGraph: {
+    url: buildUrl("/"),
+  },
+};
 
 const spotlightMetrics = [
   { label: "Indexed tools", value: "4,200+" },

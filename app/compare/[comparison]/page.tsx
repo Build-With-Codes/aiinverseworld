@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { ComparisonTable } from "@/components/comparison-table";
 import { SectionHeading } from "@/components/section-heading";
+import { buildUrl } from "@/lib/seo";
 import { getComparisonTools } from "@/lib/site-data";
 
 type ComparePageProps = {
@@ -24,6 +25,9 @@ export async function generateMetadata({
   return {
     title: `${pair.left.name} vs ${pair.right.name} | AiverseWorld`,
     description: `Compare ${pair.left.name} and ${pair.right.name} across category, description, website, and use cases.`,
+    alternates: {
+      canonical: buildUrl(`/compare/${comparison}`),
+    },
   };
 }
 

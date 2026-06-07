@@ -40,7 +40,7 @@ function createSeedData(): StoredReview[] {
       rating: review.rating,
       comment: review.comment,
       userId: `seed-${toolSlug}-${index + 1}`,
-      userEmail: `seed-${toolSlug}-${index + 1}@aiverseworld.example`,
+      userEmail: `seed-${toolSlug}-${index + 1}@aiverseworld.com`,
       createdAt: new Date("2026-01-01T00:00:00.000Z").toISOString(),
     })),
   );

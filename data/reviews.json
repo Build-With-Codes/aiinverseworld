@@ -7,7 +7,7 @@
     "rating": 5,
     "comment": "The workflow feels built for real editorial teams, not just solo writers.",
     "userId": "seed-nova-write-1",
-    "userEmail": "seed-nova-write-1@aiverseworld.example",
+    "userEmail": "seed-nova-write-1@aiverseworld.com",
     "createdAt": "2026-01-01T00:00:00.000Z"
   },
   {
@@ -18,7 +18,7 @@
     "rating": 4,
     "comment": "The SEO workflows save us hours every week.",
     "userId": "seed-nova-write-2",
-    "userEmail": "seed-nova-write-2@aiverseworld.example",
+    "userEmail": "seed-nova-write-2@aiverseworld.com",
     "createdAt": "2026-01-01T00:00:00.000Z"
   },
   {
@@ -29,7 +29,7 @@
     "rating": 5,
     "comment": "The best repo-aware assistant we tested for larger teams.",
     "userId": "seed-forgeflow-1",
-    "userEmail": "seed-forgeflow-1@aiverseworld.example",
+    "userEmail": "seed-forgeflow-1@aiverseworld.com",
     "createdAt": "2026-01-01T00:00:00.000Z"
   }
 ]

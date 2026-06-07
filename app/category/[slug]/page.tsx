@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { buildUrl } from "@/lib/seo";
 import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
 import { getCategoryBySlug, getToolsByCategory } from "@/lib/site-data";
@@ -21,6 +22,11 @@ export async function generateMetadata({
       : "Category | AiverseWorld",
     description:
       category?.description ?? "Explore AI tools grouped by category on AiverseWorld.",
+    alternates: category
+      ? {
+          canonical: buildUrl(`/category/${category.slug}`),
+        }
+      : undefined,
   };
 }
 

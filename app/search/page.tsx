@@ -2,11 +2,19 @@ import type { Metadata } from "next";
 
 import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
+import { buildUrl } from "@/lib/seo";
 import { tools } from "@/lib/site-data";
 
 export const metadata: Metadata = {
   title: "Search AI Tools | AiverseWorld",
   description: "Search, filter, and explore AI tools with dummy discovery data.",
+  alternates: {
+    canonical: buildUrl("/search"),
+  },
+  robots: {
+    index: false,
+    follow: true,
+  },
 };
 
 const filters = [

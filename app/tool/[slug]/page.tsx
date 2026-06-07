@@ -6,6 +6,7 @@ import { googleAuthEnabled } from "@/lib/auth-config";
 import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
 import { getReviewsForTool } from "@/lib/review-store";
+import { buildUrl } from "@/lib/seo";
 import { getToolBySlug, tools } from "@/lib/site-data";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -31,6 +32,15 @@ export async function generateMetadata({
   return {
     title: `${tool.name} Review, Pricing, and Alternatives | AiverseWorld`,
     description: tool.description,
+    alternates: {
+      canonical: buildUrl(`/tool/${tool.slug}`),
+    },
+    openGraph: {
+      title: `${tool.name} Review, Pricing, and Alternatives | AiverseWorld`,
+      description: tool.description,
+      url: buildUrl(`/tool/${tool.slug}`),
+      type: "article",
+    },
   };
 }
 
@@ -51,6 +61,29 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
 
   return (
     <div className="space-y-12 pb-10 pt-10">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: tool.name,
+            applicationCategory: tool.category,
+            description: tool.description,
+            operatingSystem: "Web",
+            url: buildUrl(`/tool/${tool.slug}`),
+            sameAs: tool.website,
+            offers:
+              tool.startingPrice === "Usage" || tool.startingPrice === "Included"
+                ? undefined
+                : {
+                    "@type": "Offer",
+                    price: tool.startingPrice,
+                    priceCurrency: "USD",
+                  },
+          }),
+        }}
+      />
       <section className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
           <div className="flex flex-wrap items-center gap-3">
