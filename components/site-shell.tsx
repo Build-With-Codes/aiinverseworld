@@ -2,6 +2,7 @@ import { authOptions } from "@/auth";
 import { AccountMenu } from "@/components/account-menu";
 import { AuthDialog } from "@/components/auth-dialog";
 import { MobileMenu } from "@/components/mobile-menu";
+import { NavLink } from "@/components/nav-link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { googleAuthEnabled } from "@/lib/auth-config";
 import { monetizationPages } from "@/lib/site-data";
@@ -81,13 +82,11 @@ export async function SiteShell({ children }: SiteShellProps) {
 
             <nav className="hidden items-center gap-2 md:flex">
               {navItems.map((item) => (
-                <Link
+                <NavLink
                   key={item.href}
                   href={item.href}
-                  className="rounded-full px-4 py-2 text-sm text-slate-300 transition hover:bg-white/8 hover:text-white"
-                >
-                  {item.label}
-                </Link>
+                  label={item.label}
+                />
               ))}
             </nav>
 
