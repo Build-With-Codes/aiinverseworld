@@ -1,8 +1,10 @@
 import Link from "next/link";
 
+import { NewsCard } from "@/components/news-card";
 import { CategoryCard } from "@/components/category-card";
 import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
+import { getNewsArticles } from "@/lib/news";
 import { categories, comparisons, finderQuestions, tools } from "@/lib/site-data";
 
 const spotlightMetrics = [
@@ -44,13 +46,14 @@ const discoveryBands = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
   const trendingTools = tools.slice(0, 6);
   const codingTools = tools.filter((tool) => tool.category === "Coding AI").slice(0, 6);
   const creativeTools = tools
     .filter((tool) => ["Image AI", "Video AI", "Design AI"].includes(tool.category))
     .slice(0, 6);
   const sponsoredTools = tools.filter((tool) => tool.sponsored);
+  const newsArticles = await getNewsArticles(3);
 
   return (
     <div className="space-y-20 pb-10 pt-10 sm:space-y-24 sm:pt-14">
@@ -159,6 +162,36 @@ export default function Home() {
             <p className="mt-3 text-sm leading-7 text-slate-300">{band.description}</p>
           </div>
         ))}
+      </section>
+
+      <section>
+        <SectionHeading
+          eyebrow="AI News"
+          title="Enterprise AI news, summarized with attribution"
+          description="Track governance, infrastructure, operations, and legal developments through short AI-assisted summaries that link back to the original publishers."
+        />
+        {newsArticles.length > 0 ? (
+          <>
+            <div className="mb-5 rounded-[26px] border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm leading-7 text-emerald-100">
+              We only display summaries, excerpts, and source metadata here. Readers should use the original links for the complete article and publisher context.
+            </div>
+            <div className="grid gap-6 lg:grid-cols-3">
+              {newsArticles.map((article) => (
+                <NewsCard key={article.id} article={article} />
+              ))}
+            </div>
+            <div className="mt-6">
+              <Link
+                href="/news"
+                className="inline-flex rounded-full border border-cyan-300/25 px-5 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/10"
+              >
+                Explore the full AI news desk
+              </Link>
+            </div>
+          </>
+        ) : (
+          null
+        )}
       </section>
 
       <section>

@@ -17,6 +17,7 @@ type SiteShellProps = {
 
 const navItems = [
   { href: "/", label: "Discover" },
+  { href: "/news", label: "News" },
   { href: "/search", label: "Search" },
   { href: "/category/coding-ai", label: "Categories" },
   { href: "/compare/chatgpt-vs-claude", label: "Compare" },
@@ -28,6 +29,7 @@ const footerGroups = [
     title: "Platform",
     links: [
       { href: "/", label: "Home" },
+      { href: "/news", label: "AI News" },
       { href: "/search", label: "Search" },
       { href: "/about", label: "About Us" },
       { href: "/contact", label: "Contact" },
