@@ -38,7 +38,12 @@ export function GoogleSignOutButton({
   return (
     <button
       type="button"
-      onClick={() => signOut({ callbackUrl })}
+      onClick={async () => {
+        await fetch("/api/auth/logout-service", {
+          method: "POST",
+        });
+        await signOut({ callbackUrl });
+      }}
       className={className}
     >
       {label}

@@ -1,0 +1,46 @@
+[
+  {
+    "id": "scheduling-staff-shifts",
+    "title": "Scheduling staff shifts is a nightmare",
+    "description": "We manage 50 employees across multiple stores and spend hours every week building schedules, handling swaps, and chasing confirmations.",
+    "industry": "Retail",
+    "frequency": "Every week",
+    "painScore": 9,
+    "createdAt": "2026-06-01T09:00:00.000Z",
+    "analysis": {
+      "whoHasThisProblem": "Multi-location retailers, restaurants, clinics, and service businesses with hourly staff run into this constantly.",
+      "severity": "This is a high-friction operational problem because it burns manager time every week and directly affects attendance, overtime, and customer coverage.",
+      "softwareFit": "Yes. Scheduling, shift swaps, availability capture, and notifications are all strong workflow software use cases.",
+      "aiFit": "Yes. AI can suggest optimized schedules, predict understaffing, and automate swap approvals or conflict detection.",
+      "marketOpportunity": "The opportunity is strong because the pain is recurring, measurable, and tied to labor efficiency and revenue protection.",
+      "opportunityScore": 92,
+      "startupIdeas": [
+        "SaaS for auto-generating compliant employee schedules",
+        "AI assistant for shift swaps and last-minute coverage",
+        "WhatsApp-based scheduling tool for frontline teams"
+      ]
+    }
+  },
+  {
+    "id": "finding-reliable-contractors",
+    "title": "Finding reliable local contractors is difficult",
+    "description": "We waste days comparing vendors, checking references, and redoing work when local contractors miss deadlines or quality expectations.",
+    "industry": "Construction",
+    "frequency": "Every month",
+    "painScore": 8,
+    "createdAt": "2026-06-02T11:30:00.000Z",
+    "analysis": {
+      "whoHasThisProblem": "Construction firms, property managers, facilities teams, and homeowners with recurring project work all feel this pain.",
+      "severity": "The pain is serious because poor contractor selection increases delays, rework, and project risk.",
+      "softwareFit": "Yes. Vendor discovery, vetting, reputation data, and procurement workflows are a natural software category.",
+      "aiFit": "AI can help rank vendors, summarize reviews, flag risk signals, and match project requirements to contractor profiles.",
+      "marketOpportunity": "There is a healthy niche opportunity where trust, verification, and response speed create clear value.",
+      "opportunityScore": 84,
+      "startupIdeas": [
+        "Verified local contractor marketplace for commercial projects",
+        "AI scoring engine for contractor reliability and fit",
+        "Project brief to contractor shortlist automation tool"
+      ]
+    }
+  }
+]

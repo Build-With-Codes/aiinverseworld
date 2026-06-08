@@ -7,6 +7,7 @@ import { SiteShell } from "@/components/site-shell";
 import { ThemeScript } from "@/components/theme-script";
 import { googleAuthEnabled } from "@/lib/auth-config";
 import { buildUrl, siteUrl } from "@/lib/seo";
+import { Analytics } from "@vercel/analytics/next";
 import { getServerSession } from "next-auth";
 
 import "./globals.css";
@@ -86,6 +87,7 @@ export default async function RootLayout({
         ) : (
           <ChatSupportGate enabled={googleAuthEnabled} />
         )}
+        <Analytics />
       </body>
     </html>
   );

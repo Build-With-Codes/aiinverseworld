@@ -18,6 +18,8 @@ type SiteShellProps = {
 
 const navItems = [
   { href: "/", label: "Discover" },
+  { href: "/problems", label: "Problems" },
+  { href: "/games/draw-guess", label: "Games" },
   { href: "/news", label: "News" },
   { href: "/search", label: "Search" },
   { href: "/category/coding-ai", label: "Categories" },
@@ -30,6 +32,9 @@ const footerGroups = [
     title: "Platform",
     links: [
       { href: "/", label: "Home" },
+      { href: "/problems", label: "Problems" },
+      { href: "/problems/submit", label: "Submit Problem" },
+      { href: "/games/draw-guess", label: "Games" },
       { href: "/news", label: "AI News" },
       { href: "/search", label: "Search" },
       { href: "/about", label: "About Us" },
@@ -91,6 +96,12 @@ export async function SiteShell({ children }: SiteShellProps) {
             </nav>
 
             <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+              <Link
+                href="/problems/submit"
+                className="hidden rounded-full border border-cyan-300/25 bg-cyan-300/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:border-cyan-300/40 hover:bg-cyan-300/15 lg:inline-flex"
+              >
+                Submit Problem
+              </Link>
               <ThemeToggle />
 
               <div className="hidden md:block">

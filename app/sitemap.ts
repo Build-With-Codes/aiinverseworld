@@ -6,6 +6,9 @@ import { categories, comparisons, tools } from "@/lib/site-data";
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages = [
     "",
+    "/problems",
+    "/problems/submit",
+    "/games/draw-guess",
     "/news",
     "/search",
     "/about",

@@ -2,6 +2,7 @@
 
 import { useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
+import { signIn } from "next-auth/react";
 
 import { GoogleSignInButton } from "@/components/google-auth-button";
 
@@ -36,12 +37,42 @@ export function AuthDialog({
   callbackUrl,
   enabled = true,
   triggerClassName,
-  triggerLabel = "Sign In with Google",
+  triggerLabel = "Login / Sign Up",
   title = "Join AiverseWorld",
-  description = "Sign in with Google to review tools, save favorites, and build a trusted shortlist.",
+  description = "Create your account or log in with email and password, or continue with Google.",
 }: AuthDialogProps) {
   const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<"login" | "signup">("login");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const mounted = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+
+  async function handleCredentialsSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSubmitting(true);
+    setError("");
+
+    const result = await signIn("credentials", {
+      redirect: false,
+      callbackUrl,
+      mode,
+      name,
+      email,
+      password,
+    });
+
+    setSubmitting(false);
+
+    if (result?.error) {
+      setError(result.error);
+      return;
+    }
+
+    window.location.href = callbackUrl;
+  }
 
   const dialog =
     open && mounted ? (
@@ -87,11 +118,79 @@ export function AuthDialog({
             </div>
 
             <div className="mt-8 rounded-[28px] border border-white/10 bg-white/6 p-5 sm:p-6">
-              <p className="text-sm font-medium text-white">Continue with Google</p>
-              <p className="mt-2 text-sm leading-7 text-slate-300">
-                We use Google sign-in for quick onboarding and verified user identity.
-                Your reviews stay in your own platform data flow.
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => setMode("login")}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                    mode === "login"
+                      ? "bg-white text-slate-950"
+                      : "border border-white/10 text-slate-300"
+                  }`}
+                >
+                  Login
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode("signup")}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                    mode === "signup"
+                      ? "bg-white text-slate-950"
+                      : "border border-white/10 text-slate-300"
+                  }`}
+                >
+                  Sign Up
+                </button>
+              </div>
+
+              <p className="mt-5 text-sm font-medium text-white">
+                {mode === "signup" ? "Create your account" : "Log in to your account"}
               </p>
+              <p className="mt-2 text-sm leading-7 text-slate-300">
+                Use email and password, or continue with Google. Your account is now
+                backed by the AiverseWorld auth service.
+              </p>
+
+              <form className="mt-6 space-y-4" onSubmit={handleCredentialsSubmit}>
+                {mode === "signup" ? (
+                  <input
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    placeholder="Full name"
+                    className="w-full rounded-2xl border border-white/10 bg-[#081222] px-4 py-4 text-sm text-white outline-none"
+                  />
+                ) : null}
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="Email"
+                  className="w-full rounded-2xl border border-white/10 bg-[#081222] px-4 py-4 text-sm text-white outline-none"
+                />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="Password"
+                  className="w-full rounded-2xl border border-white/10 bg-[#081222] px-4 py-4 text-sm text-white outline-none"
+                />
+                {error ? (
+                  <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
+                    {error}
+                  </div>
+                ) : null}
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 disabled:opacity-60"
+                >
+                  {submitting
+                    ? "Please wait..."
+                    : mode === "signup"
+                      ? "Create Account"
+                      : "Login"}
+                </button>
+              </form>
 
               <div className="mt-6 flex flex-wrap items-center gap-4">
                 {enabled ? (
@@ -111,8 +210,8 @@ export function AuthDialog({
               </div>
               {!enabled ? (
                 <p className="mt-4 text-xs leading-6 text-slate-400">
-                  Add `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, and `AUTH_SECRET` in your
-                  local environment to enable login.
+                  Add `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_SECRET`, and
+                  `AUTH_SERVICE_BASE_URL` in your local environment to enable login.
                 </p>
               ) : null}
             </div>
