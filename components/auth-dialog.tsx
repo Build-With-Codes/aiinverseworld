@@ -113,8 +113,8 @@ export function AuthDialog({
                   onClick={() => setMode("login")}
                   className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                     mode === "login"
-                      ? "bg-white text-slate-950"
-                      : "border border-white/10 text-slate-300"
+                      ? "bg-blue-600 text-white dark:bg-white dark:text-slate-950"
+                      : "border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
                   }`}
                 >
                   Login
@@ -124,8 +124,8 @@ export function AuthDialog({
                   onClick={() => setMode("signup")}
                   className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                     mode === "signup"
-                      ? "bg-white text-slate-950"
-                      : "border border-white/10 text-slate-300"
+                      ? "bg-blue-600 text-white dark:bg-white dark:text-slate-950"
+                      : "border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
                   }`}
                 >
                   Sign Up
@@ -135,10 +135,10 @@ export function AuthDialog({
               <p className="mt-5 text-sm font-medium text-white">
                 {mode === "signup" ? "Create your account" : "Log in to your account"}
               </p>
-              <p className="mt-2 text-sm leading-7 text-slate-300">
+              {/* <p className="mt-2 text-sm leading-7 text-slate-300">
                 Use email and password, or continue with Google. Your account is now
                 backed by the AiverseWorld auth service.
-              </p>
+              </p> */}
 
               <form className="mt-6 space-y-4" onSubmit={handleCredentialsSubmit}>
                 {mode === "signup" ? (
@@ -146,7 +146,7 @@ export function AuthDialog({
                     value={name}
                     onChange={(event) => setName(event.target.value)}
                     placeholder="Full name"
-                    className="w-full rounded-2xl border border-white/10 bg-[#081222] px-4 py-4 text-sm text-white outline-none"
+                    className="w-full rounded-2xl border border-gray-300 bg-white px-4 py-4 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-white/10 dark:bg-[#081222] dark:text-white"
                   />
                 ) : null}
                 <input
@@ -154,14 +154,14 @@ export function AuthDialog({
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                   placeholder="Email"
-                  className="w-full rounded-2xl border border-white/10 bg-[#081222] px-4 py-4 text-sm text-white outline-none"
+                  className="w-full rounded-2xl border border-gray-300 bg-white px-4 py-4 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-white/10 dark:bg-[#081222] dark:text-white"
                 />
                 <input
                   type="password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder="Password"
-                  className="w-full rounded-2xl border border-white/10 bg-[#081222] px-4 py-4 text-sm text-white outline-none"
+                  className="w-full rounded-2xl border border-gray-300 bg-white px-4 py-4 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-white/10 dark:bg-[#081222] dark:text-white"
                 />
                 {error ? (
                   <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
@@ -171,7 +171,7 @@ export function AuthDialog({
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 disabled:opacity-60"
+                  className="w-full rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60 dark:bg-white dark:text-slate-950 dark:hover:bg-cyan-200"
                 >
                   {submitting
                     ? "Please wait..."
@@ -181,11 +181,17 @@ export function AuthDialog({
                 </button>
               </form>
 
-              <div className="mt-2 flex flex-wrap items-center gap-4">
+              <div className="mt-6 flex items-center">
+                <div className="flex-1 border-t border-gray-300 dark:border-white/10"></div>
+                <span className="mx-4 text-sm text-gray-500 dark:text-slate-400">OR</span>
+                <div className="flex-1 border-t border-gray-300 dark:border-white/10"></div>
+              </div>
+
+              <div className="mt-4 flex flex-wrap items-center gap-4">
                 {enabled ? (
                   <GoogleSignInButton
                     callbackUrl={callbackUrl}
-                    className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
+                    className="rounded-2xl bg-gray-100 border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-900 transition hover:bg-gray-200 dark:bg-white dark:text-slate-950 dark:hover:bg-cyan-200 dark:border-white/10"
                     label="Continue with Google"
                   />
                 ) : (
