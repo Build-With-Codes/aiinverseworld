@@ -42,7 +42,6 @@ export default function AboutPage() {
         title="About AiverseWorld"
         description="AiverseWorld is a platform dedicated to helping people and organizations discover, compare, understand, and adopt artificial intelligence technologies."
         theme="company"
-        highlights={["Trusted Discovery", "Unbiased Comparisons", "Educational Resources"]}
       >
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-cyan-100">Our Mission</h2>
