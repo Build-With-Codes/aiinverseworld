@@ -15,7 +15,6 @@ export default function DmcaPage() {
       title="DMCA Policy"
       description="AiverseWorld respects intellectual property rights and responds to valid copyright notices."
       theme="legal"
-      highlights={["Notice process", "Counter-notices", "Legal contact"]}
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Submitting a notice</h2>

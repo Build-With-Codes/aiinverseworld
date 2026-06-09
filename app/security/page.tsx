@@ -15,7 +15,6 @@ export default function SecurityPage() {
       title="Security"
       description="Enterprise users expect clear security posture information. This page provides a concise overview."
       theme="security"
-      highlights={["Access control", "Encryption posture", "Responsible disclosure"]}
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Core controls</h2>

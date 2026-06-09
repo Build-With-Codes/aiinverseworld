@@ -15,7 +15,6 @@ export default function CookiePolicyPage() {
       title="Cookie Policy"
       description="This policy explains how cookies and similar technologies are used across the AiverseWorld platform."
       theme="monetization"
-      highlights={["Consent controls", "Analytics usage", "Ad readiness"]}
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">What we use cookies for</h2>

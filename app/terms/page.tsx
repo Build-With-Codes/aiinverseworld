@@ -14,7 +14,6 @@ export default function TermsPage() {
       title="Terms of Service"
       description="These terms outline the rules, responsibilities, and permitted use of the AiverseWorld platform."
       theme="legal"
-      highlights={["Platform rules", "User obligations", "Service boundaries"]}
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Platform access</h2>

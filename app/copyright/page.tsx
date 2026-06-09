@@ -15,7 +15,6 @@ export default function CopyrightPage() {
       title="Copyright Policy"
       description="This page explains ownership of platform content and how copyright complaints are handled."
       theme="legal"
-      highlights={["IP ownership", "Permitted use", "Notice process"]}
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Ownership</h2>

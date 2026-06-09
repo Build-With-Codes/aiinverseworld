@@ -15,7 +15,6 @@ export default function DisclaimerPage() {
       title="Disclaimer"
       description="AiverseWorld provides software discovery information for general business evaluation purposes."
       theme="legal"
-      highlights={["Independent verification", "No legal advice", "Third-party trademarks"]}
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Information accuracy</h2>
