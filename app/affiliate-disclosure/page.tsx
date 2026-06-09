@@ -15,7 +15,6 @@ export default function AffiliateDisclosurePage() {
       title="Affiliate Disclosure"
       description="Some outbound links may generate referral fees or commissions if users purchase products or sign up through those links."
       theme="monetization"
-      highlights={["Referral transparency", "Clear disclosures", "Fair recommendations"]}
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">How affiliate links work</h2>

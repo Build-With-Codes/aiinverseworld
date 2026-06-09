@@ -15,7 +15,6 @@ export default function PrivacyPage() {
       title="Privacy Policy"
       description="This page explains how AiverseWorld handles personal information and platform usage data."
       theme="privacy"
-      highlights={["User data controls", "Partner transparency", "Retention safeguards"]}
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Information we collect</h2>

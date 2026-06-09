@@ -15,7 +15,6 @@ export default function AdvertisingDisclosurePage() {
       title="Advertising Disclosure"
       description="This page explains how sponsored content, advertising, and commercial placements are presented on AiverseWorld."
       theme="monetization"
-      highlights={["Sponsored labels", "Editorial separation", "Policy compliance"]}
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Sponsored placements</h2>

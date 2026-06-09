@@ -15,7 +15,6 @@ export default function ContactPage() {
       title="Contact Us"
       description="For support, legal inquiries, partnership discussions, or enterprise onboarding, use the channels below."
       theme="contact"
-      highlights={["Support", "Enterprise sales", "Security", "Legal"]}
     >
       <div className="grid gap-6 md:grid-cols-2">
         <div className="rounded-[24px] border border-white/10 bg-[#081222] p-6">
