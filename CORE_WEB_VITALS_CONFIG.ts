@@ -85,7 +85,7 @@ const nextConfig = {
   },
 
   // Webpack configuration for optimization
-  webpack: (config, { isServer }) => {
+  webpack: (config: any, { isServer }: { isServer: boolean }) => {
     if (!isServer) {
       config.optimization = {
         ...config.optimization,
