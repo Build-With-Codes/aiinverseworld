@@ -1,47 +1,101 @@
 import type { Metadata } from "next";
-
 import { ContentPage } from "@/components/content-page";
 
 export const metadata: Metadata = {
-  title: "About Us | AiverseWorld",
-  description:
-    "Learn about AiverseWorld, our mission, and how we help teams discover the right AI tools.",
+  title: "About AiverseWorld | AI Tool Discovery Platform",
+  description: "Learn about AiverseWorld - a platform dedicated to helping people and organizations discover, compare, understand, and adopt artificial intelligence technologies.",
+  keywords: "AI tools, AI discovery, AI comparison, artificial intelligence platform, AI adoption, AI solutions, machine learning tools",
+  openGraph: {
+    title: "About AiverseWorld | AI Tool Discovery Platform",
+    description: "AiverseWorld is a trusted platform for discovering, comparing, and understanding AI technologies. Learn about our mission and vision.",
+    type: "website",
+    url: "https://aiinverseworld.com/about",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About AiverseWorld | AI Tool Discovery Platform",
+    description: "Discover how AiverseWorld helps individuals and organizations navigate the AI landscape with clarity and confidence.",
+  },
 };
 
 export default function AboutPage() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "AiverseWorld",
+    "description": "A platform dedicated to helping people and organizations discover, compare, understand, and adopt artificial intelligence technologies",
+    "url": "https://aiinverseworld.com",
+    "sameAs": [
+      "https://twitter.com/aiinverseworld",
+      "https://linkedin.com/company/aiinverseworld"
+    ]
+  };
+
   return (
-    <ContentPage
-      eyebrow="Company"
-      title="About AiverseWorld"
-      description="AiverseWorld is built to help companies discover, compare, and adopt AI tools with more clarity and less noise."
-      theme="company"
-      highlights={["Mission-led discovery", "Faster evaluation", "Clearer shortlists"]}
-    >
-      <div className="space-y-4">
-        <h2 className="text-2xl font-semibold text-white">Our mission</h2>
-        <p className="text-base leading-8 text-slate-300">
-          We are building a trusted discovery platform for AI software. Teams use
-          AiverseWorld to evaluate products faster, reduce research overhead, and
-          make better procurement decisions.
-        </p>
-      </div>
-      <div className="space-y-4">
-        <h2 className="text-2xl font-semibold text-white">What we provide</h2>
-        <p className="text-base leading-8 text-slate-300">
-          Our platform organizes AI tools across categories, pricing models, use
-          cases, and product maturity. We combine search, comparison pages, ratings,
-          reviews, and structured vendor information into one enterprise-friendly
-          experience.
-        </p>
-      </div>
-      <div className="space-y-4">
-        <h2 className="text-2xl font-semibold text-white">Who we serve</h2>
-        <p className="text-base leading-8 text-slate-300">
-          AiverseWorld is designed for operators, founders, technology leaders,
-          marketers, and procurement teams who need to assess AI products with
-          confidence.
-        </p>
-      </div>
-    </ContentPage>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <ContentPage
+        eyebrow="Company"
+        title="About AiverseWorld"
+        description="AiverseWorld is a platform dedicated to helping people and organizations discover, compare, understand, and adopt artificial intelligence technologies."
+        theme="company"
+        highlights={["Trusted Discovery", "Unbiased Comparisons", "Educational Resources"]}
+      >
+        <div className="space-y-4">
+          <h2 className="text-2xl font-bold text-cyan-100">Our Mission</h2>
+          <p className="text-base leading-8 text-slate-300">
+            Our mission is to make AI more accessible through trusted tool discovery, unbiased comparisons, practical guides, industry insights, and educational resources. We help users navigate the rapidly evolving AI landscape with clarity and confidence.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-2xl font-bold text-cyan-100">What We Provide</h2>
+          <p className="text-base leading-8 text-slate-300">
+            AiverseWorld brings together AI tools, product comparisons, reviews, tutorials, guides, industry news, and technology insights in one place.
+          </p>
+          <p className="text-base leading-8 text-slate-300">
+            Our platform helps users:
+          </p>
+          <ul className="list-disc list-inside space-y-2 text-slate-300">
+            <li>Discover AI tools across multiple categories</li>
+            <li>Compare products, features, and pricing</li>
+            <li>Explore reviews and evaluations</li>
+            <li>Learn through practical guides and tutorials</li>
+            <li>Stay informed about AI trends and developments</li>
+            <li>Research emerging technologies and use cases</li>
+            <li>Make smarter technology decisions</li>
+          </ul>
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-2xl font-bold text-cyan-100">Who We Serve</h2>
+          <p className="text-base leading-8 text-slate-300">
+            AiverseWorld is designed for:
+          </p>
+          <ul className="list-disc list-inside space-y-2 text-slate-300">
+            <li>Business leaders and entrepreneurs</li>
+            <li>Developers and technology professionals</li>
+            <li>Marketers and content creators</li>
+            <li>Students and researchers</li>
+            <li>Startups and growing teams</li>
+            <li>Organizations evaluating AI solutions</li>
+            <li>Anyone interested in artificial intelligence</li>
+          </ul>
+          <p className="text-base leading-8 text-slate-300 mt-4">
+            Whether you're looking for the right AI tool, learning about emerging technologies, researching industry trends, or exploring the future of artificial intelligence, AiverseWorld provides the resources and insights to help you move forward with confidence.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-2xl font-bold text-cyan-100">Our Vision</h2>
+          <p className="text-base leading-8 text-slate-300">
+            We believe artificial intelligence will reshape how people work, learn, create, and innovate. AiverseWorld aims to become a trusted destination where individuals and organizations can discover reliable information, evaluate AI solutions, and stay ahead in an AI-powered world.
+          </p>
+        </div>
+      </ContentPage>
+    </>
   );
 }

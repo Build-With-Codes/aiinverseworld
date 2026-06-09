@@ -13,7 +13,11 @@ type ContentPageProps = {
   title: string;
   description: string;
   theme?: ThemeName;
-  highlights?: string[];
+  metadata?: {
+    category: string;
+    publishedAt: string;
+    readTime: string;
+  };
   children: ReactNode;
 };
 
@@ -23,7 +27,6 @@ const themeStyles: Record<
     shell: string;
     badge: string;
     hero: string;
-    panel: string;
   }
 > = {
   company: {
@@ -32,8 +35,6 @@ const themeStyles: Record<
     badge: "border-cyan-300/20 bg-cyan-300/10 text-cyan-200",
     hero:
       "border-cyan-300/14 bg-linear-to-br from-cyan-400/12 via-blue-500/8 to-transparent",
-    panel:
-      "border-cyan-300/10 bg-linear-to-br from-[#081626] to-[#091120]",
   },
   privacy: {
     shell:
@@ -41,8 +42,6 @@ const themeStyles: Record<
     badge: "border-emerald-300/20 bg-emerald-300/10 text-emerald-200",
     hero:
       "border-emerald-300/14 bg-linear-to-br from-emerald-400/12 via-teal-500/8 to-transparent",
-    panel:
-      "border-emerald-300/10 bg-linear-to-br from-[#07161b] to-[#08121a]",
   },
   legal: {
     shell:
@@ -50,8 +49,6 @@ const themeStyles: Record<
     badge: "border-fuchsia-300/20 bg-fuchsia-300/10 text-fuchsia-200",
     hero:
       "border-fuchsia-300/14 bg-linear-to-br from-fuchsia-400/12 via-violet-500/8 to-transparent",
-    panel:
-      "border-fuchsia-300/10 bg-linear-to-br from-[#151021] to-[#0a101c]",
   },
   security: {
     shell:
@@ -59,8 +56,6 @@ const themeStyles: Record<
     badge: "border-blue-300/20 bg-blue-300/10 text-blue-200",
     hero:
       "border-blue-300/14 bg-linear-to-br from-blue-400/12 via-indigo-500/8 to-transparent",
-    panel:
-      "border-blue-300/10 bg-linear-to-br from-[#071524] to-[#08111d]",
   },
   contact: {
     shell:
@@ -68,8 +63,6 @@ const themeStyles: Record<
     badge: "border-amber-300/20 bg-amber-300/10 text-amber-200",
     hero:
       "border-amber-300/14 bg-linear-to-br from-amber-400/12 via-orange-500/8 to-transparent",
-    panel:
-      "border-amber-300/10 bg-linear-to-br from-[#1a1207] to-[#0d1018]",
   },
   monetization: {
     shell:
@@ -77,8 +70,6 @@ const themeStyles: Record<
     badge: "border-amber-300/20 bg-amber-300/10 text-amber-200",
     hero:
       "border-amber-300/14 bg-linear-to-br from-amber-400/12 via-orange-500/8 to-transparent",
-    panel:
-      "border-amber-300/10 bg-linear-to-br from-[#171106] to-[#0d1118]",
   },
 };
 
@@ -87,7 +78,7 @@ export function ContentPage({
   title,
   description,
   theme = "company",
-  highlights = [],
+  metadata,
   children,
 }: ContentPageProps) {
   const styles = themeStyles[theme];
@@ -100,34 +91,24 @@ export function ContentPage({
         >
           {eyebrow}
         </span>
-        <div className="mt-6 grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-          <div>
-            <h1 className="max-w-4xl text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-              {title}
-            </h1>
-            <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">
-              {description}
-            </p>
-          </div>
-          <div className={`rounded-[28px] border p-6 ${styles.panel}`}>
-            <p className="text-sm font-medium text-white">Why this matters</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {highlights.length > 0 ? (
-                highlights.map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-full border border-white/10 bg-white/6 px-3 py-2 text-xs text-slate-200"
-                  >
-                    {item}
-                  </span>
-                ))
-              ) : (
-                <span className="rounded-full border border-white/10 bg-white/6 px-3 py-2 text-xs text-slate-200">
-                  Enterprise-ready
-                </span>
-              )}
+        <div className="mt-6">
+          <h1 className="max-w-4xl text-4xl font-bold tracking-tight text-cyan-100 sm:text-5xl">
+            {title}
+          </h1>
+          <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">
+            {description}
+          </p>
+          {metadata && (
+            <div className="mt-6 flex items-center gap-3 text-sm text-slate-400">
+              <span className="bg-cyan-300/10 text-cyan-200 px-2 py-1 rounded text-xs font-medium">
+                {metadata.category}
+              </span>
+              <span>•</span>
+              <time dateTime={metadata.publishedAt}>{metadata.publishedAt}</time>
+              <span>•</span>
+              <span>{metadata.readTime} read</span>
             </div>
-          </div>
+          )}
         </div>
       </section>
 

@@ -29,6 +29,7 @@ const footerGroups = [
     title: "Platform",
     links: [
       { href: "/", label: "Home" },
+      { href: "/blog", label: "Blog" },
       { href: "/problems", label: "Problems" },
       { href: "/problems/submit", label: "Submit Problem" },
       { href: "/games/draw-guess", label: "Games" },
@@ -149,8 +150,7 @@ export async function SiteShell({ children }: SiteShellProps) {
                 </p>
               </div>
               <p className="max-w-md text-sm leading-7 text-slate-300">
-                Enterprise-grade AI tool discovery for research, comparison, and
-                confident vendor evaluation.
+                Explore AI tools, expert guides, comparisons, industry insights, and emerging technology trends.
               </p>
             </div>
 

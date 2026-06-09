@@ -8,6 +8,8 @@ import { ToolCard } from "@/components/tool-card";
 import { getNewsArticles } from "@/lib/news";
 import { buildUrl } from "@/lib/seo";
 import { categories, comparisons, finderQuestions, tools, bestLists } from "@/lib/site-data";
+import { getAllBlogPosts } from "@/lib/blog-data";
+import { blogSuggestionFAQs } from "@/lib/blog-suggestions";
 import { HeroSearch } from "@/components/hero-search";
 import { ToolMarquee } from "@/components/tool-marquee";
 
@@ -29,8 +31,6 @@ export const metadata: Metadata = {
     description: "Discover the best AI tools for productivity, coding, writing, video, and marketing.",
   },
 };
-
-
 
 const aiFinderOptions = [
   {
@@ -72,6 +72,8 @@ export default async function Home() {
     .filter((tool) => ["Image Generation", "Video Generation", "Design Assistant"].includes(tool.category))
     .slice(0, 6);
   const newsArticles = await getNewsArticles(3);
+  const blogPosts = getAllBlogPosts().slice(0, 6);
+  
   const spotlightMetrics = [
     { label: "Indexed tools", value: `${tools.length}` },
     { label: "Categories covered", value: `${categories.length}` },
@@ -165,6 +167,68 @@ export default async function Home() {
         <ToolMarquee tools={tools.slice(20, 40)} direction="right" />
       </section>
 
+      {/* Blog Posts Section */}
+      <section>
+        <SectionHeading
+          eyebrow="Learning Hub"
+          title="AI Guides, Tips & Insights"
+          description="Learn how to master AI tools, discover best practices, and stay updated with the latest AI trends and strategies."
+        />
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {blogPosts.map((post) => (
+            <Link
+              key={post.slug}
+              href={`/blog/${post.slug}`}
+              className="group rounded-[24px] border border-white/10 bg-white/5 p-6 transition hover:border-cyan-300/30 hover:bg-white/8"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="bg-cyan-300/10 text-cyan-200 px-2 py-1 rounded text-xs font-medium">
+                  {post.category}
+                </span>
+                <span className="text-xs text-slate-500">{post.readTime}</span>
+              </div>
+              <h3 className="font-semibold text-white group-hover:text-cyan-200 transition line-clamp-2">
+                {post.title}
+              </h3>
+              <p className="mt-3 text-sm text-slate-400 line-clamp-2">
+                {post.description}
+              </p>
+              <div className="mt-4 flex items-center justify-between">
+                <time className="text-xs text-slate-500">{post.publishedAt}</time>
+                <span className="text-sm text-cyan-300 group-hover:underline">Read →</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+        <div className="mt-8 text-center">
+          <Link
+            href="/blog"
+            className="inline-flex rounded-full border border-cyan-300/25 px-6 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/10"
+          >
+            View all blog posts →
+          </Link>
+        </div>
+      </section>
+
+      {/* Quick Start Questions */}
+      <section className="rounded-[34px] border border-cyan-300/18 bg-linear-to-br from-cyan-400/14 via-blue-500/10 to-violet-500/10 p-8">
+        <div className="mb-6">
+          <p className="text-xs font-semibold tracking-[0.28em] text-cyan-200 uppercase">Quick Start</p>
+          <h2 className="mt-2 text-2xl font-semibold text-white">Answer these to narrow down</h2>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {finderQuestions.map((question, index) => (
+            <div
+              key={question}
+              className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#091322] px-4 py-3 cursor-pointer transition hover:border-cyan-300/30 hover:bg-[#0a1628]"
+            >
+              <span className="text-sm text-slate-200">{question}</span>
+              <span className="text-xs font-semibold text-slate-500">0{index + 1}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section>
         <SectionHeading
           eyebrow="AI News"
@@ -232,31 +296,50 @@ export default async function Home() {
             ))}
           </div>
         </div>
-        <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
-          <SectionHeading
-            eyebrow="Compare"
-            title="Popular AI tool matchups"
-            description="Jump into high-intent comparisons people use before purchase and rollout decisions."
-          />
-          <div className="space-y-4">
-            {comparisons.slice(0, 12).map((comparison) => (
+        <div>
+          <div className="rounded-[34px] border border-white/10 bg-white/6 p-8 mb-6">
+            <SectionHeading
+              eyebrow="Compare"
+              title="Popular AI tool matchups"
+              description="Jump into high-intent comparisons people use before purchase and rollout decisions."
+            />
+            <div className="space-y-4">
+              {comparisons.slice(0, 12).map((comparison) => (
+                <Link
+                  key={comparison.slug}
+                  href={`/compare/${comparison.slug}`}
+                  className="flex flex-col gap-2 rounded-[24px] border border-white/10 bg-[#081222] p-5 transition hover:border-cyan-300/30 hover:bg-[#0a1628]"
+                >
+                  <span className="text-lg font-semibold text-white">{comparison.title}</span>
+                  <span className="text-sm leading-6 text-slate-400">
+                    {comparison.summary}
+                  </span>
+                </Link>
+              ))}
               <Link
-                key={comparison.slug}
-                href={`/compare/${comparison.slug}`}
-                className="flex flex-col gap-2 rounded-[24px] border border-white/10 bg-[#081222] p-5 transition hover:border-cyan-300/30 hover:bg-[#0a1628]"
+                href="/compare"
+                className="block rounded-[24px] border border-cyan-300/20 bg-cyan-300/8 p-4 text-center text-sm font-semibold text-cyan-200 transition hover:bg-cyan-300/12"
               >
-                <span className="text-lg font-semibold text-white">{comparison.title}</span>
-                <span className="text-sm leading-6 text-slate-400">
-                  {comparison.summary}
-                </span>
+                View all {comparisons.length} comparisons →
               </Link>
-            ))}
-            <Link
-              href="/compare"
-              className="block rounded-[24px] border border-cyan-300/20 bg-cyan-300/8 p-4 text-center text-sm font-semibold text-cyan-200 transition hover:bg-cyan-300/12"
-            >
-              View all {comparisons.length} comparisons →
-            </Link>
+            </div>
+          </div>
+          <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+            <p className="text-xs font-semibold tracking-[0.28em] text-cyan-200 uppercase mb-4">People Also Ask</p>
+            <div className="space-y-3">
+              {(blogSuggestionFAQs["50-chatgpt-prompts-save-hours"] || []).map((faq) => (
+                <Link
+                  key={faq.question}
+                  href={`/blog/${faq.relatedSlug}`}
+                  className="group flex items-start gap-3 rounded-2xl border border-white/10 bg-[#081222] p-4 transition hover:border-cyan-300/30 hover:bg-[#0a1628]"
+                >
+                  <span className="mt-1 text-cyan-400 group-hover:text-cyan-300 flex-shrink-0">▸</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-slate-200 group-hover:text-white transition line-clamp-2">{faq.question}</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>

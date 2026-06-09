@@ -1,58 +1,48 @@
-import type { MetadataRoute } from "next";
-
-import { buildUrl } from "@/lib/seo";
-import { categories, comparisons, tools, bestLists } from "@/lib/site-data";
+import { MetadataRoute } from 'next';
+import { getAllBlogPosts } from '@/lib/blog-data';
+import { siteUrl } from '@/lib/seo';
+import { categories } from '@/lib/site-data';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const staticPages = [
-    "",
-    "/best-ai-tools",
-    "/free-ai-tools",
-    "/ai-productivity-tools",
-    "/ai-coding-tools",
-    "/ai-writing-tools",
-    "/ai-video-tools",
-    "/ai-marketing-tools",
-    "/compare",
-    "/category",
-    "/problems",
-    "/problems/submit",
-    "/games/draw-guess",
-    "/news",
-    "/search",
-    "/about",
-    "/advertising-disclosure",
-    "/affiliate-disclosure",
-    "/privacy",
-    "/terms",
-    "/cookie-policy",
-    "/copyright",
-    "/disclaimer",
-    "/dmca",
-    "/security",
-    "/contact",
+  const baseUrl = siteUrl.replace(/\/$/, '');
+  
+  // Static pages
+  const staticPages: MetadataRoute.Sitemap = [
+    {
+      url: baseUrl,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/blog`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/about`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
   ];
 
-  return [
-    ...staticPages.map((path) => ({
-      url: buildUrl(path || "/"),
-      lastModified: new Date(),
-    })),
-    ...tools.map((tool) => ({
-      url: buildUrl(`/tool/${tool.slug}`),
-      lastModified: new Date(),
-    })),
-    ...categories.map((category) => ({
-      url: buildUrl(`/category/${category.slug}`),
-      lastModified: new Date(),
-    })),
-    ...comparisons.map((comparison) => ({
-      url: buildUrl(`/compare/${comparison.slug}`),
-      lastModified: new Date(),
-    })),
-    ...bestLists.map((list) => ({
-      url: buildUrl(`/best/${list.slug}`),
-      lastModified: new Date(),
-    })),
-  ];
+  // Blog posts
+  const blogPosts = getAllBlogPosts().map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.publishedAt),
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }));
+
+  // Categories
+  const categoryPages: MetadataRoute.Sitemap = categories.map((category) => ({
+    url: `${baseUrl}/category/${category.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...blogPosts, ...categoryPages];
 }
