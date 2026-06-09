@@ -7,7 +7,7 @@ import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
 import { getReviewsForTool } from "@/lib/review-store";
 import { buildUrl } from "@/lib/seo";
-import { getToolBySlug, tools } from "@/lib/site-data";
+import { getToolBySlug, aiTools } from "@/lib/site-data";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
@@ -17,27 +17,19 @@ type ToolDetailPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateMetadata({
-  params,
-}: ToolDetailPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: ToolDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
   const tool = getToolBySlug(slug);
 
-  if (!tool) {
-    return {
-      title: "Tool not found | AiverseWorld",
-    };
-  }
+  if (!tool) return { title: "Tool not found | AiverseWorld" };
 
   return {
     title: `${tool.name} Review, Pricing, and Alternatives | AiverseWorld`,
-    description: tool.description,
-    alternates: {
-      canonical: buildUrl(`/tool/${tool.slug}`),
-    },
+    description: tool.shortDescription,
+    alternates: { canonical: buildUrl(`/tool/${tool.slug}`) },
     openGraph: {
       title: `${tool.name} Review, Pricing, and Alternatives | AiverseWorld`,
-      description: tool.description,
+      description: tool.shortDescription,
       url: buildUrl(`/tool/${tool.slug}`),
       type: "article",
     },
@@ -48,16 +40,20 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
   const { slug } = await params;
   const tool = getToolBySlug(slug);
 
-  if (!tool) {
-    notFound();
-  }
+  if (!tool) notFound();
 
   const session = await getServerSession(authOptions);
-  const alternatives = tools.filter(
-    (candidate) =>
-      candidate.categorySlug === tool.categorySlug && candidate.slug !== tool.slug,
+  const alternatives = aiTools.filter(
+    (c) => c.category === tool.category && c.slug !== tool.slug,
   );
   const toolReviews = await getReviewsForTool(tool.slug);
+
+  const priceLabel =
+    tool.startingPriceUsd === null
+      ? "Usage-based"
+      : tool.startingPriceUsd === 0
+        ? "Free"
+        : `$${tool.startingPriceUsd}/mo`;
 
   return (
     <div className="space-y-12 pb-10 pt-10">
@@ -69,27 +65,23 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
             "@type": "SoftwareApplication",
             name: tool.name,
             applicationCategory: tool.category,
-            description: tool.description,
-            operatingSystem: "Web",
+            description: tool.shortDescription,
+            operatingSystem: tool.platforms.join(", "),
             url: buildUrl(`/tool/${tool.slug}`),
             sameAs: tool.website,
-            offers:
-              tool.startingPrice === "Usage" || tool.startingPrice === "Included"
-                ? undefined
-                : {
-                    "@type": "Offer",
-                    price: tool.startingPrice,
-                    priceCurrency: "USD",
-                  },
+            offers: tool.startingPriceUsd === null
+              ? undefined
+              : { "@type": "Offer", price: tool.startingPriceUsd, priceCurrency: "USD" },
           }),
         }}
       />
+
       <section className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
         <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
           <div className="flex flex-wrap items-center gap-3">
             <FaviconBadge
               name={tool.name}
-              faviconUrl={tool.faviconUrl}
+              faviconUrl={tool.favicon}
               className="h-12 w-12 rounded-2xl"
               imgClassName="p-2"
               labelClassName="text-sm"
@@ -98,19 +90,34 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
               {tool.category}
             </span>
             <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-300">
-              {tool.free === "Yes" ? "Free available" : tool.free === "Limited" ? "Limited free" : "Paid only"}
+              {tool.subcategory}
             </span>
             <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-300">
-              Starts {tool.startingPrice === "Usage" || tool.startingPrice === "Included" ? tool.startingPrice : `$${tool.startingPrice}/mo`}
+              {tool.pricingModel}
             </span>
+            {tool.status !== "Active" && (
+              <span className="rounded-full border border-amber-300/25 bg-amber-300/10 px-3 py-1 text-xs text-amber-200">
+                {tool.status}
+              </span>
+            )}
           </div>
 
           <h1 className="mt-6 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
             {tool.name}
           </h1>
+          <p className="mt-2 text-sm text-slate-400">{tool.company} · {tool.domain}</p>
           <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">
-            {tool.description}
+            {tool.summary ?? tool.shortDescription}
           </p>
+
+          {/* Tags */}
+          <div className="mt-5 flex flex-wrap gap-2">
+            {tool.tags.map((tag) => (
+              <span key={tag} className="rounded-full border border-white/8 bg-white/5 px-2.5 py-1 text-xs text-slate-400">
+                #{tag}
+              </span>
+            ))}
+          </div>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <a
@@ -122,29 +129,29 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
               Visit Website
             </a>
             <Link
-              href={`/compare/${tool.slug}-vs-${alternatives[0]?.slug ?? "nova-write"}`}
+              href={`/compare/${tool.slug}-vs-${alternatives[0]?.slug ?? "chatgpt"}`}
               className="rounded-2xl border border-white/10 bg-white/6 px-5 py-3 text-sm font-medium text-white transition hover:border-cyan-300/30"
             >
               Compare Tool
             </Link>
           </div>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-3">
-            <div className="rounded-[24px] border border-white/10 bg-[#081222] p-5">
-              <p className="text-sm text-slate-400">Official Site</p>
-              <p className="mt-3 text-lg font-semibold text-white">{tool.website.replace(/^https?:\/\//, "")}</p>
-            </div>
+          <div className="mt-10 grid gap-4 sm:grid-cols-4">
             <div className="rounded-[24px] border border-white/10 bg-[#081222] p-5">
               <p className="text-sm text-slate-400">Starting Price</p>
-              <p className="mt-3 text-lg font-semibold text-white">
-                {tool.startingPrice === "Usage" || tool.startingPrice === "Included" ? tool.startingPrice : `$${tool.startingPrice}/mo`}
-              </p>
+              <p className="mt-3 text-lg font-semibold text-white">{priceLabel}</p>
             </div>
             <div className="rounded-[24px] border border-white/10 bg-[#081222] p-5">
-              <p className="text-sm text-slate-400">Free Access</p>
-              <p className="mt-3 text-lg font-semibold text-white">
-                {tool.free}
-              </p>
+              <p className="text-sm text-slate-400">Free Plan</p>
+              <p className="mt-3 text-lg font-semibold text-white">{tool.freePlan}</p>
+            </div>
+            <div className="rounded-[24px] border border-white/10 bg-[#081222] p-5">
+              <p className="text-sm text-slate-400">API</p>
+              <p className="mt-3 text-lg font-semibold text-white">{tool.apiAvailable ? "Yes" : "No"}</p>
+            </div>
+            <div className="rounded-[24px] border border-white/10 bg-[#081222] p-5">
+              <p className="text-sm text-slate-400">Open Source</p>
+              <p className="mt-3 text-lg font-semibold text-white">{tool.openSource ? "Yes" : "No"}</p>
             </div>
           </div>
         </div>
@@ -153,10 +160,10 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
           <SectionHeading
             eyebrow="Quick Snapshot"
             title="Why teams shortlist this tool"
-            description={tool.tagline}
+            description={tool.shortDescription}
           />
-          <div className="space-y-4">
-            {tool.useCases.map((feature) => (
+          <div className="space-y-3">
+            {tool.features.map((feature) => (
               <div
                 key={feature}
                 className="rounded-[22px] border border-white/10 bg-[#081222] px-5 py-4 text-sm text-slate-200"
@@ -168,67 +175,114 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-3">
+      <section className="grid gap-6 lg:grid-cols-4">
         <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
-          <h2 className="text-xl font-semibold text-white">Use Cases</h2>
+          <h2 className="text-xl font-semibold text-white">Best For</h2>
           <div className="mt-5 space-y-3">
-            {tool.useCases.map((item) => (
-              <div
-                key={item}
-                className="rounded-2xl border border-white/10 bg-[#081222] px-4 py-3 text-sm text-slate-200"
-              >
-                {item}
-              </div>
+            {tool.bestFor.map((item) => (
+              <div key={item} className="rounded-2xl border border-white/10 bg-[#081222] px-4 py-3 text-sm text-slate-200">{item}</div>
             ))}
           </div>
         </div>
         <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
-          <h2 className="text-xl font-semibold text-white">Description</h2>
+          <h2 className="text-xl font-semibold text-white">Target Audience</h2>
           <div className="mt-5 space-y-3">
-            <div className="rounded-2xl border border-emerald-300/15 bg-emerald-300/8 px-4 py-3 text-sm text-emerald-100">
-              {tool.description}
-            </div>
+            {tool.targetAudience.map((item) => (
+              <div key={item} className="rounded-2xl border border-cyan-300/15 bg-cyan-300/8 px-4 py-3 text-sm text-cyan-100">{item}</div>
+            ))}
           </div>
         </div>
         <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
-          <h2 className="text-xl font-semibold text-white">Brand Mark</h2>
+          <h2 className="text-xl font-semibold text-white">Platforms</h2>
           <div className="mt-5 space-y-3">
-            <div className="flex min-h-36 items-center justify-center overflow-hidden rounded-2xl border border-amber-300/15 bg-amber-300/8 p-4">
-              <FaviconBadge
-                name={tool.name}
-                faviconUrl={tool.faviconUrl}
-                className="h-24 w-24 rounded-3xl"
-                imgClassName="p-4"
-                labelClassName="text-3xl"
-              />
-            </div>
+            {tool.platforms.map((p) => (
+              <div key={p} className="rounded-2xl border border-white/10 bg-[#081222] px-4 py-3 text-sm text-slate-200">{p}</div>
+            ))}
           </div>
+        </div>
+        <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
+          <h2 className="text-xl font-semibold text-white">Modalities</h2>
+          <div className="mt-5 space-y-3">
+            {tool.modalities.map((m) => (
+              <div key={m} className="rounded-2xl border border-violet-300/15 bg-violet-300/8 px-4 py-3 text-sm text-violet-200">{m}</div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-3">
+        <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
+          <h2 className="text-xl font-semibold text-white">AI Type</h2>
+          <div className="mt-5 space-y-3">
+            {tool.aiType.map((t) => (
+              <div key={t} className="rounded-2xl border border-white/10 bg-[#081222] px-4 py-3 text-sm text-slate-200">{t}</div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
+          <h2 className="text-xl font-semibold text-white">Deployment</h2>
+          <div className="mt-5 space-y-3">
+            {tool.deploymentType.map((d) => (
+              <div key={d} className="rounded-2xl border border-white/10 bg-[#081222] px-4 py-3 text-sm text-slate-200">{d}</div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
+          <h2 className="text-xl font-semibold text-white">Brand</h2>
+          <div className="mt-5 flex min-h-36 items-center justify-center overflow-hidden rounded-2xl border border-amber-300/15 bg-amber-300/8 p-4">
+            <FaviconBadge
+              name={tool.name}
+              faviconUrl={tool.favicon}
+              className="h-24 w-24 rounded-3xl"
+              imgClassName="p-4"
+              labelClassName="text-3xl"
+            />
+          </div>
+          {tool.privacyNotes && (
+            <p className="mt-4 text-xs leading-6 text-slate-400">{tool.privacyNotes}</p>
+          )}
         </div>
       </section>
 
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
           <SectionHeading
-            eyebrow="Brand"
-            title="Favicon-based listing"
-            description="This tool entry now uses the official favicon only, with alphabet fallback if the icon does not load."
+            eyebrow="Details"
+            title="Technical & deployment info"
+            description="Key facts about model providers, integrations, and team support."
           />
-          <div className="rounded-[26px] border border-white/10 bg-[#081222] p-6">
-            <div className="flex items-center gap-4">
-              <FaviconBadge
-                name={tool.name}
-                faviconUrl={tool.faviconUrl}
-                className="h-16 w-16 rounded-3xl"
-                imgClassName="p-3"
-                labelClassName="text-2xl"
-              />
-              <div>
-                <p className="text-lg font-semibold text-white">{tool.name}</p>
-                <p className="mt-1 text-sm text-slate-400">{tool.faviconUrl}</p>
+          <div className="space-y-3">
+            {tool.modelProvider.length > 0 && (
+              <div className="rounded-[24px] border border-white/10 bg-[#081222] p-4">
+                <p className="text-xs text-slate-400">Model Provider</p>
+                <p className="mt-1 text-sm text-white">{tool.modelProvider.join(", ")}</p>
+              </div>
+            )}
+            {tool.modelNames && tool.modelNames.length > 0 && (
+              <div className="rounded-[24px] border border-white/10 bg-[#081222] p-4">
+                <p className="text-xs text-slate-400">Models</p>
+                <p className="mt-1 text-sm text-white">{tool.modelNames.join(", ")}</p>
+              </div>
+            )}
+            {tool.integrations && tool.integrations.length > 0 && (
+              <div className="rounded-[24px] border border-white/10 bg-[#081222] p-4">
+                <p className="text-xs text-slate-400">Integrations</p>
+                <p className="mt-1 text-sm text-white">{tool.integrations.join(", ")}</p>
+              </div>
+            )}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-[24px] border border-white/10 bg-[#081222] p-4">
+                <p className="text-xs text-slate-400">Team Collaboration</p>
+                <p className="mt-1 text-sm font-semibold text-white">{tool.teamCollaboration ? "Yes" : "No"}</p>
+              </div>
+              <div className="rounded-[24px] border border-white/10 bg-[#081222] p-4">
+                <p className="text-xs text-slate-400">Launch Year</p>
+                <p className="mt-1 text-sm font-semibold text-white">{tool.launchYear ?? "—"}</p>
               </div>
             </div>
           </div>
         </div>
+
         <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
           <SectionHeading
             eyebrow="Reviews"
@@ -275,13 +329,9 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
                       <p className="font-semibold text-white">{review.author}</p>
                       <p className="text-sm text-slate-400">{review.role}</p>
                     </div>
-                    <p className="text-sm font-medium text-cyan-200">
-                      {review.rating.toFixed(1)} / 5
-                    </p>
+                    <p className="text-sm font-medium text-cyan-200">{review.rating.toFixed(1)} / 5</p>
                   </div>
-                  <p className="mt-4 text-sm leading-7 text-slate-300">
-                    {review.comment}
-                  </p>
+                  <p className="mt-4 text-sm leading-7 text-slate-300">{review.comment}</p>
                   <p className="mt-3 text-xs text-slate-400">
                     {new Date(review.createdAt).toLocaleDateString("en-US", {
                       year: "numeric",

@@ -21,7 +21,7 @@ const navItems = [
   { href: "/problems", label: "Problems" },
   { href: "/news", label: "News" },
   { href: "/search", label: "Search" },
-  { href: "/category/coding-ai", label: "Categories" },
+  { href: "/category", label: "Categories" },
 ];
 
 const footerGroups = [

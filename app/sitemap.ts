@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { buildUrl } from "@/lib/seo";
-import { categories, comparisons, tools } from "@/lib/site-data";
+import { categories, comparisons, tools, bestLists } from "@/lib/site-data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages = [
@@ -39,6 +39,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
     ...comparisons.map((comparison) => ({
       url: buildUrl(`/compare/${comparison.slug}`),
+      lastModified: new Date(),
+    })),
+    ...bestLists.map((list) => ({
+      url: buildUrl(`/best/${list.slug}`),
       lastModified: new Date(),
     })),
   ];

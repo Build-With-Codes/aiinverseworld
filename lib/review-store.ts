@@ -1,8 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
-import { reviews as seededReviews } from "@/lib/site-data";
-
 export type StoredReview = {
   id: string;
   toolSlug: string;
@@ -31,19 +29,7 @@ const dataDirectory = path.join(process.cwd(), "data");
 const reviewFile = path.join(dataDirectory, "reviews.json");
 
 function createSeedData(): StoredReview[] {
-  return Object.entries(seededReviews).flatMap(([toolSlug, toolReviews]) =>
-    toolReviews.map((review, index) => ({
-      id: `${toolSlug}-${index + 1}`,
-      toolSlug,
-      author: review.author,
-      role: review.role,
-      rating: review.rating,
-      comment: review.comment,
-      userId: `seed-${toolSlug}-${index + 1}`,
-      userEmail: `seed-${toolSlug}-${index + 1}@aiverseworld.com`,
-      createdAt: new Date("2026-01-01T00:00:00.000Z").toISOString(),
-    })),
-  );
+  return [];
 }
 
 async function ensureStore() {

@@ -8,5 +8,5 @@ export function ThemeScript() {
     })();
   `;
 
-  return <script dangerouslySetInnerHTML={{ __html: script }} />;
+  return <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: script }} />;
 }

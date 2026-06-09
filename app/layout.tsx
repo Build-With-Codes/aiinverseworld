@@ -4,7 +4,6 @@ import Script from "next/script";
 import { authOptions } from "@/auth";
 import { ChatSupportGate } from "@/components/chat-support-gate";
 import { SiteShell } from "@/components/site-shell";
-import { ThemeScript } from "@/components/theme-script";
 import { googleAuthEnabled } from "@/lib/auth-config";
 import { buildUrl, siteUrl } from "@/lib/seo";
 import { Analytics } from "@vercel/analytics/next";
@@ -55,8 +54,15 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
-      <body className="min-h-full">
-        <ThemeScript />
+      <body className="min-h-full" suppressHydrationWarning>
+        <Script id="theme-init" strategy="beforeInteractive">{`
+          (() => {
+            const stored = window.localStorage.getItem("aiverse-theme");
+            const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            const theme = stored === "light" || stored === "dark" ? stored : systemDark ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", theme);
+          })();
+        `}</Script>
         <Script id="aiverseworld-schema" type="application/ld+json">
           {JSON.stringify([
             {

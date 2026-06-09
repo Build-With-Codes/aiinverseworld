@@ -7,7 +7,8 @@ import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
 import { getNewsArticles } from "@/lib/news";
 import { buildUrl } from "@/lib/seo";
-import { categories, comparisons, finderQuestions, tools } from "@/lib/site-data";
+import { categories, comparisons, finderQuestions, tools, bestLists } from "@/lib/site-data";
+import { HeroSearch } from "@/components/hero-search";
 
 export const metadata: Metadata = {
   alternates: {
@@ -18,11 +19,7 @@ export const metadata: Metadata = {
   },
 };
 
-const spotlightMetrics = [
-  { label: "Indexed tools", value: "4,200+" },
-  { label: "Fresh updates weekly", value: "1,100+" },
-  { label: "Average discovery time", value: "< 90 sec" },
-];
+
 
 const aiFinderOptions = [
   {
@@ -63,8 +60,12 @@ export default async function Home() {
   const creativeTools = tools
     .filter((tool) => ["Image AI", "Video AI", "Design AI"].includes(tool.category))
     .slice(0, 6);
-  const sponsoredTools = tools.filter((tool) => tool.sponsored);
   const newsArticles = await getNewsArticles(3);
+  const spotlightMetrics = [
+    { label: "Indexed tools", value: `${tools.length}` },
+    { label: "Categories covered", value: `${categories.length}` },
+    { label: "Free plan tools", value: `${tools.filter((t) => t.freePlan === "Yes").length}` },
+  ];
 
   return (
     <div className="space-y-20 pb-10 pt-10 sm:space-y-24 sm:pt-14">
@@ -84,34 +85,7 @@ export default async function Home() {
             </p>
           </div>
 
-          <div className="rounded-[32px] border border-white/10 bg-white/8 p-4 shadow-[0_24px_120px_rgba(8,15,35,0.45)] backdrop-blur-2xl">
-            <div className="grid gap-3 sm:grid-cols-[1fr_auto_auto]">
-              <input
-                aria-label="Search tools"
-                placeholder="Search AI tools by use case, price, or category"
-                className="rounded-2xl border border-white/10 bg-[#071120] px-5 py-4 text-sm text-slate-300 outline-none placeholder:text-slate-500"
-              />
-              <button className="rounded-2xl border border-white/10 bg-white/6 px-5 py-4 text-sm font-medium text-white transition hover:border-cyan-300/30 hover:bg-white/10">
-                AI Finder
-              </button>
-              <Link
-                href="/search"
-                className="rounded-2xl bg-white px-5 py-4 text-center text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
-              >
-                Search Now
-              </Link>
-            </div>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {["AI for Sales", "Free Image Tools", "Code Assistants", "Education"].map((item) => (
-                <span
-                  key={item}
-                  className="rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs text-slate-300"
-                >
-                  {item}
-                </span>
-              ))}
-            </div>
-          </div>
+          <HeroSearch />
 
           <div className="grid gap-4 sm:grid-cols-3">
             {spotlightMetrics.map((metric) => (
@@ -200,9 +174,7 @@ export default async function Home() {
               </Link>
             </div>
           </>
-        ) : (
-          null
-        )}
+        ) : null}
       </section>
 
       <section>
@@ -217,25 +189,6 @@ export default async function Home() {
           ))}
         </div>
       </section>
-
-      {sponsoredTools.length > 0 ? (
-        <section>
-          <SectionHeading
-            eyebrow="Sponsored"
-            title="Promoted tools with clear disclosure"
-            description="This section demonstrates how paid placements can appear separately from organic discovery results."
-          />
-          <div className="mb-5 rounded-[26px] border border-amber-300/15 bg-amber-300/8 p-4 text-sm leading-7 text-amber-100">
-            Sponsored listings are paid placements and should be clearly disclosed.
-            Placement here does not imply exclusive editorial endorsement.
-          </div>
-          <div className="grid gap-6 lg:grid-cols-3">
-            {sponsoredTools.map((tool) => (
-              <ToolCard key={tool.slug} tool={tool} />
-            ))}
-          </div>
-        </section>
-      ) : null}
 
       <section>
         <SectionHeading
@@ -283,6 +236,27 @@ export default async function Home() {
               </Link>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section>
+        <SectionHeading
+          eyebrow="Best Of"
+          title="Curated AI tool lists"
+          description="Hand-picked lists by use case, category, and audience — built from real catalog data."
+        />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {bestLists.map((list) => (
+            <Link
+              key={list.slug}
+              href={`/best/${list.slug}`}
+              className="rounded-[24px] border border-white/10 bg-white/6 p-5 transition hover:border-cyan-300/30 hover:bg-white/8"
+            >
+              <span className="text-xs font-semibold tracking-[0.22em] text-cyan-200 uppercase">{list.eyebrow}</span>
+              <p className="mt-2 font-semibold text-white">{list.title}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-400 line-clamp-2">{list.description}</p>
+            </Link>
+          ))}
         </div>
       </section>
 

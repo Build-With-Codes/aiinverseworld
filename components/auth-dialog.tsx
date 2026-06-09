@@ -106,18 +106,7 @@ export function AuthDialog({
               </button>
             </div>
 
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
-              {authBenefits.map((benefit) => (
-                <div
-                  key={benefit}
-                  className="rounded-[24px] border border-white/10 bg-white/6 p-4 text-sm text-slate-200"
-                >
-                  {benefit}
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-8 rounded-[28px] border border-white/10 bg-white/6 p-5 sm:p-6">
+            <div className="mt-2 rounded-[28px] border border-white/10 bg-white/6 p-5 sm:p-6">
               <div className="flex flex-wrap gap-3">
                 <button
                   type="button"
@@ -192,7 +181,7 @@ export function AuthDialog({
                 </button>
               </form>
 
-              <div className="mt-6 flex flex-wrap items-center gap-4">
+              <div className="mt-2 flex flex-wrap items-center gap-4">
                 {enabled ? (
                   <GoogleSignInButton
                     callbackUrl={callbackUrl}
