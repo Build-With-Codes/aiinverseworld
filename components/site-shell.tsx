@@ -18,11 +18,11 @@ type SiteShellProps = {
 
 const navItems = [
   { href: "/", label: "Discover" },
-  { href: "/blog", label: "Blog" },
   { href: "/compare", label: "Compare" },
-  { href: "/news", label: "News" },
   { href: "/search", label: "Search" },
   { href: "/category", label: "Categories" },
+  { href: "/news", label: "News" },
+  { href: "/blog", label: "Blog" },
 ];
 
 const footerGroups = [
