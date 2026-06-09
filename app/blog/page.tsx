@@ -52,6 +52,7 @@ export default function BlogPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogStructuredData) }}
       />
       <ContentPage
+        eyebrow="Learning"
         title="AI Blog"
         description="Explore the latest AI trends, practical guides, tool reviews, tutorials, and industry insights to help you learn and leverage artificial intelligence."
       >
