@@ -210,25 +210,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Quick Start Questions */}
-      <section className="rounded-[34px] border border-cyan-300/18 bg-linear-to-br from-cyan-400/14 via-blue-500/10 to-violet-500/10 p-8">
-        <div className="mb-6">
-          <p className="text-xs font-semibold tracking-[0.28em] text-cyan-200 uppercase">Quick Start</p>
-          <h2 className="mt-2 text-2xl font-semibold text-white">Answer these to narrow down</h2>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {finderQuestions.map((question, index) => (
-            <div
-              key={question}
-              className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#091322] px-4 py-3 cursor-pointer transition hover:border-cyan-300/30 hover:bg-[#0a1628]"
-            >
-              <span className="text-sm text-slate-200">{question}</span>
-              <span className="text-xs font-semibold text-slate-500">0{index + 1}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
       <section>
         <SectionHeading
           eyebrow="AI News"
