@@ -12,11 +12,21 @@ import { HeroSearch } from "@/components/hero-search";
 import { ToolMarquee } from "@/components/tool-marquee";
 
 export const metadata: Metadata = {
+  title: "AI Tools Directory & Reviews 2026 | Discover the Best AI Tools - AiverseWorld",
+  description: "Explore, compare, and review the best AI tools for productivity, coding, content creation, video, marketing, and business growth. 100+ tools ranked and reviewed.",
   alternates: {
     canonical: buildUrl("/"),
   },
   openGraph: {
+    title: "AI Tools Directory & Reviews 2026 | AiverseWorld",
+    description: "Discover the best AI tools for productivity, coding, writing, video, and marketing. Compare 100+ tools with real pricing and reviews.",
     url: buildUrl("/"),
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI Tools Directory & Reviews 2026 | AiverseWorld",
+    description: "Discover the best AI tools for productivity, coding, writing, video, and marketing.",
   },
 };
 

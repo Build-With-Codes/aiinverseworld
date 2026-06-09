@@ -22,18 +22,18 @@ export async function generateMetadata({ params }: BestPageProps): Promise<Metad
   if (!list) return { title: "Not Found | AiverseWorld" };
 
   return {
-    title: `${list.title} | AiverseWorld`,
+    title: `${list.title} ${new Date().getFullYear()} — Ranked & Reviewed | AiverseWorld`,
     description: list.description,
     alternates: { canonical: buildUrl(`/best/${slug}`) },
     openGraph: {
-      title: `${list.title} | AiverseWorld`,
+      title: `${list.title} ${new Date().getFullYear()} | AiverseWorld`,
       description: list.description,
       url: buildUrl(`/best/${slug}`),
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: `${list.title} | AiverseWorld`,
+      title: `${list.title} ${new Date().getFullYear()} | AiverseWorld`,
       description: list.description,
     },
   };
@@ -52,21 +52,44 @@ export default async function BestPage({ params }: BestPageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            name: list.title,
-            description: list.description,
-            url: buildUrl(`/best/${slug}`),
-            numberOfItems: tools.length,
-            itemListElement: tools.slice(0, 10).map((tool, i) => ({
-              "@type": "ListItem",
-              position: i + 1,
-              name: tool.name,
-              url: buildUrl(`/tool/${tool.slug}`),
-              description: tool.shortDescription,
-            })),
-          }),
+          __html: JSON.stringify([
+            {
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: list.title,
+              description: list.description,
+              url: buildUrl(`/best/${slug}`),
+              numberOfItems: tools.length,
+              itemListElement: tools.slice(0, 10).map((tool, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                name: tool.name,
+                url: buildUrl(`/tool/${tool.slug}`),
+                description: tool.shortDescription,
+              })),
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: `What are the ${list.title.toLowerCase()}?`,
+                  acceptedAnswer: { "@type": "Answer", text: `${list.description} Top picks include: ${tools.slice(0, 5).map((t) => t.name).join(", ")}.` },
+                },
+                {
+                  "@type": "Question",
+                  name: `How many ${list.title.toLowerCase()} are there?`,
+                  acceptedAnswer: { "@type": "Answer", text: `AiverseWorld currently lists ${tools.length} tools in this category, all verified and ranked by popularity and user ratings.` },
+                },
+                {
+                  "@type": "Question",
+                  name: `Which of the ${list.title.toLowerCase()} has a free plan?`,
+                  acceptedAnswer: { "@type": "Answer", text: `Free plan options include: ${tools.filter((t) => t.freePlan === "Yes").slice(0, 5).map((t) => t.name).join(", ") || "See individual tool pages for details."}.` },
+                },
+              ],
+            },
+          ]),
         }}
       />
 

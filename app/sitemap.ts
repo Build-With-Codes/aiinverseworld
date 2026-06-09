@@ -6,6 +6,15 @@ import { categories, comparisons, tools, bestLists } from "@/lib/site-data";
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages = [
     "",
+    "/best-ai-tools",
+    "/free-ai-tools",
+    "/ai-productivity-tools",
+    "/ai-coding-tools",
+    "/ai-writing-tools",
+    "/ai-video-tools",
+    "/ai-marketing-tools",
+    "/compare",
+    "/category",
     "/problems",
     "/problems/submit",
     "/games/draw-guess",
