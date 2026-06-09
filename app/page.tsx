@@ -57,9 +57,9 @@ const discoveryBands = [
 
 export default async function Home() {
   const trendingTools = tools.slice(0, 6);
-  const codingTools = tools.filter((tool) => tool.category === "Coding AI").slice(0, 6);
+  const codingTools = tools.filter((tool) => tool.category === "Coding Assistant").slice(0, 6);
   const creativeTools = tools
-    .filter((tool) => ["Image AI", "Video AI", "Design AI"].includes(tool.category))
+    .filter((tool) => ["Image Generation", "Video Generation", "Design Assistant"].includes(tool.category))
     .slice(0, 6);
   const newsArticles = await getNewsArticles(3);
   const spotlightMetrics = [
