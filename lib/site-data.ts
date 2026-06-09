@@ -4143,28 +4143,123 @@ export function getBestListTools(slug: string): AITool[] {
 //   ],
 // };
 
-export const comparisons: Comparison[] = [
-  {
-    slug: "chatgpt-vs-claude",
-    title: "ChatGPT vs Claude",
-    summary: "Compare two leading AI assistants across core workflows, use cases, and starting plans.",
-  },
-  {
-    slug: "cursor-vs-github-copilot",
-    title: "Cursor vs GitHub Copilot",
-    summary: "A direct comparison for teams evaluating AI coding tools and day-to-day developer workflows.",
-  },
-  {
-    slug: "midjourney-vs-adobe-firefly",
-    title: "Midjourney vs Adobe Firefly",
-    summary: "Creative image tools compared across design-heavy and marketing-ready workflows.",
-  },
-  {
-    slug: "runway-vs-synthesia",
-    title: "Runway vs Synthesia",
-    summary: "Video generation versus avatar-first production for marketing and business teams.",
-  },
+const comparisonPairs: [string, string][] = [
+  ["chatgpt", "claude"],
+  ["chatgpt", "gemini"],
+  ["chatgpt", "copilot"],
+  ["chatgpt", "perplexity"],
+  ["chatgpt", "grok"],
+  ["chatgpt", "deepseek"],
+  ["chatgpt", "poe"],
+  ["claude", "gemini"],
+  ["claude", "copilot"],
+  ["claude", "grok"],
+  ["claude", "deepseek"],
+  ["claude", "perplexity"],
+  ["gemini", "copilot"],
+  ["gemini", "grok"],
+  ["gemini", "perplexity"],
+  ["cursor", "codeium"],
+  ["cursor", "lovable"],
+  ["cursor", "deepseek"],
+  ["midjourney", "adobe-firefly"],
+  ["midjourney", "canva-magic"],
+  ["midjourney", "seaart"],
+  ["midjourney", "canva-text-to-image"],
+  ["adobe-firefly", "canva-magic"],
+  ["adobe-firefly", "canva-text-to-image"],
+  ["runway", "synthesia"],
+  ["runway", "heygen"],
+  ["runway", "kling-ai"],
+  ["runway", "invideo"],
+  ["runway", "pictory"],
+  ["synthesia", "heygen"],
+  ["synthesia", "invideo"],
+  ["heygen", "kling-ai"],
+  ["heygen", "invideo"],
+  ["kling-ai", "invideo"],
+  ["elevenlabs", "suno"],
+  ["elevenlabs", "podcastle-ai"],
+  ["elevenlabs", "deepgrams-ai"],
+  ["suno", "podcastle-ai"],
+  ["grammarly", "quillbot"],
+  ["grammarly", "wordtune"],
+  ["grammarly", "jasper"],
+  ["grammarly", "writesonic"],
+  ["grammarly", "copy-ai"],
+  ["grammarly", "grammarly-go"],
+  ["jasper", "copy-ai"],
+  ["jasper", "writesonic"],
+  ["jasper", "contentatscale"],
+  ["copy-ai", "writesonic"],
+  ["quillbot", "wordtune"],
+  ["notion-ai", "obsidian-ai"],
+  ["notion-ai", "mem"],
+  ["notion-ai", "notebookly"],
+  ["notion-ai", "anytype-ai"],
+  ["obsidian-ai", "mem"],
+  ["obsidian-ai", "anytype-ai"],
+  ["notebook-lm", "perplexity"],
+  ["notebook-lm", "notion-ai"],
+  ["fireflies-ai", "otter-ai"],
+  ["fireflies-ai", "tldv"],
+  ["otter-ai", "tldv"],
+  ["gamma", "beautiful-ai"],
+  ["gamma", "tome"],
+  ["gamma", "slidespeak"],
+  ["beautiful-ai", "tome"],
+  ["beautiful-ai", "slidespeak"],
+  ["zapier-ai", "manus"],
+  ["zapier-ai", "inngest-ai"],
+  ["canva-magic", "wepik"],
+  ["canva-magic", "miro-ai"],
+  ["miro-ai", "framer-ai"],
+  ["framer-ai", "wepik"],
+  ["ahrefs-ai", "surfer-seo"],
+  ["ahrefs-ai", "contentatscale"],
+  ["surfer-seo", "contentatscale"],
+  ["hugging-face", "deepseek"],
+  ["hugging-face", "poe"],
+  ["character-ai", "replika-ai"],
+  ["character-ai", "poe"],
+  ["intercom-ai", "kommunicate-ai"],
+  ["intercom-ai", "conversa-ai"],
+  ["kommunicate-ai", "conversa-ai"],
+  ["descript", "loom-ai"],
+  ["descript", "otter-ai"],
+  ["loom-ai", "tldv"],
+  ["scribe-ai", "notion-ai"],
+  ["zapier-ai", "clipboard-ai"],
+  ["nanonets", "ocr-space"],
+  ["stripe-ai", "recur-ai"],
+  ["manus", "waldron"],
+  ["deepseek", "grok"],
+  ["deepseek", "poe"],
+  ["lovable", "framer-ai"],
+  ["cursor", "grammarly"],
+  ["chatgpt", "character-ai"],
+  ["chatgpt", "replika-ai"],
+  ["claude", "notebook-lm"],
+  ["gemini", "notebook-lm"],
+  ["stata-ai", "luminar"],
+  ["stata-ai", "excel-ai"],
+  ["luminar", "excel-ai"],
+  ["navan-ai", "zapier-ai"],
+  ["typeform-ai", "notion-ai"],
 ];
+
+export const comparisons: Comparison[] = comparisonPairs
+  .map(([leftSlug, rightSlug]) => {
+    const left = aiTools.find((t) => t.slug === leftSlug);
+    const right = aiTools.find((t) => t.slug === rightSlug);
+    if (!left || !right) return null;
+    return {
+      slug: `${leftSlug}-vs-${rightSlug}`,
+      title: `${left.name} vs ${right.name}`,
+      summary: `Compare ${left.name} and ${right.name} across pricing, features, platforms, and use cases.`,
+    };
+  })
+  .filter(Boolean) as Comparison[];
 
 export const monetizationPages = [
   { href: "/cookie-policy", label: "Cookie Policy" },
@@ -4200,13 +4295,14 @@ export function getComparisonBySlug(slug: string) {
 }
 
 export function getComparisonTools(slug: string) {
-  const [leftSlug, rightSlug] = slug.split("-vs-");
+  const parts = slug.split("-vs-");
+  if (parts.length < 2) return null;
+  // rightSlug may contain hyphens, so only split on first "-vs-"
+  const vsIndex = slug.indexOf("-vs-");
+  const leftSlug = slug.slice(0, vsIndex);
+  const rightSlug = slug.slice(vsIndex + 4);
   const left = getToolBySlug(leftSlug);
   const right = getToolBySlug(rightSlug);
-
-  if (!left || !right) {
-    return null;
-  }
-
+  if (!left || !right) return null;
   return { left, right };
 }

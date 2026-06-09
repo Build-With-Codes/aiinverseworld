@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { buildUrl } from "@/lib/seo";
+import { buildUrl, buildCategoryMeta } from "@/lib/seo";
 import { getCategoryBySlug, getToolsByCategory } from "@/lib/site-data";
 import { CategoryPageClient } from "./client";
 
@@ -13,10 +13,18 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   const { slug } = await params;
   const category = getCategoryBySlug(slug);
 
+  const { title, description, url } = buildCategoryMeta(
+    category?.name ?? "Category",
+    slug,
+    category?.description ?? "Explore AI tools grouped by category on AiverseWorld.",
+  );
+
   return {
-    title: category ? `${category.name} AI Tools | AiverseWorld` : "Category | AiverseWorld",
-    description: category?.description ?? "Explore AI tools grouped by category on AiverseWorld.",
-    alternates: category ? { canonical: buildUrl(`/category/${category.slug}`) } : undefined,
+    title,
+    description,
+    alternates: category ? { canonical: url } : undefined,
+    openGraph: { title, description, url, type: "website" },
+    twitter: { card: "summary_large_image", title, description },
   };
 }
 

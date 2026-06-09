@@ -6,7 +6,7 @@ import { googleAuthEnabled } from "@/lib/auth-config";
 import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
 import { getReviewsForTool } from "@/lib/review-store";
-import { buildUrl } from "@/lib/seo";
+import { buildUrl, buildToolMeta } from "@/lib/seo";
 import { getToolBySlug, aiTools } from "@/lib/site-data";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -23,15 +23,23 @@ export async function generateMetadata({ params }: ToolDetailPageProps): Promise
 
   if (!tool) return { title: "Tool not found | AiverseWorld" };
 
+  const { title, description, url } = buildToolMeta(tool);
+
   return {
-    title: `${tool.name} Review, Pricing, and Alternatives | AiverseWorld`,
-    description: tool.shortDescription,
-    alternates: { canonical: buildUrl(`/tool/${tool.slug}`) },
+    title,
+    description,
+    alternates: { canonical: url },
     openGraph: {
-      title: `${tool.name} Review, Pricing, and Alternatives | AiverseWorld`,
-      description: tool.shortDescription,
-      url: buildUrl(`/tool/${tool.slug}`),
+      title,
+      description,
+      url,
       type: "article",
+      images: [{ url: tool.favicon, alt: tool.name }],
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
     },
   };
 }
@@ -60,19 +68,56 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
-            name: tool.name,
-            applicationCategory: tool.category,
-            description: tool.shortDescription,
-            operatingSystem: tool.platforms.join(", "),
-            url: buildUrl(`/tool/${tool.slug}`),
-            sameAs: tool.website,
-            offers: tool.startingPriceUsd === null
-              ? undefined
-              : { "@type": "Offer", price: tool.startingPriceUsd, priceCurrency: "USD" },
-          }),
+          __html: JSON.stringify([
+            {
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              name: tool.name,
+              applicationCategory: tool.category,
+              description: tool.summary ?? tool.shortDescription,
+              operatingSystem: tool.platforms.join(", "),
+              url: buildUrl(`/tool/${tool.slug}`),
+              sameAs: tool.website,
+              offers: tool.startingPriceUsd === null
+                ? undefined
+                : { "@type": "Offer", price: tool.startingPriceUsd, priceCurrency: "USD" },
+              ...(tool.rating && tool.reviewCount ? {
+                aggregateRating: {
+                  "@type": "AggregateRating",
+                  ratingValue: tool.rating,
+                  reviewCount: tool.reviewCount,
+                  bestRating: 5,
+                  worstRating: 1,
+                },
+              } : {}),
+            },
+            {
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              mainEntity: [
+                {
+                  "@type": "Question",
+                  name: `Is ${tool.name} free?`,
+                  acceptedAnswer: { "@type": "Answer", text: tool.freePlan === "Yes" ? `Yes, ${tool.name} offers a free plan.` : tool.freePlan === "Limited" ? `${tool.name} has a limited free tier.` : `${tool.name} does not offer a free plan. Pricing starts at $${tool.startingPriceUsd}/mo.` },
+                },
+                {
+                  "@type": "Question",
+                  name: `What is ${tool.name} best for?`,
+                  acceptedAnswer: { "@type": "Answer", text: `${tool.name} is best for: ${tool.bestFor.join(", ")}.` },
+                },
+                {
+                  "@type": "Question",
+                  name: `Does ${tool.name} have an API?`,
+                  acceptedAnswer: { "@type": "Answer", text: tool.apiAvailable ? `Yes, ${tool.name} provides API access.` : `${tool.name} does not currently offer a public API.` },
+                },
+                {
+                  "@type": "Question",
+                  name: `What platforms does ${tool.name} support?`,
+                  acceptedAnswer: { "@type": "Answer", text: `${tool.name} is available on: ${tool.platforms.join(", ")}.` },
+                },
+              ],
+            },
+          ]),
         }}
       />
 

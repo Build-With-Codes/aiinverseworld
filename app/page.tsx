@@ -9,6 +9,7 @@ import { getNewsArticles } from "@/lib/news";
 import { buildUrl } from "@/lib/seo";
 import { categories, comparisons, finderQuestions, tools, bestLists } from "@/lib/site-data";
 import { HeroSearch } from "@/components/hero-search";
+import { ToolMarquee } from "@/components/tool-marquee";
 
 export const metadata: Metadata = {
   alternates: {
@@ -149,6 +150,11 @@ export default async function Home() {
         ))}
       </section>
 
+      <section className="space-y-3 overflow-hidden">
+        <ToolMarquee tools={tools.slice(0, 20)} direction="left" />
+        <ToolMarquee tools={tools.slice(20, 40)} direction="right" />
+      </section>
+
       <section>
         <SectionHeading
           eyebrow="AI News"
@@ -223,7 +229,7 @@ export default async function Home() {
             description="Jump into high-intent comparisons people use before purchase and rollout decisions."
           />
           <div className="space-y-4">
-            {comparisons.map((comparison) => (
+            {comparisons.slice(0, 12).map((comparison) => (
               <Link
                 key={comparison.slug}
                 href={`/compare/${comparison.slug}`}
@@ -235,6 +241,12 @@ export default async function Home() {
                 </span>
               </Link>
             ))}
+            <Link
+              href="/compare"
+              className="block rounded-[24px] border border-cyan-300/20 bg-cyan-300/8 p-4 text-center text-sm font-semibold text-cyan-200 transition hover:bg-cyan-300/12"
+            >
+              View all {comparisons.length} comparisons →
+            </Link>
           </div>
         </div>
       </section>

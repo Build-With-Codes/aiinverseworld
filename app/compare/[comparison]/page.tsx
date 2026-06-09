@@ -3,8 +3,9 @@ import { notFound } from "next/navigation";
 
 import { ComparisonTable } from "@/components/comparison-table";
 import { SectionHeading } from "@/components/section-heading";
-import { buildUrl } from "@/lib/seo";
+import { buildUrl, buildComparisonMeta } from "@/lib/seo";
 import { getComparisonTools } from "@/lib/site-data";
+import { CompareSelector } from "../compare-selector";
 
 type ComparePageProps = {
   params: Promise<{ comparison: string }>;
@@ -37,6 +38,10 @@ export default async function ComparePage({ params }: ComparePageProps) {
           title={`${pair.left.name} vs ${pair.right.name}`}
           description="A direct comparison using the real catalog fields currently available for both products."
         />
+        <CompareSelector currentLeft={pair.left.slug} currentRight={pair.right.slug} />
+      </section>
+
+      <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
         <ComparisonTable left={pair.left} right={pair.right} />
       </section>
 
