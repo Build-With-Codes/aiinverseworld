@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { GoogleSignOutButton } from "@/components/google-auth-button";
 
@@ -21,11 +21,19 @@ export function AccountMenu({ name, email, image }: AccountMenuProps) {
   const [open, setOpen] = useState(false);
   const displayName = name || "Signed In";
 
+  const handleToggle = useCallback(() => {
+    setOpen((current) => !current);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setOpen(false);
+  }, []);
+
   return (
     <div className="relative">
       <button
         type="button"
-        onClick={() => setOpen((current) => !current)}
+        onClick={handleToggle}
         className="flex items-center gap-3 rounded-full border border-white/10 bg-white/6 px-3 py-2 transition hover:border-cyan-300/30"
       >
         {image ? (
@@ -76,7 +84,7 @@ export function AccountMenu({ name, email, image }: AccountMenuProps) {
                 key={link.href}
                 href={link.href}
                 className="block rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-300 transition hover:border-cyan-300/20 hover:text-white"
-                onClick={() => setOpen(false)}
+                onClick={handleClose}
               >
                 {link.label}
               </Link>

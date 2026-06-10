@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { signIn } from "next-auth/react";
 
@@ -21,18 +21,6 @@ const authBenefits = [
   "Sync your shortlist across devices",
 ];
 
-function subscribe() {
-  return () => {};
-}
-
-function getSnapshot() {
-  return true;
-}
-
-function getServerSnapshot() {
-  return false;
-}
-
 export function AuthDialog({
   callbackUrl,
   enabled = true,
@@ -48,7 +36,11 @@ export function AuthDialog({
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const mounted = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   async function handleCredentialsSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -135,10 +127,6 @@ export function AuthDialog({
               <p className="mt-5 text-sm font-medium text-white">
                 {mode === "signup" ? "Create your account" : "Log in to your account"}
               </p>
-              {/* <p className="mt-2 text-sm leading-7 text-slate-300">
-                Use email and password, or continue with Google. Your account is now
-                backed by the AiverseWorld auth service.
-              </p> */}
 
               <form className="mt-6 space-y-4" onSubmit={handleCredentialsSubmit}>
                 {mode === "signup" ? (
