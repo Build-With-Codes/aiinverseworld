@@ -55,15 +55,22 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning>
+      <head>
+        <script
+          id="theme-init"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (() => {
+                const stored = window.localStorage.getItem("aiverse-theme");
+                const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+                const theme = stored === "light" || stored === "dark" ? stored : systemDark ? "dark" : "light";
+                document.documentElement.setAttribute("data-theme", theme);
+              })();
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-full" suppressHydrationWarning>
-        <Script id="theme-init" strategy="beforeInteractive">{`
-          (() => {
-            const stored = window.localStorage.getItem("aiverse-theme");
-            const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-            const theme = stored === "light" || stored === "dark" ? stored : systemDark ? "dark" : "light";
-            document.documentElement.setAttribute("data-theme", theme);
-          })();
-        `}</Script>
         <Script id="aiverseworld-schema" type="application/ld+json">
           {JSON.stringify([
             {

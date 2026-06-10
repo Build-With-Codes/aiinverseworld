@@ -1,8 +1,21 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 
 type ThemeMode = "dark" | "light";
+
+function getInitialTheme(): ThemeMode {
+  if (typeof window === "undefined") return "dark";
+
+  const stored = window.localStorage.getItem("aiverse-theme");
+  const systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+  return (stored === "light" || stored === "dark"
+    ? stored
+    : systemDark
+    ? "dark"
+    : "light") as ThemeMode;
+}
 
 function applyTheme(nextTheme: ThemeMode) {
   document.documentElement.setAttribute("data-theme", nextTheme);
@@ -10,31 +23,37 @@ function applyTheme(nextTheme: ThemeMode) {
   window.dispatchEvent(new CustomEvent("aiverse-theme-change"));
 }
 
-function subscribe(onStoreChange: () => void) {
-  window.addEventListener("aiverse-theme-change", onStoreChange);
-  window.addEventListener("storage", onStoreChange);
-
-  return () => {
-    window.removeEventListener("aiverse-theme-change", onStoreChange);
-    window.removeEventListener("storage", onStoreChange);
-  };
-}
-
-function getSnapshot(): ThemeMode {
-  return document.documentElement.getAttribute("data-theme") === "light"
-    ? "light"
-    : "dark";
-}
-
-function getServerSnapshot(): ThemeMode {
-  return "dark";
-}
-
 export function ThemeToggle() {
-  const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const [theme, setTheme] = useState<ThemeMode>("dark");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const initialTheme = getInitialTheme();
+    setTheme(initialTheme);
+    document.documentElement.setAttribute("data-theme", initialTheme);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    const handleChange = () => {
+      const current = document.documentElement.getAttribute("data-theme") as ThemeMode;
+      if (current) setTheme(current);
+    };
+
+    window.addEventListener("aiverse-theme-change", handleChange);
+
+    return () => {
+      window.removeEventListener("aiverse-theme-change", handleChange);
+    };
+  }, [mounted]);
+
+  if (!mounted) return null;
 
   function handleToggle() {
-    const nextTheme = theme === "dark" ? "light" : "dark";
+    const nextTheme: ThemeMode = theme === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
     applyTheme(nextTheme);
   }
 
@@ -45,16 +64,16 @@ export function ThemeToggle() {
       onClick={handleToggle}
       className="theme-toggle group inline-flex items-center gap-2 rounded-full border px-2 py-2 text-xs font-medium transition sm:gap-3 sm:px-3 sm:text-sm"
     >
-      <span
-        suppressHydrationWarning
-        className="theme-toggle__label min-w-0 text-left sm:min-w-12"
-      >
+      <span className="theme-toggle__label min-w-0 text-left sm:min-w-12">
         {theme === "light" ? "Light" : "Dark"}
       </span>
+
       <span
         aria-hidden="true"
         className={`theme-toggle__track relative inline-flex h-6 w-10 items-center rounded-full transition sm:h-7 sm:w-12 ${
-          theme === "light" ? "theme-toggle__track--light" : "theme-toggle__track--dark"
+          theme === "light"
+            ? "theme-toggle__track--light"
+            : "theme-toggle__track--dark"
         }`}
       >
         <span
