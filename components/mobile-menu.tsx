@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useCallback, useTransition, useState } from "react";
 
 import { AccountMenu } from "@/components/account-menu";
 import { AuthDialog } from "@/components/auth-dialog";
@@ -29,14 +29,27 @@ export function MobileMenu({
   userImage,
 }: MobileMenuProps) {
   const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const handleToggle = useCallback(() => {
-    setOpen((current) => !current);
+    startTransition(() => {
+      setOpen((current) => !current);
+    });
   }, []);
 
   const handleClose = useCallback(() => {
-    setOpen(false);
+    startTransition(() => {
+      setOpen(false);
+    });
   }, []);
+
+  const handleHover = useCallback(() => {
+    if (!open) {
+      startTransition(() => {
+        setOpen(true);
+      });
+    }
+  }, [open]);
 
   return (
     <div className="relative md:hidden">
@@ -45,6 +58,7 @@ export function MobileMenu({
         aria-label={open ? "Close navigation menu" : "Open navigation menu"}
         aria-expanded={open}
         onClick={handleToggle}
+        onMouseEnter={handleHover}
         className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/6 text-slate-200 transition hover:border-cyan-300/30"
       >
         <span className="flex flex-col gap-1.5">

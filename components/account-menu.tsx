@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useCallback, useTransition, useState } from "react";
 
 import { GoogleSignOutButton } from "@/components/google-auth-button";
 
@@ -19,21 +19,35 @@ const quickLinks = [
 
 export function AccountMenu({ name, email, image }: AccountMenuProps) {
   const [open, setOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const displayName = name || "Signed In";
 
   const handleToggle = useCallback(() => {
-    setOpen((current) => !current);
+    startTransition(() => {
+      setOpen((current) => !current);
+    });
   }, []);
 
   const handleClose = useCallback(() => {
-    setOpen(false);
+    startTransition(() => {
+      setOpen(false);
+    });
   }, []);
+
+  const handleHover = useCallback(() => {
+    if (!open) {
+      startTransition(() => {
+        setOpen(true);
+      });
+    }
+  }, [open]);
 
   return (
     <div className="relative">
       <button
         type="button"
         onClick={handleToggle}
+        onMouseEnter={handleHover}
         className="flex items-center gap-3 rounded-full border border-white/10 bg-white/6 px-3 py-2 transition hover:border-cyan-300/30"
       >
         {image ? (
