@@ -2,6 +2,24 @@
 // This file maps blog posts to suggested Q&A recommendations
 
 export const blogSuggestionFAQs: Record<string, Array<{ question: string; answer: string; relatedSlug: string }>> = {
+  "claude-mythos-5-cybersecurity-biology": [
+    {
+      question: "How does Claude Mythos 5 compare to other AI models?",
+      answer: "Explore our comprehensive comparison of ChatGPT, Claude, and Gemini to understand how Claude Mythos 5 fits into the broader AI landscape.",
+      relatedSlug: "chatgpt-vs-claude-vs-gemini-2026"
+    },
+    {
+      question: "What are the best AI tools available in 2026?",
+      answer: "Discover the 10 best AI tools in 2026, including specialized models like Claude Mythos 5 for different use cases.",
+      relatedSlug: "best-ai-tools-in-2026"
+    },
+    {
+      question: "What AI trends will shape 2027?",
+      answer: "Learn about upcoming AI trends and how specialized models like Claude Mythos 5 are shaping the future of AI development.",
+      relatedSlug: "ai-trends-2027"
+    }
+  ],
+  
   "best-ai-tools-in-2026": [
     {
       question: "How do I compare ChatGPT, Claude, and Gemini?",

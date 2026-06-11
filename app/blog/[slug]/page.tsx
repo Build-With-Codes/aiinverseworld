@@ -245,7 +245,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <span>{post.readTime} read</span>
           </div>
           
-          <div className="text-slate-200 space-y-4 [&_h2]:font-bold [&_h2]:text-xl [&_h2]:mt-8 [&_h2]:mb-4 [&_h3]:font-semibold [&_h3]:text-lg [&_h3]:mt-6 [&_h3]:mb-3 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_li]:mb-2 [&_img]:max-w-full [&_img]:h-auto">
+          <div className="text-slate-200 space-y-4 [&_h2]:font-bold [&_h2]:text-xl [&_h2]:mt-8 [&_h2]:mb-4 [&_h3]:font-semibold [&_h3]:text-lg [&_h3]:mt-6 [&_h3]:mb-3 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_li]:mb-2 [&_img]:max-w-full [&_img]:h-auto blog-content">
             <div dangerouslySetInnerHTML={{ __html: post.content }} />
           </div>
         </article>
