@@ -97,7 +97,7 @@ export async function SiteShell({ children }: SiteShellProps) {
             <div className="flex shrink-0 items-center gap-2 sm:gap-3">
               <Link
                 href="/problems/submit"
-                className="hidden rounded-full border border-cyan-300/25 bg-cyan-300/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:border-cyan-300/40 hover:bg-cyan-300/15 lg:inline-flex"
+                className="hidden cursor-pointer rounded-full border border-cyan-300/25 bg-cyan-300/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:border-cyan-300/45 hover:bg-cyan-300/20 hover:text-white lg:inline-flex"
               >
                 Submit Problem
               </Link>
@@ -114,7 +114,7 @@ export async function SiteShell({ children }: SiteShellProps) {
                   <AuthDialog
                     callbackUrl="/"
                     enabled={googleAuthEnabled}
-                    triggerClassName="rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
+                    triggerClassName="cursor-pointer rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
                   />
                 )}
               </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useTransition, useState } from "react";
+import { useCallback, useEffect, useRef, useTransition, useState } from "react";
 
 import { GoogleSignOutButton } from "@/components/google-auth-button";
 
@@ -19,7 +19,8 @@ const quickLinks = [
 
 export function AccountMenu({ name, email, image }: AccountMenuProps) {
   const [open, setOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
+  const menuRef = useRef<HTMLDivElement>(null);
   const displayName = name || "Signed In";
 
   const handleToggle = useCallback(() => {
@@ -42,13 +43,37 @@ export function AccountMenu({ name, email, image }: AccountMenuProps) {
     }
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
   return (
-    <div className="relative">
+    <div ref={menuRef} className="relative">
       <button
         type="button"
         onClick={handleToggle}
         onMouseEnter={handleHover}
-        className="flex items-center gap-3 rounded-full border border-white/10 bg-white/6 px-3 py-2 transition hover:border-cyan-300/30"
+        className="flex cursor-pointer items-center gap-3 rounded-full border border-white/10 bg-white/6 px-3 py-2 transition hover:border-cyan-300/40 hover:bg-cyan-300/12 hover:text-white"
       >
         {image ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -97,7 +122,7 @@ export function AccountMenu({ name, email, image }: AccountMenuProps) {
               <Link
                 key={link.href}
                 href={link.href}
-                className="block rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-300 transition hover:border-cyan-300/20 hover:text-white"
+                className="block cursor-pointer rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-300 transition hover:border-cyan-300/25 hover:bg-cyan-300/10 hover:text-white"
                 onClick={handleClose}
               >
                 {link.label}

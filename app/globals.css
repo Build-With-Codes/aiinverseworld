@@ -163,6 +163,11 @@ input {
     box-shadow 180ms ease;
 }
 
+a[href],
+button:not(:disabled) {
+  cursor: pointer;
+}
+
 input::placeholder {
   color: rgb(100 116 139 / 0.9);
 }

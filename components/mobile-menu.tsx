@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useTransition, useState } from "react";
+import { useCallback, useEffect, useRef, useTransition, useState } from "react";
 
 import { AccountMenu } from "@/components/account-menu";
 import { AuthDialog } from "@/components/auth-dialog";
@@ -29,7 +29,8 @@ export function MobileMenu({
   userImage,
 }: MobileMenuProps) {
   const [open, setOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const handleToggle = useCallback(() => {
     startTransition(() => {
@@ -51,15 +52,39 @@ export function MobileMenu({
     }
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
   return (
-    <div className="relative md:hidden">
+    <div ref={menuRef} className="relative md:hidden">
       <button
         type="button"
         aria-label={open ? "Close navigation menu" : "Open navigation menu"}
         aria-expanded={open}
         onClick={handleToggle}
         onMouseEnter={handleHover}
-        className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/6 text-slate-200 transition hover:border-cyan-300/30"
+        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/6 text-slate-200 transition hover:border-cyan-300/40 hover:bg-cyan-300/12 hover:text-white"
       >
         <span className="flex flex-col gap-1.5">
           <span className="block h-0.5 w-4 rounded-full bg-current" />
@@ -76,7 +101,7 @@ export function MobileMenu({
                 key={item.href}
                 href={item.href}
                 onClick={handleClose}
-                className="block rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-200 transition hover:border-cyan-300/20 hover:text-white"
+                className="block cursor-pointer rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-200 transition hover:border-cyan-300/25 hover:bg-cyan-300/10 hover:text-white"
               >
                 {item.label}
               </Link>
@@ -90,7 +115,7 @@ export function MobileMenu({
               <AuthDialog
                 callbackUrl="/"
                 enabled={authEnabled}
-                triggerClassName="w-full rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
+                triggerClassName="w-full cursor-pointer rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
               />
             )}
           </div>
