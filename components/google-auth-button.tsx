@@ -45,10 +45,14 @@ export function GoogleSignOutButton({
     <button
       type="button"
       onClick={async () => {
-        await fetch("/api/auth/logout-service", {
-          method: "POST",
-        });
-        await signOut({ callbackUrl });
+        try {
+          await fetch("/api/auth/logout-service", {
+            method: "POST",
+          });
+        } catch (error) {
+          console.warn("Logout service error:", error);
+        }
+        await signOut({ callbackUrl, redirect: true });
       }}
       className={className}
     >
