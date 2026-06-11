@@ -327,6 +327,175 @@ html[data-theme="light"] .content-page-copy > div {
   border-color: rgba(15, 23, 42, 0.08);
 }
 
+.blog-section-label {
+  color: rgb(103 232 249);
+}
+
+html[data-theme="light"] .blog-section-label {
+  color: rgb(14 116 144) !important;
+}
+
+.blog-section-title {
+  color: rgb(255 255 255);
+}
+
+html[data-theme="light"] .blog-section-title {
+  color: rgb(15 23 42) !important;
+}
+
+.blog-filter-chip {
+  border-color: rgb(255 255 255 / 0.12);
+  background: rgb(255 255 255 / 0.06);
+  color: rgb(226 232 240);
+}
+
+.blog-filter-chip:hover {
+  border-color: rgb(103 232 249 / 0.55);
+  background: rgb(34 211 238 / 0.12);
+  color: rgb(255 255 255);
+}
+
+.blog-filter-chip--active {
+  border-color: rgb(103 232 249 / 0.55);
+  background: rgb(34 211 238 / 0.18);
+  color: rgb(207 250 254);
+}
+
+html[data-theme="light"] .blog-filter-chip {
+  border-color: rgb(203 213 225) !important;
+  background: rgb(248 250 252) !important;
+  color: rgb(51 65 85) !important;
+}
+
+html[data-theme="light"] .blog-filter-chip:hover,
+html[data-theme="light"] .blog-filter-chip--active {
+  border-color: rgb(8 145 178 / 0.55) !important;
+  background: rgb(236 254 255) !important;
+  color: rgb(14 116 144) !important;
+}
+
+.blog-image-chip {
+  border-color: rgb(255 255 255 / 0.3);
+  background: rgb(255 255 255 / 0.16);
+  color: rgb(255 255 255);
+}
+
+.blog-article-content {
+  color: rgb(30 41 59);
+  font-size: 1rem;
+  line-height: 1.9;
+}
+
+.blog-article-content > * + * {
+  margin-top: 1.25rem;
+}
+
+.blog-article-content h2 {
+  margin-top: 2.75rem;
+  color: rgb(15 23 42);
+  font-size: clamp(1.6rem, 3vw, 2.15rem);
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.blog-article-content h3 {
+  margin-top: 2rem;
+  color: rgb(15 23 42);
+  font-size: 1.25rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.blog-article-content h4 {
+  margin-top: 1.5rem;
+  color: rgb(8 145 178);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.blog-article-content p {
+  color: rgb(51 65 85);
+}
+
+.blog-article-content a {
+  color: rgb(14 116 144);
+  font-weight: 700;
+}
+
+.blog-article-content ul,
+.blog-article-content ol {
+  margin-left: 1.25rem;
+  color: rgb(51 65 85);
+}
+
+.blog-article-content ul {
+  list-style: disc;
+}
+
+.blog-article-content ol {
+  list-style: decimal;
+}
+
+.blog-article-content li {
+  margin-top: 0.65rem;
+  padding-left: 0.25rem;
+}
+
+.blog-article-content strong {
+  color: rgb(15 23 42);
+  font-weight: 750;
+}
+
+.blog-article-content blockquote {
+  margin-top: 1.75rem;
+  border-left: 3px solid rgb(8 145 178 / 0.75);
+  border-radius: 0 18px 18px 0;
+  background: rgb(236 254 255);
+  padding: 1rem 1.25rem;
+}
+
+.blog-article-content table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  border-radius: 18px;
+}
+
+.blog-article-content th,
+.blog-article-content td {
+  border: 1px solid rgb(226 232 240);
+  padding: 0.85rem 1rem;
+  text-align: left;
+}
+
+.blog-article-content th {
+  background: rgb(236 254 255);
+  color: rgb(14 116 144);
+}
+
+.blog-article-content td {
+  background: rgb(255 255 255);
+  color: rgb(51 65 85);
+}
+
+html[data-theme="light"] .blog-article-content,
+html[data-theme="light"] .blog-article-content p,
+html[data-theme="light"] .blog-article-content li,
+html[data-theme="light"] .blog-article-content td {
+  color: rgb(51 65 85);
+}
+
+html[data-theme="light"] .blog-article-content h2,
+html[data-theme="light"] .blog-article-content h3,
+html[data-theme="light"] .blog-article-content strong {
+  color: rgb(15 23 42);
+}
+
+html[data-theme="light"] .blog-article-content blockquote {
+  background: rgb(14 165 233 / 0.1);
+}
+
 html[data-theme="light"] input::placeholder {
   color: rgb(100 116 139 / 0.95);
 }
@@ -432,4 +601,20 @@ html[data-theme="light"] table td {
 
 html[data-theme="light"] table tbody tr:hover td {
   background-color: rgba(14, 165, 233, 0.1) !important;
+}
+
+.blog-article-content table th {
+  background-color: rgb(236 254 255) !important;
+  color: rgb(14 116 144) !important;
+  border-color: rgb(186 230 253) !important;
+}
+
+.blog-article-content table td {
+  background-color: rgb(255 255 255) !important;
+  color: rgb(51 65 85) !important;
+  border-color: rgb(226 232 240) !important;
+}
+
+.blog-article-content table tbody tr:hover td {
+  background-color: rgb(240 249 255) !important;
 }

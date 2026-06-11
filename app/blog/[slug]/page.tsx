@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { blogPosts, getBlogPost, getAllBlogPosts } from "@/lib/blog-data";
 import { getBlogSuggestions } from "@/lib/blog-suggestions";
-import { ContentPage } from "@/components/content-page";
 import { Metadata } from "next";
 
 interface BlogPostPageProps {
@@ -128,6 +127,61 @@ const faqSchemas: Record<string, Array<{ question: string; answer: string }>> = 
   ]
 };
 
+type SidebarPost = {
+  slug: string;
+  title: string;
+  description: string;
+  category: string;
+  readTime: string;
+};
+
+function SidebarPostList({
+  title,
+  posts,
+  numbered = false,
+}: {
+  title: string;
+  posts: SidebarPost[];
+  numbered?: boolean;
+}) {
+  if (posts.length === 0) return null;
+
+  return (
+    <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_50px_rgba(15,23,42,0.12)]">
+      <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-cyan-700">
+        {title}
+      </h2>
+      <div className="mt-5 space-y-3">
+        {posts.map((post, index) => (
+          <Link
+            key={post.slug}
+            href={`/blog/${post.slug}`}
+            className="group block cursor-pointer rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-cyan-300/60 hover:bg-cyan-50"
+          >
+            <div className="flex gap-3">
+              {numbered ? (
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cyan-100 text-xs font-bold text-cyan-700">
+                  {index + 1}
+                </span>
+              ) : null}
+              <div className="min-w-0">
+                <span className="text-xs font-medium text-cyan-700">{post.category}</span>
+                <h3 className="mt-2 line-clamp-2 text-sm font-semibold leading-5 text-slate-950 group-hover:text-cyan-800">
+                  {post.title}
+                </h3>
+                <p className="mt-2 line-clamp-2 text-xs leading-5 text-slate-600">
+                  {post.description}
+                </p>
+                <p className="mt-3 text-xs text-slate-500">{post.readTime} read</p>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
   const post = getBlogPost(slug);
@@ -140,6 +194,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const relatedPosts = allPosts
     .filter(p => p.category === post.category && p.slug !== post.slug)
     .slice(0, 3);
+  const suggestedPosts = allPosts
+    .filter(p => p.slug !== post.slug)
+    .slice(0, 8);
+  const leftRailPosts = suggestedPosts.slice(0, 4);
+  const rightRailPosts = relatedPosts.length > 0
+    ? relatedPosts
+    : suggestedPosts.slice(4, 8);
 
   const blogSuggestions = getBlogSuggestions(slug);
 
@@ -224,18 +285,42 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
         />
       )}
-      <ContentPage
-        eyebrow="Blog"
-        title={post.title}
-        description={post.description}
-        metadata={{
-          category: post.category,
-          publishedAt: post.publishedAt,
-          readTime: post.readTime,
-        }}
-      >
-        <article>
-          <div className="flex items-center gap-3 text-sm text-slate-400 mb-8">
+      <div className="pb-12 pt-8">
+        <section className="rounded-[34px] border border-white/10 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.18),transparent_28%),radial-gradient(circle_at_90%_10%,rgba(59,130,246,0.16),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] px-5 py-8 sm:px-8 lg:px-10">
+          <Link
+            href="/blog"
+            className="inline-flex cursor-pointer rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:border-cyan-300/25 hover:bg-cyan-300/10 hover:text-white"
+          >
+            Back to blog
+          </Link>
+          <div className="mt-8 max-w-4xl">
+            <span className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-semibold tracking-[0.22em] text-cyan-200 uppercase">
+              {post.category}
+            </span>
+            <h1 className="mt-5 text-4xl font-bold tracking-tight text-cyan-100 sm:text-5xl lg:text-6xl">
+              {post.title}
+            </h1>
+            <p className="mt-5 max-w-3xl text-base leading-8 text-slate-300 sm:text-lg">
+              {post.description}
+            </p>
+            <div className="mt-6 flex flex-wrap items-center gap-3 text-sm text-slate-400">
+              <span>{post.author}</span>
+              <span aria-hidden="true">|</span>
+              <time dateTime={post.publishedAt}>{post.publishedAt}</time>
+              <span aria-hidden="true">|</span>
+              <span>{post.readTime} read</span>
+            </div>
+          </div>
+        </section>
+
+        <div className="mt-8 grid gap-6 xl:grid-cols-[minmax(0,18rem)_minmax(0,52rem)_minmax(0,18rem)] xl:items-start">
+          <aside className="hidden xl:sticky xl:top-28 xl:block">
+            <SidebarPostList title="Latest Reads" posts={leftRailPosts} numbered />
+          </aside>
+
+          <main className="mx-auto w-full max-w-4xl">
+            <article className="rounded-[30px] border border-slate-200 bg-white px-5 py-7 shadow-[0_24px_80px_rgba(15,23,42,0.14)] sm:px-8 lg:px-10">
+          <div className="hidden">
             <span className="bg-cyan-300/10 text-cyan-200 px-2 py-1 rounded text-xs font-medium">
               {post.category}
             </span>
@@ -245,27 +330,28 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <span>{post.readTime} read</span>
           </div>
           
-          <div className="text-slate-200 space-y-4 [&_h2]:font-bold [&_h2]:text-xl [&_h2]:mt-8 [&_h2]:mb-4 [&_h3]:font-semibold [&_h3]:text-lg [&_h3]:mt-6 [&_h3]:mb-3 [&_p]:leading-relaxed [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:mb-4 [&_li]:mb-2 [&_img]:max-w-full [&_img]:h-auto blog-content">
-            <div dangerouslySetInnerHTML={{ __html: post.content }} />
-          </div>
+              <div
+                className="blog-article-content"
+                dangerouslySetInnerHTML={{ __html: post.content }}
+              />
         </article>
 
         {/* Blog Suggestions - People Also Ask */}
         {blogSuggestions.length > 0 && (
-          <div className="mt-12 pt-8 border-t border-white/10">
-            <h3 className="text-xl font-bold text-cyan-100 mb-6">People Also Ask</h3>
+          <div className="mt-12 rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_50px_rgba(15,23,42,0.10)] sm:p-6">
+            <h3 className="text-xl font-bold text-slate-950 mb-6">People Also Ask</h3>
             <div className="space-y-4">
               {blogSuggestions.map((suggestion, idx) => (
-                <details key={idx} className="group rounded-lg border border-white/10 bg-white/5 p-5 transition hover:border-cyan-300/30 hover:bg-white/8 cursor-pointer">
-                  <summary className="flex items-center justify-between font-semibold text-white group-hover:text-cyan-200 transition list-none">
+                <details key={idx} className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:border-cyan-300/60 hover:bg-cyan-50 cursor-pointer">
+                  <summary className="flex items-center justify-between font-semibold text-slate-950 group-hover:text-cyan-800 transition list-none">
                     <span>{suggestion.question}</span>
                     <span className="ml-2 text-cyan-300">▸</span>
                   </summary>
-                  <div className="mt-4 text-slate-300 space-y-3 ml-4">
+                  <div className="mt-4 text-slate-700 space-y-3 ml-4">
                     <p>{suggestion.answer}</p>
                     <Link
                       href={`/blog/${suggestion.relatedSlug}`}
-                      className="inline-flex text-cyan-300 hover:underline text-sm font-medium"
+                      className="inline-flex text-cyan-700 hover:text-cyan-900 text-sm font-medium"
                     >
                       Read full article →
                     </Link>
@@ -278,19 +364,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {/* Related Posts - Internal Linking */}
         {relatedPosts.length > 0 && (
-          <div className="mt-12 pt-8 border-t border-white/10">
-            <h3 className="text-xl font-bold text-cyan-100 mb-6">Related Articles from {post.category}</h3>
+          <div className="mt-12 rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_50px_rgba(15,23,42,0.10)] sm:p-6">
+            <h3 className="text-xl font-bold text-slate-950 mb-6">Related Articles from {post.category}</h3>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {relatedPosts.map((relatedPost) => (
                 <Link
                   key={relatedPost.slug}
                   href={`/blog/${relatedPost.slug}`}
-                  className="group rounded-lg border border-white/10 bg-white/5 p-5 transition hover:border-cyan-300/30 hover:bg-white/8"
+                  className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:border-cyan-300/60 hover:bg-cyan-50"
                 >
-                  <h4 className="font-semibold text-white group-hover:text-cyan-200 transition line-clamp-2">
+                  <h4 className="font-semibold text-slate-950 group-hover:text-cyan-800 transition line-clamp-2">
                     {relatedPost.title}
                   </h4>
-                  <p className="mt-2 text-sm text-slate-400 line-clamp-2">
+                  <p className="mt-2 text-sm text-slate-600 line-clamp-2">
                     {relatedPost.description}
                   </p>
                   <div className="mt-4 flex items-center justify-between">
@@ -302,7 +388,20 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </div>
           </div>
         )}
-      </ContentPage>
+            <section className="mt-8 grid gap-5 xl:hidden">
+              <SidebarPostList title="Suggested Articles" posts={suggestedPosts.slice(0, 4)} numbered />
+              <SidebarPostList title={`More in ${post.category}`} posts={rightRailPosts} />
+            </section>
+          </main>
+
+          <aside className="hidden xl:sticky xl:top-28 xl:block">
+            <SidebarPostList
+              title={relatedPosts.length > 0 ? `More in ${post.category}` : "Suggested Guides"}
+              posts={rightRailPosts}
+            />
+          </aside>
+        </div>
+      </div>
     </>
   );
 }
