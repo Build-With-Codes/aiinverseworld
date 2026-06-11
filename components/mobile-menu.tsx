@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useTransition, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { AccountMenu } from "@/components/account-menu";
 import { AuthDialog } from "@/components/auth-dialog";
@@ -29,7 +29,6 @@ export function MobileMenu({
   userImage,
 }: MobileMenuProps) {
   const [open, setOpen] = useState(false);
-  const [, startTransition] = useTransition();
   const menuRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -43,10 +42,11 @@ export function MobileMenu({
   }, []);
 
   const handleHover = useCallback(() => {
-    if (!open) {
-      setOpen(true);
-    }
-  }, [open]);
+    setOpen((current) => {
+      if (!current) return true;
+      return current;
+    });
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -73,13 +73,10 @@ export function MobileMenu({
       }
     }
 
-    const timeoutId = setTimeout(() => {
-      document.addEventListener("pointerdown", handlePointerDown);
-      document.addEventListener("keydown", handleKeyDown);
-    }, 0);
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      clearTimeout(timeoutId);
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
