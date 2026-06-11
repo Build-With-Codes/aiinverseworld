@@ -10,7 +10,6 @@ import {
 const WASM_PATH = "/vendor/mediapipe/tasks-vision/wasm";
 const MODEL_PATH =
   "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task";
-const ROUND_SECONDS = 20;
 const WHEEL_CONFIDENCE_THRESHOLD = 0.75;
 const WHEEL_SMOOTHING = 0.08;
 const WHEEL_DEAD_ZONE = 0.025;
@@ -348,7 +347,7 @@ function drawTruckGame(
   state: TruckState,
   steeringAngle: number,
   handsVisible: number,
-  status: "idle" | "loading" | "ready" | "playing" | "complete" | "error",
+  status: "idle" | "loading" | "playing" | "error",
 ) {
   const width = GAME_WIDTH;
   const height = GAME_HEIGHT;
@@ -541,12 +540,8 @@ export function HandDetectGameClient() {
     roadOffset: 0,
   });
 
-  const [status, setStatus] = useState<"idle" | "loading" | "ready" | "playing" | "complete" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "playing" | "error">("idle");
   const [message, setMessage] = useState("Camera and hand detection run only in your browser.");
-  const [hands, setHands] = useState(0);
-  const [roundTime, setRoundTime] = useState(ROUND_SECONDS);
-  const [bothHandsSeconds, setBothHandsSeconds] = useState(0);
-  const [bestScore, setBestScore] = useState(0);
   const [permissionState, setPermissionState] = useState("Checking...");
   const [cameraLive, setCameraLive] = useState(false);
 
@@ -581,8 +576,6 @@ export function HandDetectGameClient() {
   }
 
   useEffect(() => {
-    const stored = window.localStorage.getItem("hand-detect-best-score");
-    if (stored) setBestScore(Number(stored));
     renderTruckGame(performance.now());
 
     return () => {
@@ -613,48 +606,12 @@ export function HandDetectGameClient() {
   }, []);
 
   useEffect(() => {
-    if (status !== "playing") return;
-
-    const timer = window.setInterval(() => {
-      setRoundTime((current) => {
-        if (current <= 1) {
-          window.clearInterval(timer);
-          setStatus("complete");
-          setMessage("Round complete. Try again and keep both hands visible longer.");
-          return 0;
-        }
-
-        return current - 1;
-      });
-
-      setBothHandsSeconds((current) => {
-        if (hands < 2) return current;
-        return current + 1;
-      });
-    }, 1000);
-
-    return () => window.clearInterval(timer);
-  }, [hands, status]);
-
-  useEffect(() => {
-    if (status !== "complete") return;
-
-    setBestScore((current) => {
-      const next = Math.max(current, bothHandsSeconds);
-      window.localStorage.setItem("hand-detect-best-score", String(next));
-      return next;
-    });
-  }, [bothHandsSeconds, status]);
-
-  useEffect(() => {
     renderTruckGame(performance.now());
-  }, [hands, status]);
+  }, [status]);
 
   async function startCamera() {
     setStatus("loading");
     setMessage("Requesting camera permission...");
-    setRoundTime(ROUND_SECONDS);
-    setBothHandsSeconds(0);
     handsVisibleRef.current = 0;
     steeringAngleRef.current = 0;
     wheelPoseRef.current = null;
@@ -717,7 +674,7 @@ export function HandDetectGameClient() {
       });
 
       setStatus("playing");
-      setMessage("Hold both hands up. Every second with two hands visible adds to your score.");
+      setMessage("Drive with both hands. The game runs until you end it.");
       detectLoop();
     } catch (error) {
       setStatus("error");
@@ -787,7 +744,6 @@ export function HandDetectGameClient() {
         .filter((hand) => hand.score >= WHEEL_CONFIDENCE_THRESHOLD);
 
       handsVisibleRef.current = trackedHands.length;
-      setHands(trackedHands.length);
 
       detectedHands.slice(0, 2).forEach((landmarks, index) => {
         drawHand(context, landmarks, width, height, index === 0 ? "#22d3ee" : "#a78bfa");
@@ -822,18 +778,6 @@ export function HandDetectGameClient() {
     frameRef.current = requestAnimationFrame(detectLoop);
   }
 
-  function startRound() {
-    setRoundTime(ROUND_SECONDS);
-    setBothHandsSeconds(0);
-    wheelHistoryRef.current = [];
-    truckStateRef.current = {
-      x: GAME_WIDTH * 0.5,
-      roadOffset: 0,
-    };
-    setStatus("playing");
-    setMessage("Hold both hands up. Every second with two hands visible adds to your score.");
-  }
-
   function stopCamera() {
     if (frameRef.current) cancelAnimationFrame(frameRef.current);
     streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -844,7 +788,6 @@ export function HandDetectGameClient() {
     }
 
     setStatus("idle");
-    setHands(0);
     handsVisibleRef.current = 0;
     steeringAngleRef.current = 0;
     wheelPoseRef.current = null;
