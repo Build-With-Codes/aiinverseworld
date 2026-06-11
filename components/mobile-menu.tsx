@@ -49,6 +49,11 @@ export function MobileMenu({
       if (!isOpenRef.current) return;
 
       const target = event.target as Node;
+      const targetElement = target instanceof Element ? target : target.parentElement;
+
+      if (targetElement?.closest("[data-auth-dialog='true']")) {
+        return;
+      }
 
       if (contentRef.current?.contains(target)) {
         return;
