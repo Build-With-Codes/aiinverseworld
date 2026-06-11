@@ -6,7 +6,24 @@ interface BlogCardProps {
   featured?: boolean;
 }
 
+function getArticlePreview(post: BlogPost) {
+  const plainText = post.content
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&rsquo;|&lsquo;|&#39;/g, "'")
+    .replace(/&ldquo;|&rdquo;/g, '"')
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!plainText) return post.description;
+
+  return `${post.description} ${plainText}`.slice(0, 520);
+}
+
 export function BlogCard({ post, featured = false }: BlogCardProps) {
+  const preview = featured ? getArticlePreview(post) : post.description;
+
   return (
     <article className={`group h-full ${featured ? "lg:col-span-2" : ""}`}>
       <Link
@@ -51,7 +68,7 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
               featured ? "text-base" : "text-sm"
             } ${featured ? "line-clamp-10" : "line-clamp-4"}`}
           >
-            {post.description}
+            {preview}
           </p>
           <div className="mt-auto flex items-center justify-between gap-4 pt-5">
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">

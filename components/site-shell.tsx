@@ -1,5 +1,6 @@
 import { authOptions } from "@/auth";
 import { AccountMenu } from "@/components/account-menu";
+import { AiToolsMenu } from "@/components/ai-tools-menu";
 import { AuthDialog } from "@/components/auth-dialog";
 import { MobileMenu } from "@/components/mobile-menu";
 import { NavLink } from "@/components/nav-link";
@@ -85,13 +86,10 @@ export async function SiteShell({ children }: SiteShellProps) {
             </Link>
 
             <nav className="hidden items-center gap-2 md:flex">
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.href}
-                  href={item.href}
-                  label={item.label}
-                />
-              ))}
+              <NavLink href="/" label="Discover" />
+              <AiToolsMenu />
+              <NavLink href="/news" label="News" />
+              <NavLink href="/blog" label="Blog" />
             </nav>
 
             <div className="flex shrink-0 items-center gap-2 sm:gap-3">
