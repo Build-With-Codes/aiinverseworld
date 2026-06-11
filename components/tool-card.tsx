@@ -32,7 +32,7 @@ export function ToolCard({ tool }: ToolCardProps) {
           />
           <div>
             <p className="font-semibold text-white">{tool.name}</p>
-            <p className="text-xs text-slate-400">{tool.company} · {tool.subcategory}</p>
+            <p className="text-sm text-slate-400">{tool.company} · {tool.subcategory}</p>
           </div>
         </div>
         <div className="flex flex-col items-end gap-1.5">
@@ -48,26 +48,26 @@ export function ToolCard({ tool }: ToolCardProps) {
       </div>
 
       {/* Description */}
-      <p className="mb-4 text-sm leading-6 text-slate-300">{tool.shortDescription}</p>
+      <p className="mb-4 text-base leading-7 text-slate-300">{tool.shortDescription}</p>
 
       {/* Tags */}
-      <div className="mb-4 flex flex-wrap gap-1.5">
+      {/* <div className="mb-4 flex flex-wrap gap-1.5">
         {tool.tags.slice(0, 4).map((tag) => (
           <span
             key={tag}
-            className="rounded-full border border-white/8 bg-white/5 px-2.5 py-1 text-xs text-slate-400"
+            className="rounded-full border border-white/8 bg-white/5 px-2.5 py-1 text-sm text-slate-400"
           >
             #{tag}
           </span>
         ))}
-      </div>
+      </div> */}
 
       {/* Best for */}
       <div className="mb-4 flex flex-wrap gap-2">
         {tool.bestFor.slice(0, 3).map((item) => (
           <span
             key={item}
-            className="rounded-full border border-white/8 bg-white/6 px-3 py-1 text-xs text-slate-300"
+            className="rounded-full border border-white/8 bg-white/6 px-3 py-1 text-sm text-slate-300"
           >
             {item}
           </span>
