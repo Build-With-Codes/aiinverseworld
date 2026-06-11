@@ -72,7 +72,6 @@ function drawHand(
 }
 
 function getHandCenter(landmarks: NormalizedLandmark[], width: number, height: number) {
-  // Wrist plus finger-base landmarks are steadier than fingertips for steering.
   const palmPoints = [0, 5, 9, 13, 17]
     .map((index) => landmarks[index])
     .filter(Boolean);
@@ -525,6 +524,7 @@ export function HandDetectGameClient() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const gameCanvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const landmarkerRef = useRef<HandLandmarker | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const frameRef = useRef<number | null>(null);
@@ -623,7 +623,6 @@ export function HandDetectGameClient() {
     };
 
     try {
-      // Get getUserMedia with fallbacks
       let getUserMedia: any = null;
 
       if (navigator.mediaDevices?.getUserMedia) {
@@ -674,7 +673,7 @@ export function HandDetectGameClient() {
       });
 
       setStatus("playing");
-      setMessage("Drive with both hands. The game runs until you end it.");
+      setMessage("Drive with both hands. Click anywhere to stop.");
       detectLoop();
     } catch (error) {
       setStatus("error");
@@ -778,6 +777,19 @@ export function HandDetectGameClient() {
     frameRef.current = requestAnimationFrame(detectLoop);
   }
 
+  function toggleFullscreen() {
+    const container = containerRef.current;
+    if (!container) return;
+
+    if (!document.fullscreenElement) {
+      container.requestFullscreen?.().catch(() => {
+        console.log("Fullscreen request failed");
+      });
+    } else {
+      document.exitFullscreen?.();
+    }
+  }
+
   function stopCamera() {
     if (frameRef.current) cancelAnimationFrame(frameRef.current);
     streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -801,13 +813,7 @@ export function HandDetectGameClient() {
   return (
     <div className="mx-auto max-w-6xl">
       <section className="rounded-[32px] border border-white/10 bg-white/6 p-3 sm:p-5">
-        <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#050b14]">
-          <canvas
-            ref={gameCanvasRef}
-            className="aspect-video w-full bg-slate-950 object-cover"
-            aria-label="3D-style truck driving game"
-          />
-
+        <div ref={containerRef} className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#050b14]">
           {status === "idle" || status === "error" ? (
             <button
               type="button"
@@ -829,16 +835,29 @@ export function HandDetectGameClient() {
           ) : null}
 
           {status !== "idle" && status !== "error" ? (
-            <button
-              type="button"
-              onClick={stopCamera}
-              className="absolute right-3 top-3 rounded-2xl border border-white/15 bg-slate-950/70 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(2,6,23,0.32)] transition hover:border-cyan-300/50 hover:bg-slate-900/90"
-            >
-              End Game
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={toggleFullscreen}
+                className="absolute right-3 top-3 rounded-2xl border border-white/15 bg-slate-950/70 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(2,6,23,0.32)] transition hover:border-cyan-300/50 hover:bg-slate-900/90"
+                title="Fullscreen mode (Press ESC to exit)"
+              >
+                ⛶
+              </button>
+              <p className="absolute right-3 bottom-3 text-xs text-slate-400 pointer-events-none">
+                Press ESC to exit fullscreen
+              </p>
+            </>
           ) : null}
 
-          <div className="absolute bottom-3 right-3 w-32 overflow-hidden rounded-2xl border border-white/15 bg-slate-950/90 shadow-[0_18px_50px_rgba(2,6,23,0.42)] backdrop-blur-md sm:bottom-5 sm:right-5 sm:w-48">
+          <canvas
+            ref={gameCanvasRef}
+            className="aspect-video w-full bg-slate-950 object-cover cursor-pointer"
+            aria-label="3D-style truck driving game"
+            onClick={() => status === "playing" && stopCamera()}
+          />
+
+          <div className="absolute bottom-3 right-3 w-32 overflow-hidden rounded-2xl border border-white/15 bg-slate-950/90 shadow-[0_18px_50px_rgba(2,6,23,0.42)] backdrop-blur-md sm:bottom-5 sm:right-5 sm:w-48 pointer-events-none">
             <div className="relative">
               <video
                 ref={videoRef}
