@@ -31,24 +31,20 @@ export function MobileMenu({
   const [open, setOpen] = useState(false);
   const [, startTransition] = useTransition();
   const menuRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleToggle = useCallback(() => {
-    startTransition(() => {
-      setOpen((current) => !current);
-    });
+    setOpen((current) => !current);
   }, []);
 
   const handleClose = useCallback(() => {
-    startTransition(() => {
-      setOpen(false);
-    });
+    setOpen(false);
   }, []);
 
   const handleHover = useCallback(() => {
     if (!open) {
-      startTransition(() => {
-        setOpen(true);
-      });
+      setOpen(true);
     }
   }, [open]);
 
@@ -56,9 +52,19 @@ export function MobileMenu({
     if (!open) return;
 
     function handlePointerDown(event: PointerEvent) {
-      if (!menuRef.current?.contains(event.target as Node)) {
-        setOpen(false);
+      const target = event.target as Node;
+      
+      // Don't close if clicking inside menu content
+      if (contentRef.current?.contains(target)) {
+        return;
       }
+      
+      // Don't close if clicking the toggle button
+      if (buttonRef.current?.contains(target)) {
+        return;
+      }
+      
+      setOpen(false);
     }
 
     function handleKeyDown(event: KeyboardEvent) {
@@ -67,10 +73,13 @@ export function MobileMenu({
       }
     }
 
-    document.addEventListener("pointerdown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
+    const timeoutId = setTimeout(() => {
+      document.addEventListener("pointerdown", handlePointerDown);
+      document.addEventListener("keydown", handleKeyDown);
+    }, 0);
 
     return () => {
+      clearTimeout(timeoutId);
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
@@ -79,6 +88,7 @@ export function MobileMenu({
   return (
     <div ref={menuRef} className="relative md:hidden">
       <button
+        ref={buttonRef}
         type="button"
         aria-label={open ? "Close navigation menu" : "Open navigation menu"}
         aria-expanded={open}
@@ -94,7 +104,10 @@ export function MobileMenu({
       </button>
 
       {open ? (
-        <div className="absolute right-0 top-[calc(100%+12px)] z-50 w-[min(22rem,calc(100vw-2rem))] rounded-[28px] border border-white/10 bg-[#071120]/96 p-4 shadow-[0_24px_80px_rgba(2,6,23,0.45)] backdrop-blur-xl">
+        <div 
+          ref={contentRef}
+          className="absolute right-0 top-[calc(100%+12px)] z-50 w-[min(22rem,calc(100vw-2rem))] rounded-[28px] border border-white/10 bg-[#071120]/96 p-4 shadow-[0_24px_80px_rgba(2,6,23,0.45)] backdrop-blur-xl"
+        >
           <div className="space-y-2">
             {navItems.map((item) => (
               <Link
@@ -110,7 +123,12 @@ export function MobileMenu({
 
           <div className="mt-4 border-t border-white/10 pt-4">
             {isSignedIn ? (
-              <AccountMenu name={userName} email={userEmail} image={userImage} />
+              <AccountMenu 
+                name={userName} 
+                email={userEmail} 
+                image={userImage}
+                onClose={handleClose}
+              />
             ) : (
               <AuthDialog
                 callbackUrl="/"

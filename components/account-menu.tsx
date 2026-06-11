@@ -9,6 +9,7 @@ type AccountMenuProps = {
   name?: string | null;
   email?: string | null;
   image?: string | null;
+  onClose?: () => void;
 };
 
 const quickLinks = [
@@ -17,29 +18,25 @@ const quickLinks = [
   { href: "/contact", label: "Support" },
 ];
 
-export function AccountMenu({ name, email, image }: AccountMenuProps) {
+export function AccountMenu({ name, email, image, onClose }: AccountMenuProps) {
   const [open, setOpen] = useState(false);
   const [, startTransition] = useTransition();
   const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
   const displayName = name || "Signed In";
 
   const handleToggle = useCallback(() => {
-    startTransition(() => {
-      setOpen((current) => !current);
-    });
+    setOpen((current) => !current);
   }, []);
 
   const handleClose = useCallback(() => {
-    startTransition(() => {
-      setOpen(false);
-    });
+    setOpen(false);
   }, []);
 
   const handleHover = useCallback(() => {
     if (!open) {
-      startTransition(() => {
-        setOpen(true);
-      });
+      setOpen(true);
     }
   }, [open]);
 
@@ -47,9 +44,19 @@ export function AccountMenu({ name, email, image }: AccountMenuProps) {
     if (!open) return;
 
     function handlePointerDown(event: PointerEvent) {
-      if (!menuRef.current?.contains(event.target as Node)) {
-        setOpen(false);
+      const target = event.target as Node;
+      
+      // Don't close if clicking inside menu content
+      if (contentRef.current?.contains(target)) {
+        return;
       }
+      
+      // Don't close if clicking the toggle button
+      if (buttonRef.current?.contains(target)) {
+        return;
+      }
+      
+      setOpen(false);
     }
 
     function handleKeyDown(event: KeyboardEvent) {
@@ -58,10 +65,13 @@ export function AccountMenu({ name, email, image }: AccountMenuProps) {
       }
     }
 
-    document.addEventListener("pointerdown", handlePointerDown);
-    document.addEventListener("keydown", handleKeyDown);
+    const timeoutId = setTimeout(() => {
+      document.addEventListener("pointerdown", handlePointerDown);
+      document.addEventListener("keydown", handleKeyDown);
+    }, 0);
 
     return () => {
+      clearTimeout(timeoutId);
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
@@ -70,10 +80,11 @@ export function AccountMenu({ name, email, image }: AccountMenuProps) {
   return (
     <div ref={menuRef} className="relative">
       <button
+        ref={buttonRef}
         type="button"
         onClick={handleToggle}
         onMouseEnter={handleHover}
-        className="flex cursor-pointer items-center gap-3 rounded-full border border-white/10 bg-white/6 px-3 py-2 transition hover:border-cyan-300/40 hover:bg-cyan-300/12 hover:text-white"
+        className="flex cursor-pointer items-center gap-3 rounded-full border border-white/10 bg-white/6 px-3 py-2 transition hover:border-cyan-300/40 hover:bg-cyan-300/12 hover:text-white w-full"
       >
         {image ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -87,13 +98,16 @@ export function AccountMenu({ name, email, image }: AccountMenuProps) {
             {(displayName || "U").slice(0, 1)}
           </div>
         )}
-        <span className="hidden max-w-28 truncate text-sm font-medium text-white sm:inline">
+        <span className="hidden max-w-28 truncate text-sm font-medium text-white sm:inline flex-1">
           {displayName}
         </span>
       </button>
 
       {open ? (
-        <div className="absolute right-0 top-[calc(100%+12px)] z-50 w-72 rounded-[26px] border border-white/10 bg-[#071120]/96 p-4 shadow-[0_24px_80px_rgba(2,6,23,0.45)] backdrop-blur-xl">
+        <div 
+          ref={contentRef}
+          className="absolute right-0 top-[calc(100%+12px)] z-50 w-72 rounded-[26px] border border-white/10 bg-[#071120]/96 p-4 shadow-[0_24px_80px_rgba(2,6,23,0.45)] backdrop-blur-xl"
+        >
           <div className="rounded-[22px] border border-white/10 bg-white/6 p-4">
             <div className="flex items-center gap-3">
               {image ? (
@@ -123,7 +137,10 @@ export function AccountMenu({ name, email, image }: AccountMenuProps) {
                 key={link.href}
                 href={link.href}
                 className="block cursor-pointer rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-300 transition hover:border-cyan-300/25 hover:bg-cyan-300/10 hover:text-white"
-                onClick={handleClose}
+                onClick={() => {
+                  handleClose();
+                  onClose?.();
+                }}
               >
                 {link.label}
               </Link>
