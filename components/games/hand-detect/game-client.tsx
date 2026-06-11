@@ -1,60 +1,24 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {
+  FilesetResolver,
+  HandLandmarker,
+  type NormalizedLandmark,
+} from "@mediapipe/tasks-vision";
 
-type HandLandmark = {
-  x: number;
-  y: number;
-  z?: number;
-};
-
-type HandDetectionResult = {
-  landmarks?: HandLandmark[][];
-  handednesses?: Array<Array<{ categoryName?: string; score?: number }>>;
-};
-
-type HandLandmarkerInstance = {
-  detectForVideo: (
-    video: HTMLVideoElement,
-    timestamp: number,
-  ) => HandDetectionResult;
-  close?: () => void;
-};
-
-type FilesetResolverModule = {
-  forVisionTasks: (path: string) => Promise<unknown>;
-};
-
-type HandLandmarkerModule = {
-  createFromOptions: (
-    vision: unknown,
-    options: {
-      baseOptions: {
-        modelAssetPath: string;
-        delegate: "GPU" | "CPU";
-      };
-      runningMode: "VIDEO";
-      numHands: number;
-      minHandDetectionConfidence: number;
-      minHandPresenceConfidence: number;
-      minTrackingConfidence: number;
-    },
-  ) => Promise<HandLandmarkerInstance>;
-};
-
-declare global {
-  interface Window {
-    FilesetResolver?: FilesetResolverModule;
-    HandLandmarker?: HandLandmarkerModule;
-  }
-}
-
-const SCRIPT_ID = "mediapipe-tasks-vision";
-const SCRIPT_SRC = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/vision_bundle.js";
-const WASM_PATH = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/wasm";
+const WASM_PATH = "/vendor/mediapipe/tasks-vision/wasm";
 const MODEL_PATH =
   "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/latest/hand_landmarker.task";
 const ROUND_SECONDS = 20;
+const WHEEL_CONFIDENCE_THRESHOLD = 0.75;
+const WHEEL_SMOOTHING = 0.08;
+const WHEEL_DEAD_ZONE = 0.025;
+const WHEEL_HISTORY_SIZE = 4;
+const WHEEL_HOLD_MS = 850;
+const STEERING_ARROW_DEAD_ZONE = 0.09;
+const GAME_WIDTH = 960;
+const GAME_HEIGHT = 540;
 
 const HAND_CONNECTIONS = [
   [0, 1], [1, 2], [2, 3], [3, 4],
@@ -65,34 +29,23 @@ const HAND_CONNECTIONS = [
   [0, 17],
 ];
 
-function loadScript() {
-  return new Promise<void>((resolve, reject) => {
-    if (window.HandLandmarker && window.FilesetResolver) {
-      resolve();
-      return;
-    }
+type SteeringWheelPose = {
+  centerX: number;
+  centerY: number;
+  radius: number;
+  angle: number;
+};
 
-    const existing = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
-    if (existing) {
-      existing.addEventListener("load", () => resolve(), { once: true });
-      existing.addEventListener("error", () => reject(new Error("Could not load hand detection script.")), { once: true });
-      return;
-    }
+type SteeringDirection = "left" | "right" | "straight";
 
-    const script = document.createElement("script");
-    script.id = SCRIPT_ID;
-    script.src = SCRIPT_SRC;
-    script.crossOrigin = "anonymous";
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Could not load hand detection script."));
-    document.head.appendChild(script);
-  });
-}
+type TruckState = {
+  x: number;
+  roadOffset: number;
+};
 
 function drawHand(
   context: CanvasRenderingContext2D,
-  landmarks: HandLandmark[],
+  landmarks: NormalizedLandmark[],
   width: number,
   height: number,
   color: string,
@@ -119,13 +72,474 @@ function drawHand(
   }
 }
 
+function getHandCenter(landmarks: NormalizedLandmark[], width: number, height: number) {
+  // Wrist plus finger-base landmarks are steadier than fingertips for steering.
+  const palmPoints = [0, 5, 9, 13, 17]
+    .map((index) => landmarks[index])
+    .filter(Boolean);
+
+  const center = palmPoints.reduce(
+    (acc, landmark) => ({
+      x: acc.x + (1 - landmark.x) * width,
+      y: acc.y + landmark.y * height,
+    }),
+    { x: 0, y: 0 },
+  );
+
+  return {
+    x: center.x / palmPoints.length,
+    y: center.y / palmPoints.length,
+  };
+}
+
+function getSteeringWheelPose(
+  leftHand: NormalizedLandmark[],
+  rightHand: NormalizedLandmark[],
+  width: number,
+  height: number,
+): SteeringWheelPose {
+  const a = getHandCenter(leftHand, width, height);
+  const b = getHandCenter(rightHand, width, height);
+  const centerX = (a.x + b.x) / 2;
+  const centerY = (a.y + b.y) / 2;
+  const handDistance = Math.hypot(a.x - b.x, a.y - b.y);
+  const radius = Math.min(Math.max(handDistance * 0.42, 70), Math.min(width, height) * 0.28);
+  const angle = Math.atan2(b.y - a.y, b.x - a.x);
+
+  return { centerX, centerY, radius, angle };
+}
+
+function averageWheelPose(poses: SteeringWheelPose[]): SteeringWheelPose {
+  const total = poses.reduce(
+    (acc, pose) => ({
+      centerX: acc.centerX + pose.centerX,
+      centerY: acc.centerY + pose.centerY,
+      radius: acc.radius + pose.radius,
+      sin: acc.sin + Math.sin(pose.angle),
+      cos: acc.cos + Math.cos(pose.angle),
+    }),
+    { centerX: 0, centerY: 0, radius: 0, sin: 0, cos: 0 },
+  );
+
+  return {
+    centerX: total.centerX / poses.length,
+    centerY: total.centerY / poses.length,
+    radius: total.radius / poses.length,
+    angle: Math.atan2(total.sin / poses.length, total.cos / poses.length),
+  };
+}
+
+function smoothWheelPose(
+  current: SteeringWheelPose | null,
+  target: SteeringWheelPose,
+  width: number,
+): SteeringWheelPose {
+  if (!current) return target;
+
+  const deltaX = target.centerX - current.centerX;
+  const deltaY = target.centerY - current.centerY;
+  const deltaRadius = target.radius - current.radius;
+  const deltaAngle = Math.atan2(Math.sin(target.angle - current.angle), Math.cos(target.angle - current.angle));
+  const deadZonePixels = width * WHEEL_DEAD_ZONE;
+
+  if (
+    Math.hypot(deltaX, deltaY) < deadZonePixels &&
+    Math.abs(deltaRadius) < deadZonePixels &&
+    Math.abs(deltaAngle) < 0.015
+  ) {
+    return current;
+  }
+
+  return {
+    centerX: current.centerX + deltaX * WHEEL_SMOOTHING,
+    centerY: current.centerY + deltaY * WHEEL_SMOOTHING,
+    radius: current.radius + deltaRadius * WHEEL_SMOOTHING,
+    angle: current.angle + deltaAngle * WHEEL_SMOOTHING,
+  };
+}
+
+function drawSteeringWheel(
+  context: CanvasRenderingContext2D,
+  pose: SteeringWheelPose,
+) {
+  const { centerX, centerY, radius, angle } = pose;
+  context.save();
+  context.translate(centerX, centerY);
+  context.rotate(angle);
+
+  context.lineCap = "round";
+
+  const rimGradient = context.createRadialGradient(0, 0, radius * 0.45, 0, 0, radius * 1.05);
+  rimGradient.addColorStop(0, "rgba(15, 23, 42, 0.1)");
+  rimGradient.addColorStop(0.56, "rgba(15, 23, 42, 0.88)");
+  rimGradient.addColorStop(1, "rgba(226, 232, 240, 0.96)");
+
+  context.shadowColor = "rgba(34, 211, 238, 0.55)";
+  context.shadowBlur = 24;
+
+  context.beginPath();
+  context.arc(0, 0, radius, 0, Math.PI * 2);
+  context.lineWidth = Math.max(14, radius * 0.16);
+  context.strokeStyle = rimGradient;
+  context.stroke();
+
+  context.shadowBlur = 0;
+  context.beginPath();
+  context.arc(0, 0, radius * 0.86, 0, Math.PI * 2);
+  context.lineWidth = Math.max(3, radius * 0.035);
+  context.strokeStyle = "rgba(34, 211, 238, 0.88)";
+  context.stroke();
+
+  context.beginPath();
+  context.arc(0, 0, radius * 0.67, 0, Math.PI * 2);
+  context.lineWidth = Math.max(2, radius * 0.025);
+  context.strokeStyle = "rgba(148, 163, 184, 0.45)";
+  context.stroke();
+
+  for (const [start, end] of [
+    [-0.95, -0.35],
+    [Math.PI + 0.35, Math.PI + 0.95],
+  ]) {
+    context.beginPath();
+    context.arc(0, 0, radius, start, end);
+    context.lineWidth = Math.max(18, radius * 0.2);
+    context.strokeStyle = "rgba(2, 6, 23, 0.88)";
+    context.stroke();
+
+    context.beginPath();
+    context.arc(0, 0, radius, start + 0.08, end - 0.08);
+    context.lineWidth = Math.max(4, radius * 0.045);
+    context.strokeStyle = "rgba(34, 211, 238, 0.72)";
+    context.stroke();
+  }
+
+  const spokeGradient = context.createLinearGradient(-radius * 0.7, 0, radius * 0.7, 0);
+  spokeGradient.addColorStop(0, "rgba(15, 23, 42, 0.92)");
+  spokeGradient.addColorStop(0.5, "rgba(226, 232, 240, 0.92)");
+  spokeGradient.addColorStop(1, "rgba(15, 23, 42, 0.92)");
+
+  context.lineWidth = Math.max(8, radius * 0.09);
+  context.strokeStyle = spokeGradient;
+  for (const angle of [-Math.PI / 2, Math.PI / 6, (5 * Math.PI) / 6]) {
+    context.beginPath();
+    context.moveTo(Math.cos(angle) * radius * 0.24, Math.sin(angle) * radius * 0.24);
+    context.lineTo(Math.cos(angle) * radius * 0.72, Math.sin(angle) * radius * 0.72);
+    context.stroke();
+  }
+
+  const hubGradient = context.createRadialGradient(-radius * 0.08, -radius * 0.1, 0, 0, 0, radius * 0.33);
+  hubGradient.addColorStop(0, "rgba(248, 250, 252, 0.98)");
+  hubGradient.addColorStop(0.42, "rgba(30, 41, 59, 0.95)");
+  hubGradient.addColorStop(1, "rgba(2, 6, 23, 0.96)");
+
+  context.beginPath();
+  context.arc(0, 0, radius * 0.31, 0, Math.PI * 2);
+  context.fillStyle = hubGradient;
+  context.fill();
+  context.lineWidth = Math.max(3, radius * 0.04);
+  context.strokeStyle = "rgba(34, 211, 238, 0.95)";
+  context.stroke();
+
+  context.beginPath();
+  context.arc(0, 0, radius * 0.16, 0, Math.PI * 2);
+  context.fillStyle = "rgba(34, 211, 238, 0.16)";
+  context.fill();
+
+  context.lineWidth = Math.max(2, radius * 0.02);
+  context.strokeStyle = "rgba(226, 232, 240, 0.8)";
+  for (const x of [-radius * 0.5, radius * 0.5]) {
+    context.beginPath();
+    context.roundRect(x - radius * 0.08, -radius * 0.08, radius * 0.16, radius * 0.16, radius * 0.04);
+    context.stroke();
+  }
+
+  context.fillStyle = "rgba(224, 242, 254, 0.95)";
+  context.font = `700 ${Math.max(11, radius * 0.11)}px Segoe UI, Arial, sans-serif`;
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+  context.fillText("AI", 0, -radius * 0.01);
+
+  context.fillStyle = "rgba(34, 211, 238, 0.95)";
+  for (const x of [-radius * 0.22, 0, radius * 0.22]) {
+    context.beginPath();
+    context.arc(x, radius * 0.43, Math.max(3, radius * 0.035), 0, Math.PI * 2);
+    context.fill();
+  }
+
+  context.restore();
+}
+
+function drawSteeringArrow(
+  context: CanvasRenderingContext2D,
+  direction: SteeringDirection,
+  width: number,
+  height: number,
+) {
+  const centerX = width / 2;
+  const centerY = Math.max(78, height * 0.18);
+  const arrowLength = Math.min(width * 0.34, 220);
+  const arrowWidth = Math.max(18, Math.min(width, height) * 0.045);
+  const headSize = arrowWidth * 2.35;
+  const color = direction === "straight" ? "#22d3ee" : "#facc15";
+
+  context.save();
+  context.shadowColor = "rgba(0, 0, 0, 0.45)";
+  context.shadowBlur = 18;
+  context.fillStyle = "rgba(2, 6, 23, 0.62)";
+  context.beginPath();
+  context.roundRect(centerX - 148, centerY - 48, 296, 96, 28);
+  context.fill();
+
+  context.shadowColor = direction === "straight" ? "rgba(34, 211, 238, 0.75)" : "rgba(250, 204, 21, 0.75)";
+  context.shadowBlur = 24;
+  context.strokeStyle = color;
+  context.fillStyle = color;
+  context.lineWidth = arrowWidth;
+  context.lineCap = "round";
+  context.lineJoin = "round";
+
+  if (direction === "straight") {
+    const startY = centerY + arrowLength * 0.22;
+    const endY = centerY - arrowLength * 0.22;
+
+    context.beginPath();
+    context.moveTo(centerX, startY);
+    context.lineTo(centerX, endY);
+    context.stroke();
+
+    context.beginPath();
+    context.moveTo(centerX, endY - headSize * 0.72);
+    context.lineTo(centerX - headSize * 0.62, endY + headSize * 0.08);
+    context.lineTo(centerX + headSize * 0.62, endY + headSize * 0.08);
+    context.closePath();
+    context.fill();
+  } else {
+    const sign = direction === "right" ? 1 : -1;
+    const startX = centerX - sign * arrowLength * 0.34;
+    const endX = centerX + sign * arrowLength * 0.34;
+
+    context.beginPath();
+    context.moveTo(startX, centerY);
+    context.lineTo(endX, centerY);
+    context.stroke();
+
+    context.beginPath();
+    context.moveTo(endX + sign * headSize * 0.72, centerY);
+    context.lineTo(endX - sign * headSize * 0.08, centerY - headSize * 0.62);
+    context.lineTo(endX - sign * headSize * 0.08, centerY + headSize * 0.62);
+    context.closePath();
+    context.fill();
+  }
+
+  context.restore();
+}
+
+function getSteeringDirection(angle: number): SteeringDirection {
+  if (Math.abs(angle) < STEERING_ARROW_DEAD_ZONE) return "straight";
+  return angle > 0 ? "right" : "left";
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function drawTruckGame(
+  context: CanvasRenderingContext2D,
+  state: TruckState,
+  steeringAngle: number,
+  handsVisible: number,
+  status: "idle" | "loading" | "ready" | "playing" | "complete" | "error",
+) {
+  const width = GAME_WIDTH;
+  const height = GAME_HEIGHT;
+  const horizonY = height * 0.36;
+  const vanishingX = width * 0.5;
+  const roadBottomHalf = width * 0.62;
+  const roadHorizonHalf = width * 0.08;
+  const truckWidth = 184;
+  const truckHeight = 132;
+  const truckY = height - 126;
+  const direction = getSteeringDirection(steeringAngle);
+  const steeringStrength = clamp(steeringAngle / 0.62, -1, 1);
+  const truckLaneX = clamp(state.x, 138, width - 138);
+
+  context.clearRect(0, 0, width, height);
+
+  const sky = context.createLinearGradient(0, 0, 0, horizonY);
+  sky.addColorStop(0, "#0f172a");
+  sky.addColorStop(0.5, "#075985");
+  sky.addColorStop(1, "#38bdf8");
+  context.fillStyle = sky;
+  context.fillRect(0, 0, width, horizonY);
+
+  context.fillStyle = "rgba(255, 255, 255, 0.72)";
+  for (const cloud of [
+    { x: 130, y: 78, s: 0.8 },
+    { x: 560, y: 68, s: 0.62 },
+    { x: 812, y: 112, s: 0.9 },
+  ]) {
+    context.beginPath();
+    context.ellipse(cloud.x, cloud.y, 40 * cloud.s, 18 * cloud.s, 0, 0, Math.PI * 2);
+    context.ellipse(cloud.x + 36 * cloud.s, cloud.y + 2, 34 * cloud.s, 16 * cloud.s, 0, 0, Math.PI * 2);
+    context.ellipse(cloud.x - 34 * cloud.s, cloud.y + 5, 28 * cloud.s, 14 * cloud.s, 0, 0, Math.PI * 2);
+    context.fill();
+  }
+
+  context.fillStyle = "#166534";
+  context.fillRect(0, horizonY, width, height - horizonY);
+  context.fillStyle = "#14532d";
+  for (let x = -80; x < width + 120; x += 120) {
+    context.beginPath();
+    context.moveTo(x, horizonY);
+    context.lineTo(x + 38, horizonY - 74);
+    context.lineTo(x + 82, horizonY);
+    context.closePath();
+    context.fill();
+  }
+
+  const roadGradient = context.createLinearGradient(0, horizonY, 0, height);
+  roadGradient.addColorStop(0, "#475569");
+  roadGradient.addColorStop(0.38, "#334155");
+  roadGradient.addColorStop(1, "#0f172a");
+  context.fillStyle = roadGradient;
+  context.beginPath();
+  context.moveTo(vanishingX - roadHorizonHalf, horizonY);
+  context.lineTo(vanishingX + roadHorizonHalf, horizonY);
+  context.lineTo(vanishingX + roadBottomHalf, height);
+  context.lineTo(vanishingX - roadBottomHalf, height);
+  context.closePath();
+  context.fill();
+
+  context.strokeStyle = "rgba(226, 232, 240, 0.9)";
+  context.lineWidth = 5;
+  for (const side of [-1, 1]) {
+    context.beginPath();
+    context.moveTo(vanishingX + side * roadHorizonHalf, horizonY);
+    context.lineTo(vanishingX + side * roadBottomHalf, height);
+    context.stroke();
+  }
+
+  for (const lane of [-0.34, 0, 0.34]) {
+    context.strokeStyle = lane === 0 ? "rgba(250, 204, 21, 0.85)" : "rgba(248, 250, 252, 0.72)";
+    context.lineWidth = lane === 0 ? 6 : 4;
+    for (let i = -1; i < 9; i += 1) {
+      const progress = ((i * 90 + state.roadOffset * 1.9) % 720) / 720;
+      const y1 = horizonY + Math.pow(progress, 1.75) * (height - horizonY);
+      const y2 = horizonY + Math.pow(Math.min(progress + 0.08, 1), 1.75) * (height - horizonY);
+      if (y2 <= horizonY + 3 || y1 >= height) continue;
+
+      const p1 = (y1 - horizonY) / (height - horizonY);
+      const p2 = (y2 - horizonY) / (height - horizonY);
+      const half1 = roadHorizonHalf + (roadBottomHalf - roadHorizonHalf) * p1;
+      const half2 = roadHorizonHalf + (roadBottomHalf - roadHorizonHalf) * p2;
+
+      context.beginPath();
+      context.moveTo(vanishingX + lane * half1, y1);
+      context.lineTo(vanishingX + lane * half2, y2);
+      context.stroke();
+    }
+  }
+
+  context.fillStyle = "rgba(2, 6, 23, 0.28)";
+  context.fillRect(0, height - 26, width, 26);
+
+  context.save();
+  context.translate(truckLaneX, truckY);
+  context.rotate(steeringStrength * 0.045);
+
+  context.shadowColor = "rgba(2, 6, 23, 0.5)";
+  context.shadowBlur = 22;
+  context.fillStyle = "rgba(2, 6, 23, 0.5)";
+  context.beginPath();
+  context.ellipse(0, truckHeight * 0.48, truckWidth * 0.62, 22, 0, 0, Math.PI * 2);
+  context.fill();
+  context.shadowBlur = 0;
+
+  const trailerGradient = context.createLinearGradient(0, -truckHeight * 0.74, 0, truckHeight * 0.18);
+  trailerGradient.addColorStop(0, "#67e8f9");
+  trailerGradient.addColorStop(0.55, "#0891b2");
+  trailerGradient.addColorStop(1, "#0e7490");
+  context.fillStyle = trailerGradient;
+  context.beginPath();
+  context.roundRect(-truckWidth * 0.42, -truckHeight * 0.72, truckWidth * 0.84, truckHeight * 0.76, 16);
+  context.fill();
+
+  context.strokeStyle = "rgba(224, 242, 254, 0.75)";
+  context.lineWidth = 4;
+  context.stroke();
+
+  context.fillStyle = "#f97316";
+  context.beginPath();
+  context.roundRect(-truckWidth * 0.34, -truckHeight * 0.06, truckWidth * 0.68, truckHeight * 0.38, 14);
+  context.fill();
+
+  context.fillStyle = "#bae6fd";
+  context.beginPath();
+  context.roundRect(-truckWidth * 0.24, -truckHeight * 0.01, truckWidth * 0.48, truckHeight * 0.16, 8);
+  context.fill();
+
+  context.fillStyle = "#0f172a";
+  context.beginPath();
+  context.roundRect(-truckWidth * 0.54, truckHeight * 0.2, truckWidth * 1.08, truckHeight * 0.18, 10);
+  context.fill();
+
+  context.fillStyle = "#ef4444";
+  context.fillRect(-truckWidth * 0.32, truckHeight * 0.24, 18, 12);
+  context.fillRect(truckWidth * 0.22, truckHeight * 0.24, 18, 12);
+  context.fillStyle = "#facc15";
+  context.fillRect(-truckWidth * 0.08, truckHeight * 0.25, 16, 9);
+  context.fillRect(truckWidth * 0.02, truckHeight * 0.25, 16, 9);
+
+  for (const wheelX of [-truckWidth * 0.42, truckWidth * 0.42]) {
+    context.fillStyle = "#020617";
+    context.beginPath();
+    context.arc(wheelX, truckHeight * 0.33, 25, 0, Math.PI * 2);
+    context.fill();
+    context.fillStyle = "#94a3b8";
+    context.beginPath();
+    context.arc(wheelX, truckHeight * 0.33, 11, 0, Math.PI * 2);
+    context.fill();
+  }
+
+  context.restore();
+
+  drawSteeringArrow(context, direction, width, height);
+
+  context.fillStyle = "rgba(2, 6, 23, 0.7)";
+  context.beginPath();
+  context.roundRect(width - 274, height - 82, 250, 52, 16);
+  context.fill();
+  context.fillStyle = "#334155";
+  context.fillRect(width - 244, height - 56, 190, 8);
+  context.fillStyle = "#22d3ee";
+  context.beginPath();
+  context.arc(width - 149 + steeringStrength * 92, height - 52, 13, 0, Math.PI * 2);
+  context.fill();
+
+  if (status === "idle" || status === "error" || status === "loading") {
+    context.fillStyle = "rgba(2, 6, 23, 0.62)";
+    context.fillRect(0, 0, width, height);
+  }
+}
+
 export function HandDetectGameClient() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const landmarkerRef = useRef<HandLandmarkerInstance | null>(null);
+  const gameCanvasRef = useRef<HTMLCanvasElement>(null);
+  const landmarkerRef = useRef<HandLandmarker | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const frameRef = useRef<number | null>(null);
+  const lastGameTimeRef = useRef(0);
   const lastVideoTimeRef = useRef(-1);
+  const wheelPoseRef = useRef<SteeringWheelPose | null>(null);
+  const wheelHistoryRef = useRef<SteeringWheelPose[]>([]);
+  const lastValidWheelAtRef = useRef(0);
+  const steeringAngleRef = useRef(0);
+  const handsVisibleRef = useRef(0);
+  const truckStateRef = useRef<TruckState>({
+    x: GAME_WIDTH * 0.5,
+    roadOffset: 0,
+  });
 
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "playing" | "complete" | "error">("idle");
   const [message, setMessage] = useState("Camera and hand detection run only in your browser.");
@@ -133,17 +547,69 @@ export function HandDetectGameClient() {
   const [roundTime, setRoundTime] = useState(ROUND_SECONDS);
   const [bothHandsSeconds, setBothHandsSeconds] = useState(0);
   const [bestScore, setBestScore] = useState(0);
-  const [permissionState, setPermissionState] = useState("Waiting");
+  const [permissionState, setPermissionState] = useState("Checking...");
+  const [cameraLive, setCameraLive] = useState(false);
+
+  const statusRef = useRef(status);
+  statusRef.current = status;
+
+  function renderTruckGame(now: number) {
+    const canvas = gameCanvasRef.current;
+    if (!canvas) return;
+
+    canvas.width = GAME_WIDTH;
+    canvas.height = GAME_HEIGHT;
+
+    const context = canvas.getContext("2d");
+    if (!context) return;
+
+    const lastTime = lastGameTimeRef.current || now;
+    const delta = Math.min((now - lastTime) / 16.67, 2);
+    lastGameTimeRef.current = now;
+
+    const truckState = truckStateRef.current;
+    const gameActive = statusRef.current === "playing";
+    const displaySteeringAngle = gameActive && handsVisibleRef.current >= 2 ? steeringAngleRef.current : 0;
+    const steering = clamp(displaySteeringAngle / 0.62, -1, 1);
+
+    if (gameActive) {
+      truckState.roadOffset = (truckState.roadOffset + 7.5 * delta) % 96;
+      truckState.x = clamp(truckState.x + steering * 7.2 * delta, 138, GAME_WIDTH - 138);
+    }
+
+    drawTruckGame(context, truckState, displaySteeringAngle, handsVisibleRef.current, statusRef.current);
+  }
 
   useEffect(() => {
     const stored = window.localStorage.getItem("hand-detect-best-score");
     if (stored) setBestScore(Number(stored));
+    renderTruckGame(performance.now());
 
     return () => {
       if (frameRef.current) cancelAnimationFrame(frameRef.current);
       streamRef.current?.getTracks().forEach((track) => track.stop());
       landmarkerRef.current?.close?.();
     };
+  }, []);
+
+  useEffect(() => {
+    async function checkPermission() {
+      try {
+        const result = await navigator.permissions.query({
+          name: "camera" as PermissionName,
+        });
+
+        setPermissionState(result.state.charAt(0).toUpperCase() + result.state.slice(1));
+
+        result.addEventListener("change", () => {
+          setPermissionState(result.state.charAt(0).toUpperCase() + result.state.slice(1));
+        });
+      } catch {
+        setPermissionState("Unknown");
+      }
+    }
+
+    checkPermission();
   }, []);
 
   useEffect(() => {
@@ -180,9 +646,24 @@ export function HandDetectGameClient() {
     });
   }, [bothHandsSeconds, status]);
 
+  useEffect(() => {
+    renderTruckGame(performance.now());
+  }, [hands, status]);
+
   async function startCamera() {
     setStatus("loading");
-    setMessage("Loading hand model and requesting camera permission...");
+    setMessage("Requesting camera permission...");
+    setRoundTime(ROUND_SECONDS);
+    setBothHandsSeconds(0);
+    handsVisibleRef.current = 0;
+    steeringAngleRef.current = 0;
+    wheelPoseRef.current = null;
+    wheelHistoryRef.current = [];
+    lastValidWheelAtRef.current = 0;
+    truckStateRef.current = {
+      x: GAME_WIDTH * 0.5,
+      roadOffset: 0,
+    };
 
     try {
       // Get getUserMedia with fallbacks
@@ -199,31 +680,8 @@ export function HandDetectGameClient() {
       }
 
       if (!getUserMedia) {
-        // Check if localhost on HTTP
-        if (window.location.hostname === "localhost" && window.location.protocol === "http:") {
-          throw new Error("Camera works on localhost. Try accessing via http://localhost:3000 or use HTTPS.");
-        }
         throw new Error("Camera not supported. Use Chrome, Firefox, Edge, or Safari on HTTPS.");
       }
-
-      await loadScript();
-
-      if (!window.FilesetResolver || !window.HandLandmarker) {
-        throw new Error("Hand detection library did not initialize.");
-      }
-
-      const vision = await window.FilesetResolver.forVisionTasks(WASM_PATH);
-      landmarkerRef.current = await window.HandLandmarker.createFromOptions(vision, {
-        baseOptions: {
-          modelAssetPath: MODEL_PATH,
-          delegate: "GPU",
-        },
-        runningMode: "VIDEO",
-        numHands: 2,
-        minHandDetectionConfidence: 0.55,
-        minHandPresenceConfidence: 0.55,
-        minTrackingConfidence: 0.55,
-      });
 
       const stream = await getUserMedia({
         video: {
@@ -235,20 +693,55 @@ export function HandDetectGameClient() {
       });
 
       streamRef.current = stream;
-      setPermissionState("Allowed");
+      setPermissionState("Granted");
+      setCameraLive(true);
 
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
       }
 
-      setStatus("ready");
-      setMessage("Camera ready. Start the round and keep both hands inside the frame.");
+      setMessage("Camera is live. Loading hand detection model...");
+
+      const vision = await FilesetResolver.forVisionTasks(WASM_PATH);
+      landmarkerRef.current = await HandLandmarker.createFromOptions(vision, {
+        baseOptions: {
+          modelAssetPath: MODEL_PATH,
+          delegate: "GPU",
+        },
+        runningMode: "VIDEO",
+        numHands: 2,
+        minHandDetectionConfidence: 0.75,
+        minHandPresenceConfidence: 0.75,
+        minTrackingConfidence: 0.75,
+      });
+
+      setStatus("playing");
+      setMessage("Hold both hands up. Every second with two hands visible adds to your score.");
       detectLoop();
     } catch (error) {
       setStatus("error");
-      const errorMsg = error instanceof Error ? error.message : "Could not start hand detection.";
-      setPermissionState("Blocked or unavailable");
+      let errorMsg = "Could not start hand detection.";
+
+      if (error instanceof DOMException) {
+        switch (error.name) {
+          case "NotAllowedError":
+            errorMsg = "Camera permission denied. Check browser settings to allow camera access.";
+            setPermissionState("Denied");
+            break;
+          case "NotFoundError":
+            errorMsg = "No camera detected on this device.";
+            break;
+          case "NotReadableError":
+            errorMsg = "Camera is already in use by another application.";
+            break;
+          default:
+            errorMsg = error.message;
+        }
+      } else if (error instanceof Error) {
+        errorMsg = error.message;
+      }
+
       setMessage(errorMsg);
       console.error("Camera error:", error);
     }
@@ -260,6 +753,7 @@ export function HandDetectGameClient() {
     const landmarker = landmarkerRef.current;
 
     if (!video || !canvas || !landmarker) {
+      renderTruckGame(performance.now());
       frameRef.current = requestAnimationFrame(detectLoop);
       return;
     }
@@ -271,22 +765,58 @@ export function HandDetectGameClient() {
 
     const context = canvas.getContext("2d");
     if (!context) {
+      renderTruckGame(performance.now());
       frameRef.current = requestAnimationFrame(detectLoop);
       return;
     }
 
     context.clearRect(0, 0, width, height);
+    const now = performance.now();
+    renderTruckGame(now);
 
     if (video.currentTime !== lastVideoTimeRef.current) {
       lastVideoTimeRef.current = video.currentTime;
-      const result = landmarker.detectForVideo(video, performance.now());
+      const result = landmarker.detectForVideo(video, now);
       const detectedHands = result.landmarks ?? [];
+      const trackedHands = detectedHands
+        .map((landmarks, index) => ({
+          landmarks,
+          score: result.handedness?.[index]?.[0]?.score ?? 1,
+          center: getHandCenter(landmarks, width, height),
+        }))
+        .filter((hand) => hand.score >= WHEEL_CONFIDENCE_THRESHOLD);
 
-      setHands(detectedHands.length);
+      handsVisibleRef.current = trackedHands.length;
+      setHands(trackedHands.length);
 
       detectedHands.slice(0, 2).forEach((landmarks, index) => {
         drawHand(context, landmarks, width, height, index === 0 ? "#22d3ee" : "#a78bfa");
       });
+
+      if (trackedHands.length >= 2) {
+        const [leftHand, rightHand] = trackedHands
+          .slice(0, 2)
+          .sort((a, b) => a.center.x - b.center.x);
+        const targetPose = getSteeringWheelPose(leftHand.landmarks, rightHand.landmarks, width, height);
+
+        wheelHistoryRef.current.push(targetPose);
+        if (wheelHistoryRef.current.length > WHEEL_HISTORY_SIZE) {
+          wheelHistoryRef.current.shift();
+        }
+
+        const averagedPose = averageWheelPose(wheelHistoryRef.current);
+        const smoothedPose = smoothWheelPose(wheelPoseRef.current, averagedPose, width);
+        wheelPoseRef.current = smoothedPose;
+        steeringAngleRef.current = averagedPose.angle;
+        lastValidWheelAtRef.current = now;
+        drawSteeringWheel(context, smoothedPose);
+      } else if (wheelPoseRef.current && now - lastValidWheelAtRef.current < WHEEL_HOLD_MS) {
+        steeringAngleRef.current = 0;
+        drawSteeringWheel(context, wheelPoseRef.current);
+      } else {
+        steeringAngleRef.current = 0;
+        wheelHistoryRef.current = [];
+      }
     }
 
     frameRef.current = requestAnimationFrame(detectLoop);
@@ -295,6 +825,11 @@ export function HandDetectGameClient() {
   function startRound() {
     setRoundTime(ROUND_SECONDS);
     setBothHandsSeconds(0);
+    wheelHistoryRef.current = [];
+    truckStateRef.current = {
+      x: GAME_WIDTH * 0.5,
+      roadOffset: 0,
+    };
     setStatus("playing");
     setMessage("Hold both hands up. Every second with two hands visible adds to your score.");
   }
@@ -303,128 +838,76 @@ export function HandDetectGameClient() {
     if (frameRef.current) cancelAnimationFrame(frameRef.current);
     streamRef.current?.getTracks().forEach((track) => track.stop());
     streamRef.current = null;
+
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+
     setStatus("idle");
     setHands(0);
+    handsVisibleRef.current = 0;
+    steeringAngleRef.current = 0;
+    wheelPoseRef.current = null;
+    wheelHistoryRef.current = [];
+    lastValidWheelAtRef.current = 0;
+    setCameraLive(false);
     setPermissionState("Stopped");
     setMessage("Camera stopped. Nothing was uploaded.");
   }
 
-  const progress = Math.round((bothHandsSeconds / ROUND_SECONDS) * 100);
-
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1.2fr)_24rem]">
-      <section className="rounded-[32px] border border-white/10 bg-white/6 p-4 sm:p-6">
+    <div className="mx-auto max-w-6xl">
+      <section className="rounded-[32px] border border-white/10 bg-white/6 p-3 sm:p-5">
         <div className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#050b14]">
-          <video
-            ref={videoRef}
-            className="aspect-video w-full scale-x-[-1] bg-slate-950 object-cover"
-            playsInline
-            muted
+          <canvas
+            ref={gameCanvasRef}
+            className="aspect-video w-full bg-slate-950 object-cover"
+            aria-label="3D-style truck driving game"
           />
-          <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
-          {status === "idle" || status === "loading" || status === "error" ? (
-            <div className="absolute inset-0 flex items-center justify-center bg-slate-950/72 p-6 text-center backdrop-blur-sm">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-200">
-                  Browser-only hand tracking
-                </p>
-                <h2 className="mt-3 text-2xl font-semibold text-white">
-                  Detect both hands in real time
-                </h2>
-                <p className="mt-3 max-w-md text-sm leading-7 text-slate-300">
-                  The model, webcam frames, and scoring all stay on this device.
-                </p>
-              </div>
-            </div>
+
+          {status === "idle" || status === "error" ? (
+            <button
+              type="button"
+              onClick={startCamera}
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white px-7 py-4 text-base font-semibold text-slate-950 shadow-[0_18px_60px_rgba(2,6,23,0.45)] transition hover:bg-cyan-200"
+            >
+              Start Game
+            </button>
           ) : null}
+
+          {status === "loading" ? (
+            <button
+              type="button"
+              disabled
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white/85 px-7 py-4 text-base font-semibold text-slate-950 shadow-[0_18px_60px_rgba(2,6,23,0.45)]"
+            >
+              Loading
+            </button>
+          ) : null}
+
+          {status !== "idle" && status !== "error" ? (
+            <button
+              type="button"
+              onClick={stopCamera}
+              className="absolute right-3 top-3 rounded-2xl border border-white/15 bg-slate-950/70 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(2,6,23,0.32)] transition hover:border-cyan-300/50 hover:bg-slate-900/90"
+            >
+              End Game
+            </button>
+          ) : null}
+
+          <div className="absolute bottom-3 right-3 w-32 overflow-hidden rounded-2xl border border-white/15 bg-slate-950/90 shadow-[0_18px_50px_rgba(2,6,23,0.42)] backdrop-blur-md sm:bottom-5 sm:right-5 sm:w-48">
+            <div className="relative">
+              <video
+                ref={videoRef}
+                className="aspect-video w-full scale-x-[-1] bg-slate-950 object-cover"
+                playsInline
+                muted
+              />
+              <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
+            </div>
+          </div>
         </div>
       </section>
-
-      <aside className="space-y-5">
-        <div className="rounded-[32px] border border-white/10 bg-white/6 p-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-cyan-200">
-            Two-Hand Challenge
-          </p>
-          <h2 className="mt-3 text-3xl font-semibold text-white">
-            Keep both hands visible
-          </h2>
-          <p className="mt-3 text-sm leading-7 text-slate-300">{message}</p>
-
-          <div className="mt-6 grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-white/10 bg-[#071120] p-4">
-              <p className="text-xs text-slate-400">Hands detected</p>
-              <p className="mt-2 text-3xl font-semibold text-white">{hands}</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-[#071120] p-4">
-              <p className="text-xs text-slate-400">Time left</p>
-              <p className="mt-2 text-3xl font-semibold text-white">{roundTime}s</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-[#071120] p-4">
-              <p className="text-xs text-slate-400">Score</p>
-              <p className="mt-2 text-3xl font-semibold text-white">{bothHandsSeconds}</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-[#071120] p-4">
-              <p className="text-xs text-slate-400">Best</p>
-              <p className="mt-2 text-3xl font-semibold text-white">{bestScore}</p>
-            </div>
-          </div>
-
-          <div className="mt-5 h-3 overflow-hidden rounded-full bg-white/10">
-            <div
-              className="h-full rounded-full bg-cyan-300 transition-all"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            {status === "idle" || status === "error" ? (
-              <button
-                type="button"
-                onClick={startCamera}
-                className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
-              >
-                Enable Camera
-              </button>
-            ) : null}
-            {status === "ready" || status === "complete" ? (
-              <button
-                type="button"
-                onClick={startRound}
-                className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
-              >
-                Start Round
-              </button>
-            ) : null}
-            {status !== "idle" ? (
-              <button
-                type="button"
-                onClick={stopCamera}
-                className="rounded-2xl border border-white/10 px-5 py-3 text-sm font-medium text-slate-300 transition hover:border-cyan-300/30 hover:text-white"
-              >
-                Stop Camera
-              </button>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="rounded-[28px] border border-white/10 bg-white/6 p-5">
-          <p className="text-sm font-semibold text-white">Browser status</p>
-          <div className="mt-4 space-y-3 text-sm text-slate-300">
-            <div className="flex items-center justify-between gap-4">
-              <span>Camera permission</span>
-              <span className="font-semibold text-cyan-200">{permissionState}</span>
-            </div>
-            <div className="flex items-center justify-between gap-4">
-              <span>Server upload</span>
-              <span className="font-semibold text-emerald-200">None</span>
-            </div>
-            <div className="flex items-center justify-between gap-4">
-              <span>Max hands</span>
-              <span className="font-semibold text-violet-200">2</span>
-            </div>
-          </div>
-        </div>
-      </aside>
     </div>
   );
 }

@@ -5,16 +5,16 @@ import { SectionHeading } from "@/components/section-heading";
 import { buildUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Browser Hand Detection Game | AiverseWorld",
+  title: "Motion Truck Drive | AiverseWorld",
   description:
-    "Play a browser-only two-hand detection game using webcam hand tracking. Camera frames stay on your device.",
+    "Drive a motion-controlled truck game with browser-only two-hand steering. Camera frames stay on your device.",
   alternates: {
     canonical: buildUrl("/games/hand-detect"),
   },
   openGraph: {
-    title: "Browser Hand Detection Game | AiverseWorld",
+    title: "Motion Truck Drive | AiverseWorld",
     description:
-      "Detect both hands in real time using client-side browser hand tracking.",
+      "Steer a 3D-style truck road game with two-hand browser motion tracking.",
     url: buildUrl("/games/hand-detect"),
     type: "website",
   },
@@ -26,8 +26,8 @@ export default function HandDetectGamePage() {
       <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
         <SectionHeading
           eyebrow="Game"
-          title="Two-Hand Browser Detection"
-          description="Enable your camera, hold both hands inside the frame, and score points while detection runs locally in your browser."
+          title="Motion Truck Drive"
+          description="Steer the truck with both hands while motion tracking runs locally in your browser."
         />
         <div className="grid gap-4 lg:grid-cols-4">
           {[
