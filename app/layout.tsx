@@ -54,7 +54,7 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
 
   return (
-    <html lang="en" className="h-full antialiased" suppressHydrationWarning>
+    <html lang="en" className="h-full antialiased" suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         <script
           id="theme-init"

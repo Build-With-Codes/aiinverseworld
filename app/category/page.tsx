@@ -35,6 +35,7 @@ export default function CategoriesPage() {
           placeholder="Search categories…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          suppressHydrationWarning
           className="w-full rounded-2xl border border-white/10 bg-[#071120] px-5 py-4 text-sm text-slate-300 outline-none placeholder:text-slate-500 focus:border-cyan-300/30"
         />
         {query && (

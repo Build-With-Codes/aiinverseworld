@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useTransition, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { GoogleSignOutButton } from "@/components/google-auth-button";
 
@@ -20,62 +20,54 @@ const quickLinks = [
 
 export function AccountMenu({ name, email, image, onClose }: AccountMenuProps) {
   const [open, setOpen] = useState(false);
-  const [, startTransition] = useTransition();
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const isOpenRef = useRef(false);
   const displayName = name || "Signed In";
 
   const handleToggle = useCallback(() => {
-    setOpen((current) => !current);
+    isOpenRef.current = !isOpenRef.current;
+    setOpen(isOpenRef.current);
   }, []);
 
   const handleClose = useCallback(() => {
+    isOpenRef.current = false;
     setOpen(false);
-  }, []);
-
-  const handleHover = useCallback(() => {
-    if (!open) {
-      setOpen(true);
-    }
-  }, [open]);
+    onClose?.();
+  }, [onClose]);
 
   useEffect(() => {
-    if (!open) return;
-
     function handlePointerDown(event: PointerEvent) {
+      if (!isOpenRef.current) return;
+
       const target = event.target as Node;
-      
-      // Don't close if clicking inside menu content
+
       if (contentRef.current?.contains(target)) {
         return;
       }
-      
-      // Don't close if clicking the toggle button
+
       if (buttonRef.current?.contains(target)) {
         return;
       }
-      
-      setOpen(false);
+
+      handleClose();
     }
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setOpen(false);
+      if (event.key === "Escape" && isOpenRef.current) {
+        handleClose();
       }
     }
 
-    const timeoutId = setTimeout(() => {
-      document.addEventListener("pointerdown", handlePointerDown);
-      document.addEventListener("keydown", handleKeyDown);
-    }, 0);
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      clearTimeout(timeoutId);
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [open]);
+  }, [handleClose]);
 
   return (
     <div ref={menuRef} className="relative">
@@ -83,7 +75,6 @@ export function AccountMenu({ name, email, image, onClose }: AccountMenuProps) {
         ref={buttonRef}
         type="button"
         onClick={handleToggle}
-        onMouseEnter={handleHover}
         className="flex cursor-pointer items-center gap-3 rounded-full border border-white/10 bg-white/6 px-3 py-2 transition hover:border-cyan-300/40 hover:bg-cyan-300/12 hover:text-white w-full"
       >
         {image ? (
@@ -104,7 +95,7 @@ export function AccountMenu({ name, email, image, onClose }: AccountMenuProps) {
       </button>
 
       {open ? (
-        <div 
+        <div
           ref={contentRef}
           className="absolute right-0 top-[calc(100%+12px)] z-50 w-72 rounded-[26px] border border-white/10 bg-[#071120]/96 p-4 shadow-[0_24px_80px_rgba(2,6,23,0.45)] backdrop-blur-xl"
         >
@@ -137,10 +128,7 @@ export function AccountMenu({ name, email, image, onClose }: AccountMenuProps) {
                 key={link.href}
                 href={link.href}
                 className="block cursor-pointer rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-300 transition hover:border-cyan-300/25 hover:bg-cyan-300/10 hover:text-white"
-                onClick={() => {
-                  handleClose();
-                  onClose?.();
-                }}
+                onClick={handleClose}
               >
                 {link.label}
               </Link>

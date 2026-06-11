@@ -41,6 +41,7 @@ export default function ComparePage() {
             <select
               value={left}
               onChange={(e) => setLeft(e.target.value)}
+              suppressHydrationWarning
               className="w-full rounded-2xl border border-white/10 bg-[#071120] px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/30"
             >
               <option value="">Select a tool…</option>
@@ -59,6 +60,7 @@ export default function ComparePage() {
             <select
               value={right}
               onChange={(e) => setRight(e.target.value)}
+              suppressHydrationWarning
               className="w-full rounded-2xl border border-white/10 bg-[#071120] px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/30"
             >
               <option value="">Select a tool…</option>
@@ -91,6 +93,7 @@ export default function ComparePage() {
             placeholder="Search comparisons…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            suppressHydrationWarning
             className="w-full rounded-2xl border border-white/10 bg-[#071120] px-4 py-2.5 text-sm text-slate-300 outline-none placeholder:text-slate-500 focus:border-cyan-300/30 sm:w-72"
           />
         </div>

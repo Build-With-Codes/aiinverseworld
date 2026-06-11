@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { signIn } from "next-auth/react";
 
@@ -14,12 +14,6 @@ type AuthDialogProps = {
   title?: string;
   description?: string;
 };
-
-const authBenefits = [
-  "Post verified reviews",
-  "Save and compare tools",
-  "Sync your shortlist across devices",
-];
 
 export function AuthDialog({
   callbackUrl,
@@ -37,10 +31,48 @@ export function AuthDialog({
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target as Node;
+
+      // If click is inside the panel, don't close
+      if (panelRef.current?.contains(target)) {
+        return;
+      }
+
+      // If click is inside container but outside panel, close
+      if (containerRef.current?.contains(target)) {
+        setOpen(false);
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    }
+
+    // Small delay to ensure DOM is ready
+    const timerId = setTimeout(() => {
+      document.addEventListener("pointerdown", handlePointerDown, true);
+      document.addEventListener("keydown", handleKeyDown);
+    }, 0);
+
+    return () => {
+      clearTimeout(timerId);
+      document.removeEventListener("pointerdown", handlePointerDown, true);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
 
   async function handleCredentialsSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -68,14 +100,15 @@ export function AuthDialog({
 
   const dialog =
     open && mounted ? (
-      <div className="fixed inset-0 z-[70] flex items-start justify-center overflow-y-auto p-3 sm:items-center sm:p-4">
-        <button
-          type="button"
-          aria-label="Close sign in dialog"
-          onClick={() => setOpen(false)}
-          className="auth-dialog__overlay absolute inset-0 backdrop-blur-md"
-        />
-        <div className="auth-dialog__panel relative z-10 my-3 w-full max-w-xl overflow-y-auto rounded-[34px] border border-white/10 shadow-[0_30px_120px_rgba(2,6,23,0.55)] sm:my-0">
+      <div
+        ref={containerRef}
+        className="fixed inset-0 z-[70] flex items-start justify-center overflow-y-auto p-3 sm:items-center sm:p-4 backdrop-blur-md"
+      >
+        <div
+          ref={panelRef}
+          className="auth-dialog__panel relative z-10 my-3 w-full max-w-xl overflow-y-auto rounded-[34px] border border-white/10 shadow-[0_30px_120px_rgba(2,6,23,0.55)] sm:my-0"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="auth-dialog__content bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.18),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(99,102,241,0.16),_transparent_30%)] p-5 sm:p-8">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">

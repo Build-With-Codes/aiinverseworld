@@ -32,44 +32,38 @@ export function MobileMenu({
   const menuRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const isOpenRef = useRef(false);
 
   const handleToggle = useCallback(() => {
-    setOpen((current) => !current);
+    isOpenRef.current = !isOpenRef.current;
+    setOpen(isOpenRef.current);
   }, []);
 
   const handleClose = useCallback(() => {
+    isOpenRef.current = false;
     setOpen(false);
   }, []);
 
-  const handleHover = useCallback(() => {
-    setOpen((current) => {
-      if (!current) return true;
-      return current;
-    });
-  }, []);
-
   useEffect(() => {
-    if (!open) return;
-
     function handlePointerDown(event: PointerEvent) {
+      if (!isOpenRef.current) return;
+
       const target = event.target as Node;
-      
-      // Don't close if clicking inside menu content
+
       if (contentRef.current?.contains(target)) {
         return;
       }
-      
-      // Don't close if clicking the toggle button
+
       if (buttonRef.current?.contains(target)) {
         return;
       }
-      
-      setOpen(false);
+
+      handleClose();
     }
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setOpen(false);
+      if (event.key === "Escape" && isOpenRef.current) {
+        handleClose();
       }
     }
 
@@ -80,7 +74,7 @@ export function MobileMenu({
       document.removeEventListener("pointerdown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [open]);
+  }, [handleClose]);
 
   return (
     <div ref={menuRef} className="relative md:hidden">
@@ -90,7 +84,6 @@ export function MobileMenu({
         aria-label={open ? "Close navigation menu" : "Open navigation menu"}
         aria-expanded={open}
         onClick={handleToggle}
-        onMouseEnter={handleHover}
         className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/6 text-slate-200 transition hover:border-cyan-300/40 hover:bg-cyan-300/12 hover:text-white"
       >
         <span className="flex flex-col gap-1.5">
@@ -101,7 +94,7 @@ export function MobileMenu({
       </button>
 
       {open ? (
-        <div 
+        <div
           ref={contentRef}
           className="absolute right-0 top-[calc(100%+12px)] z-50 w-[min(22rem,calc(100vw-2rem))] rounded-[28px] border border-white/10 bg-[#071120]/96 p-4 shadow-[0_24px_80px_rgba(2,6,23,0.45)] backdrop-blur-xl"
         >
@@ -120,9 +113,9 @@ export function MobileMenu({
 
           <div className="mt-4 border-t border-white/10 pt-4">
             {isSignedIn ? (
-              <AccountMenu 
-                name={userName} 
-                email={userEmail} 
+              <AccountMenu
+                name={userName}
+                email={userEmail}
                 image={userImage}
                 onClose={handleClose}
               />
