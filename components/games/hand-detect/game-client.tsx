@@ -18,6 +18,18 @@ const WHEEL_HOLD_MS = 850;
 const STEERING_ARROW_DEAD_ZONE = 0.09;
 const GAME_WIDTH = 960;
 const GAME_HEIGHT = 540;
+const OBSTACLE_SPAWN_INTERVAL = 118;
+const OBSTACLE_SPEED = 0.0037;
+const TRUCK_STEERING_SPEED = 6.8;
+const TRUCK_STEERING_BOOST = 4.2;
+const OBSTACLE_REMOVE_Z = 0.96;
+const CRASH_Z_MIN = 0.78;
+const CRASH_Z_MAX = 0.93;
+const CRASH_LANE_OVERLAP = 0.2;
+const DISTANCE_PER_FRAME = 0.018;
+const LANE_DIVIDERS = [-1 / 3, 1 / 3];
+const VEHICLE_LANES = [-2 / 3, 0, 2 / 3];
+const VEHICLE_COLORS = ["#ef4444", "#eab308", "#a855f7", "#22c55e", "#f97316"];
 
 const HAND_CONNECTIONS = [
   [0, 1], [1, 2], [2, 3], [3, 4],
@@ -40,6 +52,13 @@ type SteeringDirection = "left" | "right" | "straight";
 type TruckState = {
   x: number;
   roadOffset: number;
+};
+
+type VehicleObstacle = {
+  id: number;
+  lane: number;
+  z: number;
+  color: string;
 };
 
 function drawHand(
@@ -344,9 +363,13 @@ function clamp(value: number, min: number, max: number) {
 function drawTruckGame(
   context: CanvasRenderingContext2D,
   state: TruckState,
+  obstacles: VehicleObstacle[],
+  score: number,
+  distance: number,
+  elapsedSeconds: number,
   steeringAngle: number,
   handsVisible: number,
-  status: "idle" | "loading" | "playing" | "error",
+  status: "idle" | "loading" | "playing" | "crashed" | "error",
 ) {
   const width = GAME_WIDTH;
   const height = GAME_HEIGHT;
@@ -417,9 +440,9 @@ function drawTruckGame(
     context.stroke();
   }
 
-  for (const lane of [-0.34, 0, 0.34]) {
-    context.strokeStyle = lane === 0 ? "rgba(250, 204, 21, 0.85)" : "rgba(248, 250, 252, 0.72)";
-    context.lineWidth = lane === 0 ? 6 : 4;
+  for (const laneDivider of LANE_DIVIDERS) {
+    context.strokeStyle = "rgba(248, 250, 252, 0.72)";
+    context.lineWidth = 5;
     for (let i = -1; i < 9; i += 1) {
       const progress = ((i * 90 + state.roadOffset * 1.9) % 720) / 720;
       const y1 = horizonY + Math.pow(progress, 1.75) * (height - horizonY);
@@ -432,14 +455,64 @@ function drawTruckGame(
       const half2 = roadHorizonHalf + (roadBottomHalf - roadHorizonHalf) * p2;
 
       context.beginPath();
-      context.moveTo(vanishingX + lane * half1, y1);
-      context.lineTo(vanishingX + lane * half2, y2);
+      context.moveTo(vanishingX + laneDivider * half1, y1);
+      context.lineTo(vanishingX + laneDivider * half2, y2);
       context.stroke();
     }
   }
 
   context.fillStyle = "rgba(2, 6, 23, 0.28)";
   context.fillRect(0, height - 26, width, 26);
+
+  for (const obstacle of [...obstacles].sort((a, b) => a.z - b.z)) {
+    const y = horizonY + Math.pow(obstacle.z, 1.75) * (height - horizonY);
+    const progress = clamp((y - horizonY) / (height - horizonY), 0, 1);
+    const halfRoad = roadHorizonHalf + (roadBottomHalf - roadHorizonHalf) * progress;
+    const vehicleX = vanishingX + obstacle.lane * halfRoad;
+    const scale = 0.22 + obstacle.z * 1.04;
+    const vehicleWidth = 68 * scale;
+    const vehicleHeight = 92 * scale;
+
+    if (y < horizonY + 4 || y > height + vehicleHeight) continue;
+
+    context.save();
+    context.translate(vehicleX, y);
+    context.shadowColor = "rgba(2, 6, 23, 0.45)";
+    context.shadowBlur = 12 * scale;
+    context.fillStyle = "rgba(2, 6, 23, 0.36)";
+    context.beginPath();
+    context.ellipse(0, vehicleHeight * 0.42, vehicleWidth * 0.58, vehicleHeight * 0.14, 0, 0, Math.PI * 2);
+    context.fill();
+    context.shadowBlur = 0;
+
+    context.fillStyle = obstacle.color;
+    context.beginPath();
+    context.roundRect(-vehicleWidth * 0.5, -vehicleHeight * 0.46, vehicleWidth, vehicleHeight * 0.78, 12 * scale);
+    context.fill();
+
+    context.fillStyle = "rgba(186, 230, 253, 0.92)";
+    context.beginPath();
+    context.roundRect(-vehicleWidth * 0.32, -vehicleHeight * 0.34, vehicleWidth * 0.64, vehicleHeight * 0.22, 7 * scale);
+    context.fill();
+
+    context.fillStyle = "#020617";
+    context.beginPath();
+    context.roundRect(-vehicleWidth * 0.55, vehicleHeight * 0.18, vehicleWidth * 1.1, vehicleHeight * 0.15, 8 * scale);
+    context.fill();
+
+    context.fillStyle = "#fef3c7";
+    context.fillRect(-vehicleWidth * 0.35, vehicleHeight * 0.2, 11 * scale, 9 * scale);
+    context.fillRect(vehicleWidth * 0.22, vehicleHeight * 0.2, 11 * scale, 9 * scale);
+
+    for (const wheelX of [-vehicleWidth * 0.38, vehicleWidth * 0.38]) {
+      context.fillStyle = "#020617";
+      context.beginPath();
+      context.arc(wheelX, vehicleHeight * 0.34, 12 * scale, 0, Math.PI * 2);
+      context.fill();
+    }
+
+    context.restore();
+  }
 
   context.save();
   context.translate(truckLaneX, truckY);
@@ -503,6 +576,20 @@ function drawTruckGame(
 
   drawSteeringArrow(context, direction, width, height);
 
+  context.fillStyle = "rgba(2, 6, 23, 0.72)";
+  context.beginPath();
+  context.roundRect(24, 24, 260, 92, 18);
+  context.fill();
+
+  context.fillStyle = "#e0f2fe";
+  context.font = "800 16px Segoe UI, Arial, sans-serif";
+  context.fillText(`Score ${score}`, 46, 54);
+
+  context.fillStyle = "#cbd5e1";
+  context.font = "700 14px Segoe UI, Arial, sans-serif";
+  context.fillText(`Distance ${distance} m`, 46, 82);
+  context.fillText(`Time ${elapsedSeconds}s`, 178, 82);
+
   context.fillStyle = "rgba(2, 6, 23, 0.7)";
   context.beginPath();
   context.roundRect(width - 274, height - 82, 250, 52, 16);
@@ -514,7 +601,7 @@ function drawTruckGame(
   context.arc(width - 149 + steeringStrength * 92, height - 52, 13, 0, Math.PI * 2);
   context.fill();
 
-  if (status === "idle" || status === "error" || status === "loading") {
+  if (status === "idle" || status === "error" || status === "loading" || status === "crashed") {
     context.fillStyle = "rgba(2, 6, 23, 0.62)";
     context.fillRect(0, 0, width, height);
   }
@@ -535,12 +622,18 @@ export function HandDetectGameClient() {
   const lastValidWheelAtRef = useRef(0);
   const steeringAngleRef = useRef(0);
   const handsVisibleRef = useRef(0);
+  const obstacleIdRef = useRef(0);
+  const obstacleSpawnRef = useRef(0);
+  const obstaclesRef = useRef<VehicleObstacle[]>([]);
+  const distanceRef = useRef(0);
+  const elapsedSecondsRef = useRef(0);
+  const scoreRef = useRef(0);
   const truckStateRef = useRef<TruckState>({
     x: GAME_WIDTH * 0.5,
     roadOffset: 0,
   });
 
-  const [status, setStatus] = useState<"idle" | "loading" | "playing" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "playing" | "crashed" | "error">("idle");
   const [message, setMessage] = useState("Camera and hand detection run only in your browser.");
   const [permissionState, setPermissionState] = useState("Checking...");
   const [cameraLive, setCameraLive] = useState(false);
@@ -569,10 +662,57 @@ export function HandDetectGameClient() {
 
     if (gameActive) {
       truckState.roadOffset = (truckState.roadOffset + 7.5 * delta) % 96;
-      truckState.x = clamp(truckState.x + steering * 7.2 * delta, 138, GAME_WIDTH - 138);
+      const steeringSpeed = TRUCK_STEERING_SPEED + Math.abs(steering) * TRUCK_STEERING_BOOST;
+      truckState.x = clamp(truckState.x + steering * steeringSpeed * delta, 138, GAME_WIDTH - 138);
+      distanceRef.current += DISTANCE_PER_FRAME * delta * 60;
+      elapsedSecondsRef.current += delta / 60;
+      scoreRef.current = Math.floor(distanceRef.current + elapsedSecondsRef.current * 8);
+      obstacleSpawnRef.current += delta;
+
+      if (obstacleSpawnRef.current >= OBSTACLE_SPAWN_INTERVAL && obstaclesRef.current.length < 4) {
+        const lane = VEHICLE_LANES[Math.floor(Math.random() * VEHICLE_LANES.length)];
+        const color = VEHICLE_COLORS[obstacleIdRef.current % VEHICLE_COLORS.length];
+        obstacleIdRef.current += 1;
+        obstacleSpawnRef.current = 0;
+        obstaclesRef.current = [
+          ...obstaclesRef.current,
+          { id: obstacleIdRef.current, lane, z: 0.02, color },
+        ];
+      }
+
+      obstaclesRef.current = obstaclesRef.current
+        .map((obstacle) => ({
+          ...obstacle,
+          z: obstacle.z + OBSTACLE_SPEED * delta,
+        }))
+        .filter((obstacle) => obstacle.z < OBSTACLE_REMOVE_Z);
+
+      const truckLane = clamp((truckState.x - GAME_WIDTH * 0.5) / (GAME_WIDTH * 0.62), -1, 1);
+      const crashed = obstaclesRef.current.some(
+        (obstacle) =>
+          obstacle.z > CRASH_Z_MIN &&
+          obstacle.z < CRASH_Z_MAX &&
+          Math.abs(obstacle.lane - truckLane) < CRASH_LANE_OVERLAP,
+      );
+
+      if (crashed) {
+        statusRef.current = "crashed";
+        setStatus("crashed");
+        setMessage("Crash. Start again when ready.");
+      }
     }
 
-    drawTruckGame(context, truckState, displaySteeringAngle, handsVisibleRef.current, statusRef.current);
+    drawTruckGame(
+      context,
+      truckState,
+      obstaclesRef.current,
+      scoreRef.current,
+      Math.floor(distanceRef.current),
+      Math.floor(elapsedSecondsRef.current),
+      displaySteeringAngle,
+      handsVisibleRef.current,
+      statusRef.current,
+    );
   }
 
   useEffect(() => {
@@ -609,18 +749,28 @@ export function HandDetectGameClient() {
     renderTruckGame(performance.now());
   }, [status]);
 
-  async function startCamera() {
-    setStatus("loading");
-    setMessage("Requesting camera permission...");
+  function resetDriveState() {
     handsVisibleRef.current = 0;
     steeringAngleRef.current = 0;
     wheelPoseRef.current = null;
     wheelHistoryRef.current = [];
     lastValidWheelAtRef.current = 0;
+    obstacleIdRef.current = 0;
+    obstacleSpawnRef.current = 0;
+    obstaclesRef.current = [];
+    distanceRef.current = 0;
+    elapsedSecondsRef.current = 0;
+    scoreRef.current = 0;
     truckStateRef.current = {
       x: GAME_WIDTH * 0.5,
       roadOffset: 0,
     };
+  }
+
+  async function startCamera() {
+    setStatus("loading");
+    setMessage("Requesting camera permission...");
+    resetDriveState();
 
     try {
       let getUserMedia: any = null;
@@ -701,6 +851,14 @@ export function HandDetectGameClient() {
       setMessage(errorMsg);
       console.error("Camera error:", error);
     }
+  }
+
+  function restartDrive() {
+    resetDriveState();
+    statusRef.current = "playing";
+    setStatus("playing");
+    setMessage("Drive with both hands. Click anywhere to stop.");
+    renderTruckGame(performance.now());
   }
 
   function detectLoop() {
@@ -800,11 +958,7 @@ export function HandDetectGameClient() {
     }
 
     setStatus("idle");
-    handsVisibleRef.current = 0;
-    steeringAngleRef.current = 0;
-    wheelPoseRef.current = null;
-    wheelHistoryRef.current = [];
-    lastValidWheelAtRef.current = 0;
+    resetDriveState();
     setCameraLive(false);
     setPermissionState("Stopped");
     setMessage("Camera stopped. Nothing was uploaded.");
@@ -814,11 +968,11 @@ export function HandDetectGameClient() {
     <div className="mx-auto max-w-6xl">
       <section className="rounded-[32px] border border-white/10 bg-white/6 p-3 sm:p-5">
         <div ref={containerRef} className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#050b14]">
-          {status === "idle" || status === "error" ? (
+          {status === "idle" || status === "error" || status === "crashed" ? (
             <button
               type="button"
-              onClick={startCamera}
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white px-7 py-4 text-base font-semibold text-slate-950 shadow-[0_18px_60px_rgba(2,6,23,0.45)] transition hover:bg-cyan-200"
+              onClick={status === "crashed" ? restartDrive : startCamera}
+              className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white px-7 py-4 text-base font-semibold text-slate-950 shadow-[0_18px_60px_rgba(2,6,23,0.45)] transition hover:bg-cyan-200"
             >
               Start Game
             </button>
@@ -828,18 +982,18 @@ export function HandDetectGameClient() {
             <button
               type="button"
               disabled
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white/85 px-7 py-4 text-base font-semibold text-slate-950 shadow-[0_18px_60px_rgba(2,6,23,0.45)]"
+              className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white/85 px-7 py-4 text-base font-semibold text-slate-950 shadow-[0_18px_60px_rgba(2,6,23,0.45)]"
             >
               Loading
             </button>
           ) : null}
 
-          {status !== "idle" && status !== "error" ? (
+          {status !== "idle" && status !== "error" && status !== "crashed" ? (
             <>
               <button
                 type="button"
                 onClick={toggleFullscreen}
-                className="absolute right-3 top-3 rounded-2xl border border-white/15 bg-slate-950/70 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(2,6,23,0.32)] transition hover:border-cyan-300/50 hover:bg-slate-900/90"
+                className="absolute right-3 top-3 z-20 rounded-2xl border border-white/15 bg-slate-950/70 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(2,6,23,0.32)] transition hover:border-cyan-300/50 hover:bg-slate-900/90"
                 title="Fullscreen mode (Press ESC to exit)"
               >
                 ⛶
