@@ -1,5 +1,4 @@
-export const AUTH_SERVICE_BASE_URL =
-  process.env.AUTH_SERVICE_BASE_URL ?? "http://localhost:3002";
+import { AIVERSE_AUTH_BASE_URL } from "@/lib/service-urls";
 
 type AuthServiceResult = {
   user: {
@@ -16,7 +15,7 @@ type AuthServiceResult = {
 };
 
 async function postToAuthService<T>(path: string, body: Record<string, unknown>) {
-  const response = await fetch(`${AUTH_SERVICE_BASE_URL}${path}`, {
+  const response = await fetch(`${AIVERSE_AUTH_BASE_URL}${path}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -57,7 +56,7 @@ export async function loginWithGoogleAuthService(input: { idToken: string }) {
 }
 
 export async function logoutFromAuthService(sessionToken: string) {
-  const response = await fetch(`${AUTH_SERVICE_BASE_URL}/api/auth/logout`, {
+  const response = await fetch(`${AIVERSE_AUTH_BASE_URL}/api/auth/logout`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${sessionToken}`,

@@ -7,5 +7,5 @@ export const authSecretConfigured = Boolean(
 );
 
 export const authServiceConfigured = Boolean(
-  process.env.AUTH_SERVICE_BASE_URL || process.env.NEXT_PUBLIC_AUTH_SERVICE_ENABLED,
+  process.env.AIVERSE_AUTH_BASE_URL || process.env.NEXT_PUBLIC_AUTH_SERVICE_ENABLED,
 );

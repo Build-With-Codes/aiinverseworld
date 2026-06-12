@@ -6,6 +6,7 @@ import {
   HandLandmarker,
   type NormalizedLandmark,
 } from "@mediapipe/tasks-vision";
+import { requestUserMedia } from "@/lib/browser-media";
 
 const WASM_PATH = "/vendor/mediapipe/tasks-vision/wasm";
 const MODEL_PATH =
@@ -773,30 +774,14 @@ export function HandDetectGameClient() {
     resetDriveState();
 
     try {
-      let getUserMedia: any = null;
-
-      if (navigator.mediaDevices?.getUserMedia) {
-        getUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
-      } else if ((navigator as any).getUserMedia) {
-        getUserMedia = (navigator as any).getUserMedia.bind(navigator);
-      } else if ((navigator as any).webkitGetUserMedia) {
-        getUserMedia = (navigator as any).webkitGetUserMedia.bind(navigator);
-      } else if ((navigator as any).mozGetUserMedia) {
-        getUserMedia = (navigator as any).mozGetUserMedia.bind(navigator);
-      }
-
-      if (!getUserMedia) {
-        throw new Error("Camera not supported. Use Chrome, Firefox, Edge, or Safari on HTTPS.");
-      }
-
-      const stream = await getUserMedia({
+      const stream = await requestUserMedia({
         video: {
           facingMode: "user",
           width: { ideal: 1280 },
           height: { ideal: 720 },
         },
         audio: false,
-      });
+      }, "camera");
 
       streamRef.current = stream;
       setPermissionState("Granted");

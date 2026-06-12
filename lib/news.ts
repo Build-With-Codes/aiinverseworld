@@ -28,9 +28,6 @@ type NewsResponse = {
   };
 };
 
-export const NEWS_API_BASE_URL =
-  process.env.NEWS_API_BASE_URL ?? "http://localhost:3001";
-
 export async function getNewsArticles(limit = 6, category?: string) {
   const searchParams = new URLSearchParams({ limit: String(limit) });
 
@@ -40,7 +37,7 @@ export async function getNewsArticles(limit = 6, category?: string) {
 
   try {
     const response = await fetch(
-      `${NEWS_API_BASE_URL}/api/news?${searchParams.toString()}`,
+      `${AIVERSE_WORLD_BASE_URL}/api/news?${searchParams.toString()}`,
       {
         cache: "no-store",
       },
@@ -56,3 +53,4 @@ export async function getNewsArticles(limit = 6, category?: string) {
     return [];
   }
 }
+import { AIVERSE_WORLD_BASE_URL } from "@/lib/service-urls";
