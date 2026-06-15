@@ -1,3 +1,13 @@
+export interface BlogPostTheme {
+  primary: string;
+  primaryLight: string;
+  primaryDark: string;
+  accent: string;
+  accentLight: string;
+  gradientFrom: string;
+  gradientTo: string;
+}
+
 export interface BlogPost {
   slug: string;
   title: string;
@@ -9,6 +19,7 @@ export interface BlogPost {
   author: string;
   seoTitle?: string;
   metaDescription?: string;
+  theme: BlogPostTheme;
 }
 
 export const blogPosts: BlogPost[] = [
@@ -22,6 +33,15 @@ export const blogPosts: BlogPost[] = [
     author: "AI Inverse World Team",
     seoTitle: "Claude Mythos 5: Anthropic's New State-of-the-Art Model for Cybersecurity and Biology Research",
     metaDescription: "Discover Claude Mythos 5, Anthropic's specialized AI model for cybersecurity, biology research, and healthcare. Learn about state-of-the-art capabilities, premium pricing, and limited availability.",
+    theme: {
+      primary: "purple",
+      primaryLight: "purple-300",
+      primaryDark: "purple-900",
+      accent: "purple",
+      accentLight: "purple-100",
+      gradientFrom: "rgba(168,85,247,0.18)",
+      gradientTo: "rgba(139,92,246,0.16)",
+    },
     content: `
 <h2>Claude Mythos 5: A New Era in Specialized AI</h2>
 
@@ -318,6 +338,15 @@ export const blogPosts: BlogPost[] = [
     author: "AI Inverse World Team",
     seoTitle: "10 Best AI Tools in 2026: Complete Guide for Productivity & Creativity",
     metaDescription: "Discover the best AI tools in 2026, including ChatGPT, Claude, Gemini, Midjourney, Cursor, and more. Learn which AI platforms can boost productivity, creativity, and business growth.",
+    theme: {
+      primary: "blue",
+      primaryLight: "blue-300",
+      primaryDark: "blue-900",
+      accent: "blue",
+      accentLight: "blue-100",
+      gradientFrom: "rgba(59,130,246,0.18)",
+      gradientTo: "rgba(37,99,235,0.16)",
+    },
     content: `
 <h2>Introduction</h2>
 
@@ -503,6 +532,15 @@ export const blogPosts: BlogPost[] = [
     author: "AI Inverse World Team",
     seoTitle: "25 Free AI Tools You Can Use Today (2026 Edition)",
     metaDescription: "Explore 25 free AI tools for writing, coding, image generation, video editing, research, and productivity. Discover the best free AI platforms you can start using today.",
+    theme: {
+      primary: "green",
+      primaryLight: "green-300",
+      primaryDark: "green-900",
+      accent: "green",
+      accentLight: "green-100",
+      gradientFrom: "rgba(34,197,94,0.18)",
+      gradientTo: "rgba(21,128,61,0.16)",
+    },
     content: `
 <h2>Introduction</h2>
 
@@ -673,6 +711,15 @@ export const blogPosts: BlogPost[] = [
     author: "AI Inverse World Team",
     seoTitle: "ChatGPT vs Claude vs Gemini: Which AI Is Best in 2026?",
     metaDescription: "Compare ChatGPT, Claude, and Gemini across writing, coding, research, productivity, and pricing. Discover which AI assistant is best for your needs in 2026.",
+    theme: {
+      primary: "indigo",
+      primaryLight: "indigo-300",
+      primaryDark: "indigo-900",
+      accent: "indigo",
+      accentLight: "indigo-100",
+      gradientFrom: "rgba(99,102,241,0.18)",
+      gradientTo: "rgba(79,70,229,0.16)",
+    },
     content: `
 <h2>Introduction</h2>
 
@@ -958,6 +1005,15 @@ export const blogPosts: BlogPost[] = [
     author: "AI Inverse World Team",
     seoTitle: "How to Make Money with AI in 2026: 15 Proven Methods",
     metaDescription: "Learn 15 practical ways to make money with AI in 2026. Discover opportunities in content creation, freelancing, automation, AI tools, digital products, and online businesses.",
+    theme: {
+      primary: "amber",
+      primaryLight: "amber-300",
+      primaryDark: "amber-900",
+      accent: "amber",
+      accentLight: "amber-100",
+      gradientFrom: "rgba(251,146,60,0.18)",
+      gradientTo: "rgba(217,119,6,0.16)",
+    },
     content: `
 <h2>Introduction</h2>
 
@@ -1281,6 +1337,15 @@ export const blogPosts: BlogPost[] = [
     author: "AI Inverse World Team",
     seoTitle: "AI Tools Every Content Creator Should Know in 2026",
     metaDescription: "Discover the best AI tools for content creators in 2026. Explore AI writing, image generation, video editing, SEO, research, and productivity tools for bloggers, YouTubers, and marketers.",
+    theme: {
+      primary: "rose",
+      primaryLight: "rose-300",
+      primaryDark: "rose-900",
+      accent: "rose",
+      accentLight: "rose-100",
+      gradientFrom: "rgba(244,63,94,0.18)",
+      gradientTo: "rgba(190,24,93,0.16)",
+    },
     content: `
 <h2>Introduction</h2>
 
@@ -1676,6 +1741,15 @@ export const blogPosts: BlogPost[] = [
     author: "AI Inverse World Team",
     seoTitle: "50 ChatGPT Prompts That Save Hours Every Week",
     metaDescription: "Discover 50 powerful ChatGPT prompts for productivity, writing, marketing, SEO, research, business, coding, learning, and content creation. Save hours every week with effective prompts.",
+    theme: {
+      primary: "teal",
+      primaryLight: "teal-300",
+      primaryDark: "teal-900",
+      accent: "teal",
+      accentLight: "teal-100",
+      gradientFrom: "rgba(20,184,166,0.18)",
+      gradientTo: "rgba(15,118,110,0.16)",
+    },
     content: `
 <h2>Introduction</h2>
 
@@ -1922,6 +1996,15 @@ export const blogPosts: BlogPost[] = [
     author: "AI Inverse World Team",
     seoTitle: "Best Free AI Image Generators Compared in 2026",
     metaDescription: "Compare the best free AI image generators in 2026. Explore Leonardo AI, Ideogram, Adobe Firefly, Canva AI, and more. Find the right tool for your design needs.",
+    theme: {
+      primary: "orange",
+      primaryLight: "orange-300",
+      primaryDark: "orange-900",
+      accent: "orange",
+      accentLight: "orange-100",
+      gradientFrom: "rgba(249,115,22,0.18)",
+      gradientTo: "rgba(194,65,12,0.16)",
+    },
     content: `
 <h2>Introduction</h2>
 
@@ -2138,6 +2221,15 @@ export const blogPosts: BlogPost[] = [
     author: "AI Inverse World Team",
     seoTitle: "10 AI Trends That Will Shape 2027",
     metaDescription: "Discover the 10 most important AI trends expected to shape 2027. Learn about AI agents, personalized assistants, multimodal AI, video generation, and more.",
+    theme: {
+      primary: "fuchsia",
+      primaryLight: "fuchsia-300",
+      primaryDark: "fuchsia-900",
+      accent: "fuchsia",
+      accentLight: "fuchsia-100",
+      gradientFrom: "rgba(232,121,249,0.18)",
+      gradientTo: "rgba(162,28,175,0.16)",
+    },
     content: `
 <h2>Introduction</h2>
 

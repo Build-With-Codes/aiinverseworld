@@ -286,7 +286,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         />
       )}
       <div className="pb-12 pt-8">
-        <section className="rounded-[34px] border border-white/10 bg-[radial-gradient(circle_at_20%_20%,rgba(34,211,238,0.18),transparent_28%),radial-gradient(circle_at_90%_10%,rgba(59,130,246,0.16),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.08),rgba(255,255,255,0.03))] px-5 py-8 sm:px-8 lg:px-10">
+        <section className="rounded-[34px] border border-white/10 px-5 py-8 sm:px-8 lg:px-10" style={{
+          background: `radial-gradient(circle at 20% 20%, ${post.theme.gradientFrom}, transparent 28%), radial-gradient(circle at 90% 10%, ${post.theme.gradientTo}, transparent 30%), linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03))`
+        }}>
           <Link
             href="/blog"
             className="inline-flex cursor-pointer rounded-full border border-white/10 bg-white/6 px-4 py-2 text-sm font-semibold text-slate-300 transition hover:border-cyan-300/25 hover:bg-cyan-300/10 hover:text-white"
@@ -294,10 +296,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             Back to blog
           </Link>
           <div className="mt-8 max-w-4xl">
-            <span className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-semibold tracking-[0.22em] text-cyan-200 uppercase">
+            <span className="inline-flex rounded-full border px-3 py-2 text-xs font-semibold tracking-[0.22em] uppercase" style={{
+              borderColor: post.theme.primaryLight.includes('300') ? '#d8b4fe' : '#93c5fd',
+              backgroundColor: post.theme.primary === 'purple' ? '#f3e8ff' : post.theme.primary === 'blue' ? '#eff6ff' : post.theme.primary === 'green' ? '#f0fdf4' : post.theme.primary === 'indigo' ? '#eef2ff' : post.theme.primary === 'amber' ? '#fefce8' : post.theme.primary === 'rose' ? '#ffe4e6' : post.theme.primary === 'teal' ? '#f0fdfa' : '#fff7ed',
+              color: post.theme.primary === 'purple' ? '#a855f7' : post.theme.primary === 'blue' ? '#3b82f6' : post.theme.primary === 'green' ? '#22c55e' : post.theme.primary === 'indigo' ? '#6366f1' : post.theme.primary === 'amber' ? '#d97706' : post.theme.primary === 'rose' ? '#f43f5e' : post.theme.primary === 'teal' ? '#14b8a6' : '#ea580c'
+            }}>
               {post.category}
             </span>
-            <h1 className="mt-5 text-4xl font-bold tracking-tight text-cyan-100 sm:text-5xl lg:text-6xl">
+            <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl" style={{
+              color: '#ffffff'
+            }}>
               {post.title}
             </h1>
             <p className="mt-5 max-w-3xl text-base leading-8 text-slate-300 sm:text-lg">
