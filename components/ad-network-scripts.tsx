@@ -5,7 +5,7 @@ import { adPlacements, adsEnabled } from "@/lib/ads";
 const globalScriptPlacements = [
   adPlacements.popunder,
   adPlacements.socialBar,
-].filter((placement) => placement.scriptUrl);
+].filter((placement) => placement.enabled && placement.scriptUrl);
 
 export function AdNetworkScripts() {
   if (!adsEnabled || globalScriptPlacements.length === 0) {

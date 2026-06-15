@@ -10,7 +10,7 @@ type AdSlotProps = {
 export function AdSlot({ placement, className = "" }: AdSlotProps) {
   const ad = adPlacements[placement];
 
-  if (!adsEnabled || !ad.scriptUrl) {
+  if (!adsEnabled || !ad.enabled || !ad.scriptUrl) {
     return null;
   }
 
