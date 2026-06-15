@@ -28,12 +28,25 @@ export function AdSlot({ placement, className = "" }: AdSlotProps) {
     >
       <div
         className="ad-slot-frame"
-        id={`ad-container-${ad.id}`}
+        id={ad.containerId ?? `ad-container-${ad.id}`}
         style={{
           minHeight: ad.height,
           width: ad.width ? `${ad.width}px` : undefined,
         }}
       />
+      {placement === "banner468x60" && ad.key ? (
+        <Script id={`ad-options-${ad.id}`} strategy="afterInteractive">
+          {`
+            window.atOptions = {
+              key: "${ad.key}",
+              format: "iframe",
+              height: ${ad.height ?? 60},
+              width: ${ad.width ?? 468},
+              params: {}
+            };
+          `}
+        </Script>
+      ) : null}
       <Script
         data-ad-zone-id={ad.id}
         id={`ad-slot-script-${ad.id}`}

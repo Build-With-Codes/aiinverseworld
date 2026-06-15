@@ -11,6 +11,8 @@ export type AdPlacement = {
   type: string;
   scriptUrl?: string;
   href?: string;
+  containerId?: string;
+  key?: string;
   width?: number;
   height?: number;
 };
@@ -35,6 +37,7 @@ export const adPlacements: Record<AdPlacementKey, AdPlacement> = {
     name: "NativeBanner_1",
     type: "Native Banner",
     scriptUrl: process.env.NEXT_PUBLIC_AD_NATIVE_BANNER_SCRIPT_URL,
+    containerId: process.env.NEXT_PUBLIC_AD_NATIVE_BANNER_CONTAINER_ID,
   },
   smartlink: {
     id: "29648354",
@@ -47,6 +50,7 @@ export const adPlacements: Record<AdPlacementKey, AdPlacement> = {
     name: "Banner_468x60",
     type: "Banner 468x60",
     scriptUrl: process.env.NEXT_PUBLIC_AD_BANNER_468_SCRIPT_URL,
+    key: process.env.NEXT_PUBLIC_AD_BANNER_468_KEY,
     width: 468,
     height: 60,
   },
