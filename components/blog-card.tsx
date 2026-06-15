@@ -37,8 +37,10 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
             featured ? "min-h-36 p-5 lg:min-h-full lg:p-6" : "p-5"
           }`}
         >
-          <div className="absolute right-4 top-4 rounded-full border border-white/80 bg-white px-3 py-1 text-xs font-bold text-slate-950 shadow-[0_8px_22px_rgba(15,23,42,0.22)]">
-            {post.readTime}
+          <div className="absolute right-4 top-4">
+            <span className="rounded-full border border-white/80 bg-white px-3 py-1 text-xs font-bold text-slate-950 shadow-[0_8px_22px_rgba(15,23,42,0.22)]">
+              {post.readTime}
+            </span>
           </div>
           <div className="flex h-full min-h-24 flex-col justify-end pr-16">
             <span className="blog-image-chip w-fit rounded-full border px-3 py-1 text-xs font-semibold">
@@ -53,10 +55,17 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
         </div>
 
         <div className={featured ? "flex flex-1 flex-col p-5 lg:p-6" : "flex flex-1 flex-col p-5"}>
-          <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500">
-            <time dateTime={post.publishedAt}>{post.publishedAt}</time>
-            <span aria-hidden="true">|</span>
-            <span>{post.author}</span>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500">
+              <time dateTime={post.publishedAt}>{post.publishedAt}</time>
+              <span aria-hidden="true">|</span>
+              <span>{post.author}</span>
+            </div>
+            {featured ? (
+              <span className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-bold text-cyan-800">
+                Featured
+              </span>
+            ) : null}
           </div>
           {featured ? (
             <h3 className="mt-3 text-xl font-bold leading-tight text-slate-950 group-hover:text-cyan-800">

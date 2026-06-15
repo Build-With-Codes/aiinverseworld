@@ -114,27 +114,16 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
           <div className="space-y-5">
             {featuredPost ? (
               <section>
-                <div className="mb-2 flex items-end justify-between gap-4">
-                  <div>
-                    <p className="blog-section-label text-xs font-semibold uppercase tracking-[0.22em]">
-                      Featured
-                    </p>
-                    <h2 className="blog-section-title mt-1 text-xl font-bold">
-                      {selectedTopic ? selectedTopic : "Start here"}
-                    </h2>
-                  </div>
-                </div>
                 <BlogCard post={featuredPost} featured />
               </section>
             ) : null}
 
             {latestPosts.length > 0 ? (
               <section>
-                <div className="mb-2">
-                  <p className="blog-section-label text-xs font-semibold uppercase tracking-[0.22em]">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <h2 className="blog-section-title text-lg font-bold">
                     Latest Articles
-                  </p>
-                  <h2 className="blog-section-title mt-1 text-xl font-bold">Fresh reads</h2>
+                  </h2>
                 </div>
                 <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                   {latestPosts.map((post) => (
