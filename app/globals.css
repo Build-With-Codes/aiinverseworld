@@ -618,3 +618,19 @@ html[data-theme="light"] table tbody tr:hover td {
 .blog-article-content table tbody tr:hover td {
   background-color: rgb(240 249 255) !important;
 }
+
+.ad-slot {
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%;
+}
+
+.ad-slot-frame {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.ad-slot-banner468x60 {
+  min-height: 60px;
+}

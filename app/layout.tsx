@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 
 import { authOptions } from "@/auth";
+import { AdNetworkScripts } from "@/components/ad-network-scripts";
 import { ChatSupportGate } from "@/components/chat-support-gate";
 import { SiteShell } from "@/components/site-shell";
 import { googleAuthEnabled } from "@/lib/auth-config";
@@ -93,6 +94,7 @@ export default async function RootLayout({
             },
           ])}
         </Script>
+        <AdNetworkScripts />
         <SiteShell>{children}</SiteShell>
         {session?.user ? (
           <Script id="chatbase-widget" strategy="afterInteractive">

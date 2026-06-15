@@ -1,5 +1,6 @@
 import { authOptions } from "@/auth";
 import { AccountMenu } from "@/components/account-menu";
+import { AdSlot } from "@/components/ad-slot";
 import { AiToolsMenu } from "@/components/ai-tools-menu";
 import { AuthDialog } from "@/components/auth-dialog";
 import { MobileMenu } from "@/components/mobile-menu";
@@ -129,7 +130,11 @@ export async function SiteShell({ children }: SiteShellProps) {
           </div>
         </header>
 
-        <main className="flex-1">{children}</main>
+        <main className="flex-1">
+          {children}
+          <AdSlot placement="nativeBanner" className="mx-auto mt-12" />
+          <AdSlot placement="banner468x60" className="mx-auto mt-8" />
+        </main>
 
         <footer className="app-glass mt-16 rounded-[32px] border border-white/10 bg-white/6 px-6 py-10 backdrop-blur-xl sm:px-8">
           <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
