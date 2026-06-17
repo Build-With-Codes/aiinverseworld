@@ -45,6 +45,10 @@ export const metadata: Metadata = {
       "Search and compare AI tools with an enterprise-grade discovery experience.",
     images: ["/logo.png"],
   },
+  // FIXED: Moved verification tag into Next.js metadata and fixed the property key
+  verification: {
+    google: "ca-pub-1921034562411070", 
+  },
 };
 
 export default async function RootLayout({
@@ -70,15 +74,17 @@ export default async function RootLayout({
             `,
           }}
         />
-        <meta name="google-site-verification" content="ca-pub-1921034562411070" />
+        {/* REMOVED: Next.js <Script> component and invalid meta tags are removed from <head> */}
+      </head>
+      <body className="min-h-full" suppressHydrationWarning>
+        {/* FIXED: AdSense script placed correctly here inside <body> with proper loading strategy */}
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1921034562411070"
           crossOrigin="anonymous"
-          strategy="beforeInteractive"
+          strategy="afterInteractive"
         />
-      </head>
-      <body className="min-h-full" suppressHydrationWarning>
+
         <Script id="aiverseworld-schema" type="application/ld+json">
           {JSON.stringify([
             {
