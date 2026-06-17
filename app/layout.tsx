@@ -70,6 +70,12 @@ export default async function RootLayout({
             `,
           }}
         />
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1921034562411070"
+          crossOrigin="anonymous"
+          strategy="beforeInteractive"
+        />
       </head>
       <body className="min-h-full" suppressHydrationWarning>
         <Script id="aiverseworld-schema" type="application/ld+json">
