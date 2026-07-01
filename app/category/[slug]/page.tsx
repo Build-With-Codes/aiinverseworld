@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 
 import { buildCategoryMeta } from "@/lib/seo";
 import { getCategoryWithTools } from "@/lib/tool-catalog";
@@ -36,13 +35,28 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const page = Math.max(1, Number(pageParam) || 1);
   const result = await getCategoryWithTools(slug, page, 24);
 
-  if (!result) notFound();
-
   return (
     <CategoryPageClient
-      category={result.category}
-      tools={result.tools}
-      pagination={result.pagination}
+      category={
+        result?.category ?? {
+          name: slug
+            .split("-")
+            .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+            .join(" "),
+          slug,
+          count: 0,
+          description: "No data is available for this category right now.",
+        }
+      }
+      tools={result?.tools ?? []}
+      pagination={
+        result?.pagination ?? {
+          page,
+          limit: 24,
+          total: 0,
+          totalPages: 1,
+        }
+      }
     />
   );
 }

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 
 import { ComparisonTable } from "@/components/comparison-table";
 import { SectionHeading } from "@/components/section-heading";
@@ -31,7 +30,20 @@ export default async function ComparePage({ params }: ComparePageProps) {
     getToolOptions(),
   ]);
 
-  if (!pair) notFound();
+  if (!pair) {
+    return (
+      <div className="space-y-10 pb-10 pt-10">
+        <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+          <SectionHeading
+            eyebrow="Compare"
+            title="No comparison data available"
+            description="Comparison data is unavailable right now. Please try again shortly."
+          />
+          <CompareSelector currentLeft="" currentRight="" toolOptions={toolOptions} />
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-10 pb-10 pt-10">

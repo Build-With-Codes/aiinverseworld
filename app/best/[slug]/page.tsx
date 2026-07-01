@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import Link from "next/link";
 
 import { ToolCard } from "@/components/tool-card";
@@ -51,7 +50,19 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
     getBestLists(),
   ]);
 
-  if (!result) notFound();
+  if (!result) {
+    return (
+      <div className="space-y-8 pb-10 pt-10 sm:pt-14">
+        <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+          <SectionHeading
+            eyebrow="Best AI Tools"
+            title="No data available"
+            description="This list is unavailable right now. Please check back shortly."
+          />
+        </section>
+      </div>
+    );
+  }
 
   const { list, tools, pagination } = result;
 

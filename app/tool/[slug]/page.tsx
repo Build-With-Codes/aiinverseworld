@@ -11,7 +11,6 @@ import { getToolById, getToolBySlug, searchTools } from "@/lib/tool-catalog";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
-import { notFound } from "next/navigation";
 
 type ToolDetailPageProps = {
   params: Promise<{ slug: string }>;
@@ -50,7 +49,25 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
   const { id } = (await searchParams) ?? {};
   const tool = id ? await getToolById(id) : await getToolBySlug(slug);
 
-  if (!tool || tool.slug !== slug) notFound();
+  if (!tool || tool.slug !== slug) {
+    return (
+      <div className="space-y-12 pb-10 pt-10">
+        <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+          <SectionHeading
+            eyebrow="AI Tool"
+            title="No tool data available"
+            description="This tool listing is unavailable right now. Please try again shortly."
+          />
+          <Link
+            href="/search"
+            className="mt-6 inline-flex rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
+          >
+            Browse tools
+          </Link>
+        </section>
+      </div>
+    );
+  }
 
   const session = await getServerSession(authOptions);
   const alternativesResult = await searchTools({

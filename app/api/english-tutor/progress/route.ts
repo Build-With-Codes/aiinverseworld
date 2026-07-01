@@ -11,6 +11,16 @@ export async function GET(request: Request) {
     backendUrl.searchParams.set("userId", userId);
   }
 
-  const response = await fetch(backendUrl, { cache: "no-store" });
-  return Response.json(await response.json(), { status: response.status });
+  try {
+    const response = await fetch(backendUrl, { cache: "no-store" });
+    return Response.json(await response.json(), { status: response.status });
+  } catch {
+    return Response.json({
+      userId,
+      sessions: 0,
+      turns: 0,
+      averageScore: 0,
+      recentSessions: [],
+    });
+  }
 }

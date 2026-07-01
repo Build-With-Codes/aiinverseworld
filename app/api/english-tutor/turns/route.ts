@@ -8,14 +8,21 @@ const BACKEND_API_BASE_URL =
 export async function POST(request: Request) {
   const body = await request.json();
 
-  const response = await fetch(`${BACKEND_API_BASE_URL}/api/english-tutor/turns`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-    cache: "no-store",
-  });
+  try {
+    const response = await fetch(`${BACKEND_API_BASE_URL}/api/english-tutor/turns`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      cache: "no-store",
+    });
 
-  return Response.json(await response.json(), { status: response.status });
+    return Response.json(await response.json(), { status: response.status });
+  } catch {
+    return Response.json(
+      { error: "English tutor backend is unavailable." },
+      { status: 503 },
+    );
+  }
 }
