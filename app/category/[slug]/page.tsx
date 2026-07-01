@@ -1,17 +1,19 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { buildUrl, buildCategoryMeta } from "@/lib/seo";
-import { getCategoryBySlug, getToolsByCategory } from "@/lib/site-data";
+import { buildCategoryMeta } from "@/lib/seo";
+import { getCategoryWithTools } from "@/lib/tool-catalog";
 import { CategoryPageClient } from "./client";
 
 type CategoryPageProps = {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ page?: string }>;
 };
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = getCategoryBySlug(slug);
+  const result = await getCategoryWithTools(slug);
+  const category = result?.category;
 
   const { title, description, url } = buildCategoryMeta(
     category?.name ?? "Category",
@@ -28,13 +30,19 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
   };
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
   const { slug } = await params;
-  const category = getCategoryBySlug(slug);
+  const { page: pageParam } = (await searchParams) ?? {};
+  const page = Math.max(1, Number(pageParam) || 1);
+  const result = await getCategoryWithTools(slug, page, 24);
 
-  if (!category) notFound();
+  if (!result) notFound();
 
-  const categoryTools = getToolsByCategory(slug);
-
-  return <CategoryPageClient category={category} tools={categoryTools} />;
+  return (
+    <CategoryPageClient
+      category={result.category}
+      tools={result.tools}
+      pagination={result.pagination}
+    />
+  );
 }

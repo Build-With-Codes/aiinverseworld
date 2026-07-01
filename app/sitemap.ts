@@ -1,9 +1,9 @@
 import { MetadataRoute } from 'next';
 import { getAllBlogPosts } from '@/lib/blog-data';
 import { siteUrl } from '@/lib/seo';
-import { categories } from '@/lib/site-data';
+import { getCategories } from '@/lib/tool-catalog';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = siteUrl.replace(/\/$/, '');
   
   // Static pages
@@ -37,7 +37,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Categories
-  const categoryPages: MetadataRoute.Sitemap = categories.map((category) => ({
+  const categoryResult = await getCategories();
+  const categoryPages: MetadataRoute.Sitemap = categoryResult.categories.map((category) => ({
     url: `${baseUrl}/category/${category.slug}`,
     lastModified: new Date(),
     changeFrequency: 'weekly' as const,

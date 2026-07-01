@@ -8,14 +8,14 @@ import { buildUrl } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Submit Problem | AiverseWorld",
   description:
-    "Submit a business problem and get AI analysis with startup ideas.",
+    "Submit a real problem for the community to vote on whether AI can solve it.",
   alternates: {
     canonical: buildUrl("/problems/submit"),
   },
   openGraph: {
     title: "Submit Problem | AiverseWorld",
     description:
-      "Submit a business problem and get AI analysis with startup ideas.",
+      "Submit a real problem for the community to vote on whether AI can solve it.",
     url: buildUrl("/problems/submit"),
     type: "website",
   },
@@ -36,7 +36,7 @@ export default function SubmitProblemPage() {
         <SectionHeading
           eyebrow="Submit Problem"
           title="Share a painful business problem"
-          description="Tell us what keeps slowing your team down. We’ll store the problem, analyze it with AI, and publish it to the feed with startup ideas."
+          description="Tell us what keeps slowing your team down. We will save the problem and publish it to the feed so people can vote on whether AI can solve it."
         />
 
         <form action={submitProblemAction} className="grid gap-6 lg:grid-cols-2">
@@ -127,9 +127,8 @@ export default function SubmitProblemPage() {
 
           <div className="lg:col-span-2 rounded-[28px] border border-white/10 bg-[#071120] p-5">
             <p className="text-sm leading-7 text-slate-300">
-              We generate AI analysis and startup ideas automatically after
-              submission. Keep the problem specific and grounded in real recurring
-              pain.
+              Keep the problem specific and grounded in real recurring pain.
+              After submission, other users can vote on whether AI can solve it.
             </p>
           </div>
 

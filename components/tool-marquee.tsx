@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { AITool } from "@/lib/site-data";
+import type { AITool } from "@/lib/catalog-types";
 
 type Props = {
   tools: AITool[];

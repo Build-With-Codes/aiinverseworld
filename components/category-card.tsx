@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { Category } from "@/lib/site-data";
+import type { Category } from "@/lib/catalog-types";
 
 type CategoryCardProps = {
   category: Category;

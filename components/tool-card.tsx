@@ -1,7 +1,7 @@
 import { FaviconBadge } from "@/components/favicon-badge";
 import Link from "next/link";
 
-import type { AITool } from "@/lib/site-data";
+import type { AITool } from "@/lib/catalog-types";
 
 type ToolCardProps = {
   tool: AITool;
@@ -17,7 +17,7 @@ export function ToolCard({ tool }: ToolCardProps) {
 
   return (
     <Link
-      href={`/tool/${tool.slug}`}
+      href={`/tool/${tool.slug}?id=${encodeURIComponent(tool.id)}`}
       className="group flex h-full flex-col rounded-[28px] border border-white/10 bg-white/6 p-6 shadow-[0_24px_80px_rgba(4,10,25,0.28)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-300/30 hover:bg-white/8"
     >
       {/* Header */}

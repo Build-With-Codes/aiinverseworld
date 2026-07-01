@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 
 import { ComparisonTable } from "@/components/comparison-table";
 import { SectionHeading } from "@/components/section-heading";
-import { buildUrl, buildComparisonMeta } from "@/lib/seo";
-import { getComparisonTools } from "@/lib/site-data";
+import { buildUrl } from "@/lib/seo";
+import { getComparisonWithTools, getToolOptions } from "@/lib/tool-catalog";
 import { CompareSelector } from "../compare-selector";
 
 type ComparePageProps = {
@@ -13,7 +13,7 @@ type ComparePageProps = {
 
 export async function generateMetadata({ params }: ComparePageProps): Promise<Metadata> {
   const { comparison } = await params;
-  const pair = getComparisonTools(comparison);
+  const pair = await getComparisonWithTools(comparison);
 
   if (!pair) return { title: "Comparison not found | AiverseWorld" };
 
@@ -26,7 +26,10 @@ export async function generateMetadata({ params }: ComparePageProps): Promise<Me
 
 export default async function ComparePage({ params }: ComparePageProps) {
   const { comparison } = await params;
-  const pair = getComparisonTools(comparison);
+  const [pair, toolOptions] = await Promise.all([
+    getComparisonWithTools(comparison),
+    getToolOptions(),
+  ]);
 
   if (!pair) notFound();
 
@@ -38,7 +41,11 @@ export default async function ComparePage({ params }: ComparePageProps) {
           title={`${pair.left.name} vs ${pair.right.name}`}
           description="A direct comparison using the real catalog fields currently available for both products."
         />
-        <CompareSelector currentLeft={pair.left.slug} currentRight={pair.right.slug} />
+        <CompareSelector
+          currentLeft={pair.left.id}
+          currentRight={pair.right.id}
+          toolOptions={toolOptions}
+        />
       </section>
 
       <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">

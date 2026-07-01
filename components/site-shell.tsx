@@ -7,7 +7,6 @@ import { MobileMenu } from "@/components/mobile-menu";
 import { NavLink } from "@/components/nav-link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { googleAuthEnabled } from "@/lib/auth-config";
-import { monetizationPages } from "@/lib/site-data";
 import logoImage from "@/public/logo.png";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,6 +24,14 @@ const navItems = [
   { href: "/category", label: "Categories" },
   { href: "/news", label: "News" },
   { href: "/blog", label: "Blog" },
+];
+
+const monetizationPages = [
+  { href: "/cookie-policy", label: "Cookie Policy" },
+  { href: "/advertising-disclosure", label: "Advertising Disclosure" },
+  { href: "/affiliate-disclosure", label: "Affiliate Disclosure" },
+  { href: "/disclaimer", label: "Disclaimer" },
+  { href: "/dmca", label: "DMCA Policy" },
 ];
 
 const footerGroups = [

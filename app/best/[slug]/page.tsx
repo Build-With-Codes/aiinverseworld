@@ -5,19 +5,22 @@ import Link from "next/link";
 import { ToolCard } from "@/components/tool-card";
 import { SectionHeading } from "@/components/section-heading";
 import { buildUrl } from "@/lib/seo";
-import { bestLists, getBestList, getBestListTools } from "@/lib/site-data";
+import { getBestLists, getBestListWithTools } from "@/lib/tool-catalog";
 
 type BestPageProps = {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ page?: string }>;
 };
 
 export async function generateStaticParams() {
-  return bestLists.map((list) => ({ slug: list.slug }));
+  const result = await getBestLists();
+  return result.lists.map((list) => ({ slug: list.slug }));
 }
 
 export async function generateMetadata({ params }: BestPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const list = getBestList(slug);
+  const result = await getBestListWithTools(slug);
+  const list = result?.list;
 
   if (!list) return { title: "Not Found | AiverseWorld" };
 
@@ -39,13 +42,18 @@ export async function generateMetadata({ params }: BestPageProps): Promise<Metad
   };
 }
 
-export default async function BestPage({ params }: BestPageProps) {
+export default async function BestPage({ params, searchParams }: BestPageProps) {
   const { slug } = await params;
-  const list = getBestList(slug);
+  const { page: pageParam } = (await searchParams) ?? {};
+  const page = Math.max(1, Number(pageParam) || 1);
+  const [result, allLists] = await Promise.all([
+    getBestListWithTools(slug, page, 24),
+    getBestLists(),
+  ]);
 
-  if (!list) notFound();
+  if (!result) notFound();
 
-  const tools = getBestListTools(slug);
+  const { list, tools, pagination } = result;
 
   return (
     <div className="space-y-12 pb-10 pt-10 sm:pt-14">
@@ -104,6 +112,7 @@ export default async function BestPage({ params }: BestPageProps) {
         />
         <div className="mt-4 flex flex-wrap gap-3 text-sm text-slate-400">
           <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">{tools.length} tools listed</span>
+          <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">{pagination.total} total matches</span>
           <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Sorted by popularity</span>
           <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Updated 2025</span>
         </div>
@@ -128,10 +137,32 @@ export default async function BestPage({ params }: BestPageProps) {
         </div>
       )}
 
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-[28px] border border-white/10 bg-white/6 p-5 text-sm text-slate-300">
+        <span>
+          Page {pagination.page} of {pagination.totalPages} | {pagination.total} tools
+        </span>
+        <div className="flex gap-2">
+          <Link
+            aria-disabled={pagination.page <= 1}
+            className={`rounded-2xl border border-white/10 px-4 py-2 ${pagination.page <= 1 ? "pointer-events-none opacity-40" : "hover:border-cyan-300/30 hover:text-white"}`}
+            href={`/best/${slug}?page=${Math.max(1, pagination.page - 1)}`}
+          >
+            Previous
+          </Link>
+          <Link
+            aria-disabled={pagination.page >= pagination.totalPages}
+            className={`rounded-2xl border border-white/10 px-4 py-2 ${pagination.page >= pagination.totalPages ? "pointer-events-none opacity-40" : "hover:border-cyan-300/30 hover:text-white"}`}
+            href={`/best/${slug}?page=${pagination.page + 1}`}
+          >
+            Next
+          </Link>
+        </div>
+      </div>
+
       <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
         <p className="mb-4 text-sm font-semibold text-slate-300">Explore more lists</p>
         <div className="flex flex-wrap gap-3">
-          {bestLists.filter((l) => l.slug !== slug).map((l) => (
+          {allLists.lists.filter((l) => l.slug !== slug).map((l) => (
             <Link
               key={l.slug}
               href={`/best/${l.slug}`}

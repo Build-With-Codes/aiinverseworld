@@ -1,8 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
-import { createProblem } from "@/lib/problem-store";
+import { createProblem, voteOnProblem, type ProblemVote } from "@/lib/problem-store";
 
 export async function submitProblemAction(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
@@ -30,4 +31,17 @@ export async function submitProblemAction(formData: FormData) {
   });
 
   redirect(`/problems/${problem.id}`);
+}
+
+export async function voteProblemAction(formData: FormData) {
+  const problemId = String(formData.get("problemId") ?? "").trim();
+  const vote = String(formData.get("vote") ?? "").trim() as ProblemVote;
+
+  if (!problemId || (vote !== "aiSolvable" && vote !== "notAiSolvable")) {
+    throw new Error("Invalid problem vote.");
+  }
+
+  await voteOnProblem(problemId, vote);
+  revalidatePath("/problems");
+  revalidatePath(`/problems/${problemId}`);
 }

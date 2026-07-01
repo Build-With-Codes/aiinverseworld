@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { AiSolveVote } from "@/components/problems/ai-solve-vote";
 import { SectionHeading } from "@/components/section-heading";
 import { getProblems } from "@/lib/problem-store";
 import { buildUrl } from "@/lib/seo";
@@ -8,21 +9,59 @@ import { buildUrl } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Startup Problems Feed | AiverseWorld",
   description:
-    "Browse real startup problems submitted by operators and founders, with AI analysis and startup ideas.",
+    "Browse real problems submitted by operators and founders, then vote on whether AI can solve them.",
   alternates: {
     canonical: buildUrl("/problems"),
   },
   openGraph: {
     title: "Startup Problems Feed | AiverseWorld",
     description:
-      "Browse real startup problems submitted by operators and founders, with AI analysis and startup ideas.",
+      "Browse real problems submitted by operators and founders, then vote on whether AI can solve them.",
     url: buildUrl("/problems"),
     type: "website",
   },
 };
 
-export default async function ProblemsPage() {
-  const problems = await getProblems();
+type ProblemsPageProps = {
+  searchParams?: Promise<{
+    page?: string;
+    industry?: string;
+    q?: string;
+    sort?: string;
+  }>;
+};
+
+function buildProblemsHref(params: Record<string, string | number | undefined>) {
+  const searchParams = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(params)) {
+    if (value) {
+      searchParams.set(key, String(value));
+    }
+  }
+
+  const query = searchParams.toString();
+  return query ? `/problems?${query}` : "/problems";
+}
+
+export default async function ProblemsPage({ searchParams }: ProblemsPageProps) {
+  const params = await searchParams;
+  const selectedIndustry = params?.industry ?? "";
+  const searchQuery = params?.q ?? "";
+  const sort =
+    params?.sort === "oldest" ||
+    params?.sort === "pain" ||
+    params?.sort === "ai-score"
+      ? params.sort
+      : "newest";
+  const page = Math.max(1, Number(params?.page) || 1);
+  const { problems, pagination, filters } = await getProblems({
+    page,
+    limit: 12,
+    industry: selectedIndustry,
+    search: searchQuery,
+    sort,
+  });
 
   return (
     <div className="space-y-14 pb-10 pt-10 sm:space-y-16 sm:pt-14">
@@ -33,12 +72,11 @@ export default async function ProblemsPage() {
           </div>
           <div className="space-y-4">
             <h1 className="max-w-4xl text-5xl font-semibold tracking-tight text-white sm:text-6xl">
-              Real business problems with AI analysis and startup ideas
+              Real problems ranked by whether AI can solve them
             </h1>
             <p className="max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">
-              Founders can browse recurring operational pain points, see who has
-              them, and explore whether software or AI can turn them into
-              venture-worthy opportunities.
+              Submit recurring pain points, browse what others are facing, and
+              vote on whether each problem is a strong fit for AI.
             </p>
           </div>
         </div>
@@ -50,7 +88,7 @@ export default async function ProblemsPage() {
           <div className="mt-5 space-y-3 text-sm leading-7 text-slate-300">
             <p>Submit a problem in under a minute.</p>
             <p>Browse a clean feed of operator pain points.</p>
-            <p>Get instant AI analysis and 3–5 startup ideas.</p>
+            <p>See the community score for whether AI can solve it.</p>
           </div>
           <Link
             href="/problems/submit"
@@ -64,9 +102,46 @@ export default async function ProblemsPage() {
       <section>
         <SectionHeading
           eyebrow="Feed"
-          title="Browse recurring problems worth building around"
-          description="Think of this like a lightweight Product Hunt for problems: what hurts, how often it happens, and whether software can solve it."
+          title="Browse recurring problems people want solved"
+          description="Think of this like a lightweight Product Hunt for problems: what hurts, how often it happens, and whether people believe AI can solve it."
         />
+
+        <form className="mb-6 grid gap-3 rounded-[28px] border border-white/10 bg-white/6 p-4 lg:grid-cols-[minmax(0,1fr)_14rem_12rem_auto]">
+          <input
+            className="rounded-2xl border border-white/10 bg-[#081222] px-4 py-3 text-sm text-white outline-none placeholder:text-slate-500"
+            defaultValue={searchQuery}
+            name="q"
+            placeholder="Search problems"
+          />
+          <select
+            className="rounded-2xl border border-white/10 bg-[#081222] px-4 py-3 text-sm text-white outline-none"
+            defaultValue={selectedIndustry}
+            name="industry"
+          >
+            <option value="">All industries</option>
+            {filters.industries.map((industry) => (
+              <option key={industry} value={industry}>
+                {industry}
+              </option>
+            ))}
+          </select>
+          <select
+            className="rounded-2xl border border-white/10 bg-[#081222] px-4 py-3 text-sm text-white outline-none"
+            defaultValue={sort}
+            name="sort"
+          >
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="pain">Highest pain</option>
+            <option value="ai-score">AI score</option>
+          </select>
+          <button
+            className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
+            type="submit"
+          >
+            Filter
+          </button>
+        </form>
 
         <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
           {problems.map((problem) => (
@@ -92,9 +167,13 @@ export default async function ProblemsPage() {
                 {problem.description}
               </p>
 
+              <div className="mt-5">
+                <AiSolveVote problem={problem} compact />
+              </div>
+
               <div className="mt-5 flex items-center justify-between gap-3 text-sm text-slate-400">
                 <span>{problem.frequency}</span>
-                <span>Opportunity {problem.analysis.opportunityScore}/100</span>
+                <span>{problem.industry}</span>
               </div>
 
               <Link
@@ -105,6 +184,46 @@ export default async function ProblemsPage() {
               </Link>
             </article>
           ))}
+        </div>
+
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-300">
+          <span>
+            Page {pagination.page} of {pagination.totalPages} | {pagination.total} problems
+          </span>
+          <div className="flex gap-2">
+            <Link
+              aria-disabled={pagination.page <= 1}
+              className={`rounded-full border border-white/10 px-4 py-2 font-semibold ${
+                pagination.page <= 1
+                  ? "pointer-events-none opacity-40"
+                  : "hover:border-cyan-300/40 hover:text-cyan-100"
+              }`}
+              href={buildProblemsHref({
+                q: searchQuery,
+                industry: selectedIndustry,
+                sort,
+                page: pagination.page - 1,
+              })}
+            >
+              Previous
+            </Link>
+            <Link
+              aria-disabled={pagination.page >= pagination.totalPages}
+              className={`rounded-full border border-white/10 px-4 py-2 font-semibold ${
+                pagination.page >= pagination.totalPages
+                  ? "pointer-events-none opacity-40"
+                  : "hover:border-cyan-300/40 hover:text-cyan-100"
+              }`}
+              href={buildProblemsHref({
+                q: searchQuery,
+                industry: selectedIndustry,
+                sort,
+                page: pagination.page + 1,
+              })}
+            >
+              Next
+            </Link>
+          </div>
         </div>
       </section>
     </div>

@@ -7,7 +7,7 @@ import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
 import { getNewsArticles } from "@/lib/news";
 import { buildUrl } from "@/lib/seo";
-import { categories, comparisons, finderQuestions, tools, bestLists } from "@/lib/site-data";
+import { getBestLists, getComparisons, getToolCatalog, recommendTools } from "@/lib/tool-catalog";
 import { getAllBlogPosts } from "@/lib/blog-data";
 import { blogSuggestionFAQs } from "@/lib/blog-suggestions";
 import { HeroSearch } from "@/components/hero-search";
@@ -47,6 +47,15 @@ const aiFinderOptions = [
   },
 ];
 
+const finderQuestions = [
+  "Do you need an assistant?",
+  "Are you building software?",
+  "Do you need image or video creation?",
+  "Are you automating workflows?",
+  "Do you need enterprise deployment?",
+  "Are you researching or summarizing content?",
+];
+
 const discoveryBands = [
   {
     title: "For marketers",
@@ -66,18 +75,26 @@ const discoveryBands = [
 ];
 
 export default async function Home() {
-  const trendingTools = tools.slice(0, 6);
-  const codingTools = tools.filter((tool) => tool.category === "Coding Assistant").slice(0, 6);
-  const creativeTools = tools
+  const catalog = await getToolCatalog();
+  const comparisonCatalog = await getComparisons(12);
+  const bestListCatalog = await getBestLists();
+  const liveTools = catalog.tools;
+  const liveCategories = catalog.categories;
+  const liveComparisons = comparisonCatalog.comparisons;
+  const liveBestLists = bestListCatalog.lists;
+  const trendingTools = liveTools.slice(0, 6);
+  const codingTools = liveTools.filter((tool) => tool.category === "Coding Assistant").slice(0, 6);
+  const creativeTools = liveTools
     .filter((tool) => ["Image Generation", "Video Generation", "Design Assistant"].includes(tool.category))
     .slice(0, 6);
+  const researchRecommendations = await recommendTools("research summarize PDFs knowledge documents", 3);
   const newsArticles = await getNewsArticles(3);
   const blogPosts = getAllBlogPosts().slice(0, 6);
   
   const spotlightMetrics = [
-    { label: "Indexed tools", value: `${tools.length}` },
-    { label: "Categories covered", value: `${categories.length}` },
-    { label: "Free plan tools", value: `${tools.filter((t) => t.freePlan === "Yes").length}` },
+    { label: "Indexed tools", value: `${liveTools.length}` },
+    { label: "Categories covered", value: `${liveCategories.length}` },
+    { label: "Free plan tools", value: `${liveTools.filter((t) => t.freePlan === "Yes").length}` },
   ];
 
   return (
@@ -163,8 +180,8 @@ export default async function Home() {
       </section>
 
       <section className="space-y-3 overflow-hidden">
-        <ToolMarquee tools={tools.slice(0, 20)} direction="left" />
-        <ToolMarquee tools={tools.slice(20, 40)} direction="right" />
+        <ToolMarquee tools={liveTools.slice(0, 20)} direction="left" />
+        <ToolMarquee tools={liveTools.slice(20, 40)} direction="right" />
       </section>
 
       {/* Blog Posts Section */}
@@ -240,6 +257,19 @@ export default async function Home() {
 
       <section>
         <SectionHeading
+          eyebrow="Recommended from catalog"
+          title="Tell us the job, get an AI shortlist"
+          description="The finder now scores tools against user intent, categories, audiences, tags, platforms, and pricing metadata."
+        />
+        <div className="grid gap-6 lg:grid-cols-3">
+          {researchRecommendations.map((tool) => (
+            <ToolCard key={tool.slug} tool={tool} />
+          ))}
+        </div>
+      </section>
+
+      <section>
+        <SectionHeading
           eyebrow="Featured"
           title="Live AI tools from the current market"
           description="AiverseWorld now showcases the real tools you provided across assistants, coding, creative, productivity, research, and enterprise AI."
@@ -272,7 +302,7 @@ export default async function Home() {
             description="Move from broad discovery to a focused shortlist with categories optimized for real use cases."
           />
           <div className="grid gap-4 sm:grid-cols-2">
-            {categories.map((category) => (
+            {liveCategories.map((category) => (
               <CategoryCard key={category.slug} category={category} />
             ))}
           </div>
@@ -285,7 +315,7 @@ export default async function Home() {
               description="Jump into high-intent comparisons people use before purchase and rollout decisions."
             />
             <div className="space-y-4">
-              {comparisons.slice(0, 12).map((comparison) => (
+              {liveComparisons.slice(0, 12).map((comparison) => (
                 <Link
                   key={comparison.slug}
                   href={`/compare/${comparison.slug}`}
@@ -301,7 +331,7 @@ export default async function Home() {
                 href="/compare"
                 className="block rounded-[24px] border border-cyan-300/20 bg-cyan-300/8 p-4 text-center text-sm font-semibold text-cyan-200 transition hover:bg-cyan-300/12"
               >
-                View all {comparisons.length} comparisons →
+                View all {liveComparisons.length} comparisons →
               </Link>
             </div>
           </div>
@@ -332,7 +362,7 @@ export default async function Home() {
           description="Hand-picked lists by use case, category, and audience — built from real catalog data."
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {bestLists.map((list) => (
+          {liveBestLists.map((list) => (
             <Link
               key={list.slug}
               href={`/best/${list.slug}`}

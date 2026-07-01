@@ -33,16 +33,19 @@ function MenuColumn({
   title,
   href,
   links,
+  onNavigate,
 }: {
   eyebrow: string;
   title: string;
   href: string;
   links: Array<{ href: string; title: string; detail: string }>;
+  onNavigate: () => void;
 }) {
   return (
     <div className="rounded-[22px] border border-slate-200 bg-slate-50 p-4">
       <Link
         href={href}
+        onClick={onNavigate}
         className="group block rounded-2xl bg-white p-4 shadow-[0_12px_32px_rgba(15,23,42,0.08)] transition hover:bg-cyan-50"
       >
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-700">
@@ -57,6 +60,7 @@ function MenuColumn({
           <Link
             key={link.href}
             href={link.href}
+            onClick={onNavigate}
             className="group block rounded-2xl border border-slate-200 bg-white px-4 py-3 transition hover:border-cyan-300 hover:bg-cyan-50"
           >
             <p className="text-sm font-semibold text-slate-950 group-hover:text-cyan-800">
@@ -142,24 +146,28 @@ export function AiToolsMenu() {
               title="Search AI tools"
               href="/search"
               links={searchExamples}
+              onNavigate={close}
             />
             <MenuColumn
               eyebrow="Browse"
               title="Explore categories"
               href="/category"
               links={categoryExamples}
+              onNavigate={close}
             />
             <MenuColumn
               eyebrow="Compare"
               title="Compare tools"
               href="/compare"
               links={compareExamples}
+              onNavigate={close}
             />
             <MenuColumn
               eyebrow="Best Of"
               title="Curated AI tool lists"
               href="/best-ai-tools"
               links={bestOfExamples}
+              onNavigate={close}
             />
           </div>
         </div>

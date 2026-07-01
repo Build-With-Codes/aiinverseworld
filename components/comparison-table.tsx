@@ -1,4 +1,4 @@
-import type { AITool } from "@/lib/site-data";
+import type { AITool } from "@/lib/catalog-types";
 
 type ComparisonTableProps = {
   left: AITool;

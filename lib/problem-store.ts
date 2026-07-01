@@ -1,5 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { AIVERSE_WORLD_BASE_URL } from "@/lib/service-urls";
 
 export type ProblemAnalysis = {
   whoHasThisProblem: string;
@@ -21,6 +22,42 @@ export type StoredProblem = {
   email?: string;
   createdAt: string;
   analysis: ProblemAnalysis;
+  votes: ProblemVotes;
+};
+
+export type ProblemVotes = {
+  aiSolvable: number;
+  notAiSolvable: number;
+};
+
+export type ProblemVote = keyof ProblemVotes;
+
+export type ProblemVoteSummary = ProblemVotes & {
+  total: number;
+  aiScore: number;
+};
+
+export type ProblemSort = "newest" | "oldest" | "pain" | "ai-score";
+
+export type ProblemListOptions = {
+  page?: number;
+  limit?: number;
+  industry?: string;
+  search?: string;
+  sort?: ProblemSort;
+};
+
+export type ProblemListResult = {
+  problems: StoredProblem[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+  filters: {
+    industries: string[];
+  };
 };
 
 type CreateProblemInput = {
@@ -32,67 +69,27 @@ type CreateProblemInput = {
   email?: string;
 };
 
+type BackendProblem = Omit<StoredProblem, "analysis"> & {
+  updatedAt?: string;
+  voteSummary?: {
+    total: number;
+    aiScore: number;
+  };
+};
+
+type BackendProblemListResponse = {
+  data?: BackendProblem[];
+  pagination?: ProblemListResult["pagination"];
+  filters?: ProblemListResult["filters"];
+};
+
+type BackendProblemResponse = {
+  data?: BackendProblem;
+};
+
 const dataDirectory = path.join(process.cwd(), "data");
 const problemsFile = path.join(dataDirectory, "problems.json");
 
-const seedProblems: StoredProblem[] = [
-  {
-    id: "scheduling-staff-shifts",
-    title: "Scheduling staff shifts is a nightmare",
-    description:
-      "We manage 50 employees across multiple stores and spend hours every week building schedules, handling swaps, and chasing confirmations.",
-    industry: "Retail",
-    frequency: "Every week",
-    painScore: 9,
-    createdAt: "2026-06-01T09:00:00.000Z",
-    analysis: {
-      whoHasThisProblem:
-        "Multi-location retailers, restaurants, clinics, and service businesses with hourly staff run into this constantly.",
-      severity:
-        "This is a high-friction operational problem because it burns manager time every week and directly affects attendance, overtime, and customer coverage.",
-      softwareFit:
-        "Yes. Scheduling, shift swaps, availability capture, and notifications are all strong workflow software use cases.",
-      aiFit:
-        "Yes. AI can suggest optimized schedules, predict understaffing, and automate swap approvals or conflict detection.",
-      marketOpportunity:
-        "The opportunity is strong because the pain is recurring, measurable, and tied to labor efficiency and revenue protection.",
-      opportunityScore: 92,
-      startupIdeas: [
-        "SaaS for auto-generating compliant employee schedules",
-        "AI assistant for shift swaps and last-minute coverage",
-        "WhatsApp-based scheduling tool for frontline teams",
-      ],
-    },
-  },
-  {
-    id: "finding-reliable-contractors",
-    title: "Finding reliable local contractors is difficult",
-    description:
-      "We waste days comparing vendors, checking references, and redoing work when local contractors miss deadlines or quality expectations.",
-    industry: "Construction",
-    frequency: "Every month",
-    painScore: 8,
-    createdAt: "2026-06-02T11:30:00.000Z",
-    analysis: {
-      whoHasThisProblem:
-        "Construction firms, property managers, facilities teams, and homeowners with recurring project work all feel this pain.",
-      severity:
-        "The pain is serious because poor contractor selection increases delays, rework, and project risk.",
-      softwareFit:
-        "Yes. Vendor discovery, vetting, reputation data, and procurement workflows are a natural software category.",
-      aiFit:
-        "AI can help rank vendors, summarize reviews, flag risk signals, and match project requirements to contractor profiles.",
-      marketOpportunity:
-        "There is a healthy niche opportunity where trust, verification, and response speed create clear value.",
-      opportunityScore: 84,
-      startupIdeas: [
-        "Verified local contractor marketplace for commercial projects",
-        "AI scoring engine for contractor reliability and fit",
-        "Project brief to contractor shortlist automation tool",
-      ],
-    },
-  },
-];
 
 function buildFallbackAnalysis(input: CreateProblemInput): ProblemAnalysis {
   return {
@@ -164,18 +161,124 @@ async function ensureStore() {
   try {
     await fs.access(problemsFile);
   } catch {
-    await fs.writeFile(problemsFile, JSON.stringify(seedProblems, null, 2), "utf8");
+  //  await fs.writeFile(problemsFile, JSON.stringify(seedProblems, null, 2), "utf8");
   }
 }
 
 async function readAllProblems() {
   await ensureStore();
   const raw = await fs.readFile(problemsFile, "utf8");
-  return JSON.parse(raw) as StoredProblem[];
+  const problems = JSON.parse(raw) as Array<StoredProblem & { votes?: Partial<ProblemVotes> }>;
+
+  return problems.map((problem) => ({
+    ...problem,
+    votes: normalizeProblemVotes(problem.votes),
+  }));
 }
 
 async function writeAllProblems(problems: StoredProblem[]) {
   await fs.writeFile(problemsFile, JSON.stringify(problems, null, 2), "utf8");
+}
+
+function attachFallbackAnalysis(problem: BackendProblem): StoredProblem {
+  return {
+    id: problem.id,
+    title: problem.title,
+    description: problem.description,
+    industry: problem.industry,
+    frequency: problem.frequency,
+    painScore: problem.painScore,
+    email: problem.email,
+    createdAt: problem.createdAt,
+    votes: normalizeProblemVotes(problem.votes),
+    analysis: buildFallbackAnalysis({
+      title: problem.title,
+      description: problem.description,
+      industry: problem.industry,
+      frequency: problem.frequency,
+      painScore: problem.painScore,
+      email: problem.email,
+    }),
+  };
+}
+
+function getDefaultProblemListResult(problems: StoredProblem[]): ProblemListResult {
+  return {
+    problems,
+    pagination: {
+      page: 1,
+      limit: problems.length || 12,
+      total: problems.length,
+      totalPages: 1,
+    },
+    filters: {
+      industries: Array.from(new Set(problems.map((problem) => problem.industry))).sort(),
+    },
+  };
+}
+
+async function getProblemsFromBackend(
+  options: Required<ProblemListOptions>,
+): Promise<ProblemListResult | null> {
+  const searchParams = new URLSearchParams({
+    page: String(options.page),
+    limit: String(options.limit),
+    sort: options.sort,
+  });
+
+  if (options.industry) {
+    searchParams.set("industry", options.industry);
+  }
+
+  if (options.search) {
+    searchParams.set("search", options.search);
+  }
+
+  try {
+    const response = await fetch(
+      `${AIVERSE_WORLD_BASE_URL}/api/problems?${searchParams.toString()}`,
+      { cache: "no-store" },
+    );
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const payload = (await response.json()) as BackendProblemListResponse;
+    const backendProblems = payload.data ?? [];
+
+    return {
+      problems: backendProblems.map(attachFallbackAnalysis),
+      pagination: payload.pagination ?? {
+        page: options.page,
+        limit: options.limit,
+        total: backendProblems.length,
+        totalPages: 1,
+      },
+      filters: payload.filters ?? {
+        industries: [],
+      },
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function getProblemFromBackend(id: string) {
+  try {
+    const response = await fetch(`${AIVERSE_WORLD_BASE_URL}/api/problems/${id}`, {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const payload = (await response.json()) as BackendProblemResponse;
+    return payload.data ? attachFallbackAnalysis(payload.data) : null;
+  } catch {
+    return null;
+  }
 }
 
 async function generateProblemAnalysis(
@@ -268,19 +371,121 @@ async function generateProblemAnalysis(
   return buildFallbackAnalysis(input);
 }
 
-export async function getProblems() {
-  const problems = await readAllProblems();
-  return problems.sort((left, right) => right.createdAt.localeCompare(left.createdAt));
+export async function getProblems(options: ProblemListOptions = {}) {
+  const normalizedOptions: Required<ProblemListOptions> = {
+    page: Math.max(1, Number(options.page) || 1),
+    limit: Math.max(1, Math.min(50, Number(options.limit) || 12)),
+    industry: options.industry?.trim() ?? "",
+    search: options.search?.trim() ?? "",
+    sort: options.sort ?? "newest",
+  };
+
+  const backendResult = await getProblemsFromBackend(normalizedOptions);
+
+  if (backendResult) {
+    return backendResult;
+  }
+
+  const allProblems = (await readAllProblems())
+    .filter((problem) =>
+      normalizedOptions.industry
+        ? problem.industry.toLowerCase() === normalizedOptions.industry.toLowerCase()
+        : true,
+    )
+    .filter((problem) => {
+      if (!normalizedOptions.search) {
+        return true;
+      }
+
+      const haystack = `${problem.title} ${problem.description} ${problem.industry}`.toLowerCase();
+      return haystack.includes(normalizedOptions.search.toLowerCase());
+    })
+    .sort((left, right) => {
+      if (normalizedOptions.sort === "oldest") {
+        return left.createdAt.localeCompare(right.createdAt);
+      }
+
+      if (normalizedOptions.sort === "pain") {
+        return right.painScore - left.painScore;
+      }
+
+      if (normalizedOptions.sort === "ai-score") {
+        return getProblemVoteSummary(right).aiScore - getProblemVoteSummary(left).aiScore;
+      }
+
+      return right.createdAt.localeCompare(left.createdAt);
+    });
+
+  const start = (normalizedOptions.page - 1) * normalizedOptions.limit;
+  const problems = allProblems.slice(start, start + normalizedOptions.limit);
+
+  return {
+    ...getDefaultProblemListResult(problems),
+    pagination: {
+      page: normalizedOptions.page,
+      limit: normalizedOptions.limit,
+      total: allProblems.length,
+      totalPages: Math.max(1, Math.ceil(allProblems.length / normalizedOptions.limit)),
+    },
+    filters: {
+      industries: Array.from(
+        new Set((await readAllProblems()).map((problem) => problem.industry)),
+      ).sort(),
+    },
+  };
 }
 
 export async function getProblemById(id: string) {
+  const backendProblem = await getProblemFromBackend(id);
+
+  if (backendProblem) {
+    return backendProblem;
+  }
+
   const problems = await readAllProblems();
   return problems.find((problem) => problem.id === id) ?? null;
 }
 
+function normalizeProblemVotes(votes?: Partial<ProblemVotes>): ProblemVotes {
+  return {
+    aiSolvable: Math.max(0, Number(votes?.aiSolvable) || 0),
+    notAiSolvable: Math.max(0, Number(votes?.notAiSolvable) || 0),
+  };
+}
+
+export function getProblemVoteSummary(problem: StoredProblem): ProblemVoteSummary {
+  const votes = normalizeProblemVotes(problem.votes);
+  const total = votes.aiSolvable + votes.notAiSolvable;
+
+  return {
+    ...votes,
+    total,
+    aiScore: total ? Math.round((votes.aiSolvable / total) * 100) : 0,
+  };
+}
+
 export async function createProblem(input: CreateProblemInput) {
+  try {
+    const response = await fetch(`${AIVERSE_WORLD_BASE_URL}/api/problems`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(input),
+    });
+
+    if (response.ok) {
+      const payload = (await response.json()) as BackendProblemResponse;
+
+      if (payload.data) {
+        return attachFallbackAnalysis(payload.data);
+      }
+    }
+  } catch {
+  }
+
   const problems = await readAllProblems();
-  const analysis = await generateProblemAnalysis(input);
+  const analysis = buildFallbackAnalysis(input);
 
   const nextProblem: StoredProblem = {
     id: crypto.randomUUID(),
@@ -292,10 +497,54 @@ export async function createProblem(input: CreateProblemInput) {
     email: input.email?.trim() || undefined,
     createdAt: new Date().toISOString(),
     analysis,
+    votes: {
+      aiSolvable: 0,
+      notAiSolvable: 0,
+    },
   };
 
   problems.unshift(nextProblem);
   await writeAllProblems(problems);
 
   return nextProblem;
+}
+
+export async function voteOnProblem(id: string, vote: ProblemVote) {
+  try {
+    const response = await fetch(`${AIVERSE_WORLD_BASE_URL}/api/problems/${id}/vote`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ vote }),
+    });
+
+    if (response.ok) {
+      const payload = (await response.json()) as BackendProblemResponse;
+
+      if (payload.data) {
+        return attachFallbackAnalysis(payload.data);
+      }
+    }
+  } catch {
+  }
+
+  const problems = await readAllProblems();
+  const problemIndex = problems.findIndex((problem) => problem.id === id);
+
+  if (problemIndex === -1) {
+    return null;
+  }
+
+  const problem = problems[problemIndex];
+  const votes = normalizeProblemVotes(problem.votes);
+
+  votes[vote] += 1;
+  problems[problemIndex] = {
+    ...problem,
+    votes,
+  };
+
+  await writeAllProblems(problems);
+  return problems[problemIndex];
 }

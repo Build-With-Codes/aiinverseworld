@@ -7,7 +7,7 @@ import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
 import { getReviewsForTool } from "@/lib/review-store";
 import { buildUrl, buildToolMeta } from "@/lib/seo";
-import { getToolBySlug, aiTools } from "@/lib/site-data";
+import { getToolById, getToolBySlug, searchTools } from "@/lib/tool-catalog";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getServerSession } from "next-auth";
@@ -15,11 +15,12 @@ import { notFound } from "next/navigation";
 
 type ToolDetailPageProps = {
   params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ id?: string }>;
 };
 
 export async function generateMetadata({ params }: ToolDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const tool = getToolBySlug(slug);
+  const tool = await getToolBySlug(slug);
 
   if (!tool) return { title: "Tool not found | AiverseWorld" };
 
@@ -44,16 +45,19 @@ export async function generateMetadata({ params }: ToolDetailPageProps): Promise
   };
 }
 
-export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
+export default async function ToolDetailPage({ params, searchParams }: ToolDetailPageProps) {
   const { slug } = await params;
-  const tool = getToolBySlug(slug);
+  const { id } = (await searchParams) ?? {};
+  const tool = id ? await getToolById(id) : await getToolBySlug(slug);
 
-  if (!tool) notFound();
+  if (!tool || tool.slug !== slug) notFound();
 
   const session = await getServerSession(authOptions);
-  const alternatives = aiTools.filter(
-    (c) => c.category === tool.category && c.slug !== tool.slug,
-  );
+  const alternativesResult = await searchTools({
+    category: tool.category,
+    limit: 24,
+  });
+  const alternatives = alternativesResult.tools.filter((item) => item.slug !== tool.slug);
   const toolReviews = await getReviewsForTool(tool.slug);
 
   const priceLabel =
@@ -174,7 +178,11 @@ export default async function ToolDetailPage({ params }: ToolDetailPageProps) {
               Visit Website
             </a>
             <Link
-              href={`/compare/${tool.slug}-vs-${alternatives[0]?.slug ?? "chatgpt"}`}
+              href={
+                alternatives[0]
+                  ? `/compare?leftId=${encodeURIComponent(tool.id)}&rightId=${encodeURIComponent(alternatives[0].id)}`
+                  : "/compare"
+              }
               className="rounded-2xl border border-white/10 bg-white/6 px-5 py-3 text-sm font-medium text-white transition hover:border-cyan-300/30"
             >
               Compare Tool

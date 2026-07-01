@@ -2,18 +2,29 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { aiTools } from "@/lib/site-data";
 
-export function CompareSelector({ currentLeft, currentRight }: { currentLeft: string; currentRight: string }) {
+type ToolOption = {
+  value: string;
+  slug: string;
+  label: string;
+};
+
+export function CompareSelector({
+  currentLeft,
+  currentRight,
+  toolOptions,
+}: {
+  currentLeft: string;
+  currentRight: string;
+  toolOptions: ToolOption[];
+}) {
   const router = useRouter();
   const [left, setLeft] = useState(currentLeft);
   const [right, setRight] = useState(currentRight);
 
-  const toolOptions = aiTools.map((t) => ({ value: t.slug, label: t.name }));
-
   function handleCompare() {
     if (left && right && left !== right) {
-      router.push(`/compare/${left}-vs-${right}`);
+      router.push(`/compare?leftId=${encodeURIComponent(left)}&rightId=${encodeURIComponent(right)}`);
     }
   }
 

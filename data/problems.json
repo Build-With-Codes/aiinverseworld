@@ -19,6 +19,10 @@
         "AI assistant for shift swaps and last-minute coverage",
         "WhatsApp-based scheduling tool for frontline teams"
       ]
+    },
+    "votes": {
+      "aiSolvable": 1,
+      "notAiSolvable": 0
     }
   },
   {
@@ -41,6 +45,10 @@
         "AI scoring engine for contractor reliability and fit",
         "Project brief to contractor shortlist automation tool"
       ]
+    },
+    "votes": {
+      "aiSolvable": 3,
+      "notAiSolvable": 3
     }
   }
 ]
