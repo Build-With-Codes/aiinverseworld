@@ -255,18 +255,20 @@ export default async function Home() {
         ) : null}
       </section>
 
-      <section>
-        <SectionHeading
-          eyebrow="Recommended from catalog"
-          title="Tell us the job, get an AI shortlist"
-          description="The finder now scores tools against user intent, categories, audiences, tags, platforms, and pricing metadata."
-        />
-        <div className="grid gap-6 lg:grid-cols-3">
-          {researchRecommendations.map((tool) => (
-            <ToolCard key={tool.slug} tool={tool} />
-          ))}
-        </div>
-      </section>
+      {researchRecommendations.length > 0 ? (
+        <section className="home-recommendations">
+          <SectionHeading
+            eyebrow="Recommended from catalog"
+            title="Tell us the job, get an AI shortlist"
+            description="The finder now scores tools against user intent, categories, audiences, tags, platforms, and pricing metadata."
+          />
+          <div className="grid gap-6 lg:grid-cols-3">
+            {researchRecommendations.map((tool) => (
+              <ToolCard key={tool.slug} tool={tool} />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section>
         <SectionHeading
