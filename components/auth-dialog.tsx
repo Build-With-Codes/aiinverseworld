@@ -15,6 +15,35 @@ type AuthDialogProps = {
   description?: string;
 };
 
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function getFriendlyAuthError(message?: string | null) {
+  if (!message) {
+    return "We could not complete sign in. Please try again.";
+  }
+
+  const normalized = message.toLowerCase();
+
+  if (
+    normalized.includes("credentials") ||
+    normalized.includes("unauthorized") ||
+    normalized.includes("invalid") ||
+    normalized.includes("password")
+  ) {
+    return "The email or password does not look right. Please check and try again.";
+  }
+
+  if (normalized.includes("already") || normalized.includes("exists")) {
+    return "An account with this email already exists. Try logging in instead.";
+  }
+
+  if (normalized.includes("fetch") || normalized.includes("network") || normalized.includes("econnrefused")) {
+    return "We could not reach the sign-in service. Please try again in a moment.";
+  }
+
+  return "We could not complete sign in. Please check your details and try again.";
+}
+
 export function AuthDialog({
   callbackUrl,
   enabled = true,
@@ -76,26 +105,55 @@ export function AuthDialog({
 
   async function handleCredentialsSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitting(true);
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim().toLowerCase();
+    const trimmedPassword = password.trim();
+
     setError("");
 
-    const result = await signIn("credentials", {
-      redirect: false,
-      callbackUrl,
-      mode,
-      name,
-      email,
-      password,
-    });
-
-    setSubmitting(false);
-
-    if (result?.error) {
-      setError(result.error);
+    if (mode === "signup" && trimmedName.length < 2) {
+      setError("Please enter your full name.");
       return;
     }
 
-    window.location.href = callbackUrl;
+    if (!emailPattern.test(trimmedEmail)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (trimmedPassword.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+
+    setSubmitting(true);
+
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        callbackUrl,
+        mode,
+        name: trimmedName,
+        email: trimmedEmail,
+        password: trimmedPassword,
+      });
+
+      if (result?.error) {
+        setError(getFriendlyAuthError(result.error));
+        return;
+      }
+
+      if (!result?.ok) {
+        setError("We could not complete sign in. Please try again.");
+        return;
+      }
+
+      window.location.href = callbackUrl;
+    } catch (error) {
+      setError(getFriendlyAuthError(error instanceof Error ? error.message : null));
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const dialog =
@@ -103,125 +161,155 @@ export function AuthDialog({
       <div
         ref={containerRef}
         data-auth-dialog="true"
-        className="fixed inset-0 z-[70] flex items-start justify-center overflow-y-auto p-3 sm:items-center sm:p-4 backdrop-blur-md"
+        className="fixed inset-0 z-[70] flex items-start justify-center overflow-y-auto bg-slate-950/55 p-3 backdrop-blur-md sm:items-center sm:p-4"
       >
         <div
           ref={panelRef}
-          className="auth-dialog__panel relative z-10 my-3 w-full max-w-xl overflow-y-auto rounded-[34px] border border-white/10 shadow-[0_30px_120px_rgba(2,6,23,0.55)] sm:my-0"
+          className="auth-dialog__panel relative z-10 my-3 w-full max-w-[27rem] overflow-hidden rounded-[26px] border border-white/10 shadow-[0_24px_90px_rgba(2,6,23,0.5)] sm:my-0"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="auth-dialog__content bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.18),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(99,102,241,0.16),_transparent_30%)] p-5 sm:p-8">
+          <div className="auth-dialog__content bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.14),_transparent_30%),linear-gradient(180deg,_rgba(255,255,255,0.06),_rgba(255,255,255,0.03))] p-4 sm:p-6">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <span className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-[11px] font-semibold tracking-[0.24em] text-cyan-200 uppercase">
+                <span className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5 text-[10px] font-semibold tracking-[0.2em] text-cyan-200 uppercase">
                   Account Access
                 </span>
-                <h2 className="mt-4 text-2xl font-semibold tracking-tight text-white sm:mt-5 sm:text-3xl">
+                <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
                   {title}
                 </h2>
-                <p className="mt-3 max-w-lg text-sm leading-7 text-slate-300">
+                <p className="mt-2 max-w-sm text-sm leading-6 text-slate-300">
                   {description}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="auth-dialog__close shrink-0 rounded-full border border-white/10 px-3 py-2 text-sm text-slate-300 transition hover:border-cyan-300/30 hover:text-white"
+                className="auth-dialog__close shrink-0 rounded-full border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-cyan-300/30 hover:text-white"
               >
                 Close
               </button>
             </div>
 
-            <div className="mt-2 rounded-[28px] border border-white/10 bg-white/6 p-5 sm:p-6">
-              <div className="flex flex-wrap gap-3">
+            <div className="mt-5 rounded-[22px] border border-white/10 bg-white/6 p-3.5 sm:p-4">
+              <div className="grid rounded-2xl border border-white/10 bg-[#071120]/80 p-1 sm:grid-cols-2">
                 <button
                   type="button"
-                  onClick={() => setMode("login")}
-                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                  onClick={() => {
+                    setMode("login");
+                    setError("");
+                  }}
+                  disabled={submitting}
+                  className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
                     mode === "login"
-                      ? "bg-blue-600 text-white dark:bg-white dark:text-slate-950"
-                      : "border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
+                      ? "bg-white text-slate-950 shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
+                      : "text-slate-400 hover:bg-white/5 hover:text-white disabled:opacity-60"
                   }`}
                 >
                   Login
                 </button>
                 <button
                   type="button"
-                  onClick={() => setMode("signup")}
-                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                  onClick={() => {
+                    setMode("signup");
+                    setError("");
+                  }}
+                  disabled={submitting}
+                  className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
                     mode === "signup"
-                      ? "bg-blue-600 text-white dark:bg-white dark:text-slate-950"
-                      : "border border-gray-300 text-gray-700 hover:bg-gray-100 dark:border-white/10 dark:text-slate-300 dark:hover:bg-white/5"
+                      ? "bg-white text-slate-950 shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
+                      : "text-slate-400 hover:bg-white/5 hover:text-white disabled:opacity-60"
                   }`}
                 >
                   Sign Up
                 </button>
               </div>
 
-              <p className="mt-5 text-sm font-medium text-white">
+              <p className="mt-4 text-sm font-medium text-white">
                 {mode === "signup" ? "Create your account" : "Log in to your account"}
               </p>
 
-              <form className="mt-6 space-y-4" onSubmit={handleCredentialsSubmit}>
+              <form className="mt-4 space-y-3" onSubmit={handleCredentialsSubmit}>
                 {mode === "signup" ? (
                   <input
                     value={name}
-                    onChange={(event) => setName(event.target.value)}
+                    onChange={(event) => {
+                      setName(event.target.value);
+                      if (error) setError("");
+                    }}
                     placeholder="Full name"
-                    className="w-full rounded-2xl border border-gray-300 bg-white px-4 py-4 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-white/10 dark:bg-[#081222] dark:text-white"
+                    autoComplete="name"
+                    minLength={2}
+                    required={mode === "signup"}
+                    disabled={submitting}
+                    className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 dark:border-white/10 dark:bg-[#081222] dark:text-white"
                   />
                 ) : null}
                 <input
                   type="email"
                   value={email}
-                  onChange={(event) => setEmail(event.target.value)}
+                  onChange={(event) => {
+                    setEmail(event.target.value);
+                    if (error) setError("");
+                  }}
                   placeholder="Email"
-                  className="w-full rounded-2xl border border-gray-300 bg-white px-4 py-4 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-white/10 dark:bg-[#081222] dark:text-white"
+                  autoComplete="email"
+                  inputMode="email"
+                  required
+                  disabled={submitting}
+                  className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 dark:border-white/10 dark:bg-[#081222] dark:text-white"
                 />
                 <input
                   type="password"
                   value={password}
-                  onChange={(event) => setPassword(event.target.value)}
+                  onChange={(event) => {
+                    setPassword(event.target.value);
+                    if (error) setError("");
+                  }}
                   placeholder="Password"
-                  className="w-full rounded-2xl border border-gray-300 bg-white px-4 py-4 text-sm text-gray-900 outline-none focus:border-blue-500 dark:border-white/10 dark:bg-[#081222] dark:text-white"
+                  autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                  minLength={8}
+                  required
+                  disabled={submitting}
+                  className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 dark:border-white/10 dark:bg-[#081222] dark:text-white"
                 />
                 {error ? (
-                  <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
+                  <div role="alert" className="rounded-xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
                     {error}
                   </div>
                 ) : null}
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full rounded-2xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-60 dark:bg-white dark:text-slate-950 dark:hover:bg-cyan-200"
+                  className="flex h-12 w-full items-center justify-center rounded-xl bg-cyan-500 px-5 text-sm font-semibold text-slate-950 shadow-[0_12px_30px_rgba(34,211,238,0.18)] transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-70"
                 >
                   {submitting
-                    ? "Please wait..."
+                    ? "Signing in..."
                     : mode === "signup"
                       ? "Create Account"
                       : "Login"}
                 </button>
               </form>
 
-              <div className="mt-6 flex items-center">
+              <div className="mt-5 flex items-center">
                 <div className="flex-1 border-t border-gray-300 dark:border-white/10"></div>
-                <span className="mx-4 text-sm text-gray-500 dark:text-slate-400">OR</span>
+                <span className="mx-3 text-xs font-medium text-gray-500 dark:text-slate-400">OR</span>
                 <div className="flex-1 border-t border-gray-300 dark:border-white/10"></div>
               </div>
 
-              <div className="mt-4 flex flex-wrap items-center gap-4">
+              <div className="mt-4 grid gap-3">
                 {enabled ? (
                   <GoogleSignInButton
                     callbackUrl={callbackUrl}
-                    className="rounded-2xl bg-gray-100 border border-gray-300 px-5 py-3 text-sm font-semibold text-gray-900 transition hover:bg-gray-200 dark:bg-white dark:text-slate-950 dark:hover:bg-cyan-200 dark:border-white/10"
+                    disabled={submitting}
+                    className="h-12 w-full rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 dark:border-white/10 dark:bg-white dark:text-slate-950 dark:hover:bg-cyan-100"
                     label="Continue with Google"
                   />
                 ) : (
-                  <div className="rounded-2xl border border-amber-300/20 bg-amber-300/10 px-5 py-3 text-sm text-amber-100">
+                  <div className="rounded-xl border border-amber-300/20 bg-amber-300/10 px-5 py-3 text-sm text-amber-100">
                     Google OAuth is not configured yet.
                   </div>
                 )}
-                <span className="text-xs leading-6 text-slate-400">
+                <span className="text-center text-xs leading-5 text-slate-400">
                   By continuing, you agree to our Terms and Privacy Policy.
                 </span>
               </div>
