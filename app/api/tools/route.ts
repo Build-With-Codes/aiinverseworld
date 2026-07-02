@@ -18,7 +18,12 @@ export async function GET(request: Request) {
         "Content-Type": response.headers.get("Content-Type") ?? "application/json",
       },
     });
-  } catch {
+  } catch (error) {
+    console.warn(
+      `[api/tools] backend request failed for ${AIVERSE_WORLD_BASE_URL}: ${
+        error instanceof Error ? error.message : "unknown error"
+      }`,
+    );
     return Response.json({
       data: [],
       pagination: { page: 1, limit: 24, total: 0, totalPages: 1 },

@@ -11,10 +11,7 @@ type BestPageProps = {
   searchParams?: Promise<{ page?: string }>;
 };
 
-export async function generateStaticParams() {
-  const result = await getBestLists();
-  return result.lists.map((list) => ({ slug: list.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: BestPageProps): Promise<Metadata> {
   const { slug } = await params;

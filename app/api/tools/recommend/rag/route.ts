@@ -18,7 +18,12 @@ export async function GET(request: Request) {
         "Content-Type": response.headers.get("Content-Type") ?? "application/json",
       },
     });
-  } catch {
+  } catch (error) {
+    console.warn(
+      `[api/tools/recommend/rag] backend request failed for ${AIVERSE_WORLD_BASE_URL}: ${
+        error instanceof Error ? error.message : "unknown error"
+      }`,
+    );
     return Response.json({
       query: searchParams.get("q") ?? "",
       answer: "No recommendations are available right now.",
