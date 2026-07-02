@@ -12,6 +12,12 @@ import { getAllBlogPosts } from "@/lib/blog-data";
 import { blogSuggestionFAQs } from "@/lib/blog-suggestions";
 import { HeroSearch } from "@/components/hero-search";
 import { ToolMarquee } from "@/components/tool-marquee";
+import {
+  aiFinderOptions,
+  discoveryBands,
+  finderQuestions,
+  homeRecommendationQuery,
+} from "@/lib/home-content";
 
 export const metadata: Metadata = {
   title: "AI Tools Directory & Reviews 2026 | Discover the Best AI Tools - AiverseWorld",
@@ -32,48 +38,6 @@ export const metadata: Metadata = {
   },
 };
 
-const aiFinderOptions = [
-  {
-    title: "Growth teams",
-    description: "Find writing, SEO, image, and analytics tools in one flow.",
-  },
-  {
-    title: "Builders",
-    description: "Compare copilots, agents, code search, and automation stacks.",
-  },
-  {
-    title: "Creators",
-    description: "Explore tools for visuals, video, voice, and campaign production.",
-  },
-];
-
-const finderQuestions = [
-  "Do you need an assistant?",
-  "Are you building software?",
-  "Do you need image or video creation?",
-  "Are you automating workflows?",
-  "Do you need enterprise deployment?",
-  "Are you researching or summarizing content?",
-];
-
-const discoveryBands = [
-  {
-    title: "For marketers",
-    description: "Find content, SEO, image, and campaign tools with faster shortlist paths.",
-    accent: "from-cyan-400/16 via-sky-500/10 to-transparent",
-  },
-  {
-    title: "For builders",
-    description: "Compare copilots, agents, dev platforms, and workflow automation stacks.",
-    accent: "from-violet-400/16 via-indigo-500/10 to-transparent",
-  },
-  {
-    title: "For teams",
-    description: "Evaluate productivity, research, support, and operations tools in one place.",
-    accent: "from-emerald-400/16 via-teal-500/10 to-transparent",
-  },
-];
-
 export default async function Home() {
   const catalog = await getToolCatalog();
   const comparisonCatalog = await getComparisons(12);
@@ -87,7 +51,7 @@ export default async function Home() {
   const creativeTools = liveTools
     .filter((tool) => ["Image Generation", "Video Generation", "Design Assistant"].includes(tool.category))
     .slice(0, 6);
-  const researchRecommendations = await recommendTools("research summarize PDFs knowledge documents", 3);
+  const researchRecommendations = await recommendTools(homeRecommendationQuery, 3);
   const newsArticles = await getNewsArticles(3);
   const blogPosts = getAllBlogPosts().slice(0, 6);
   
@@ -140,13 +104,14 @@ export default async function Home() {
             </h2>
             <div className="mt-6 space-y-3">
               {finderQuestions.map((question, index) => (
-                <div
-                  key={question}
+                <Link
+                  key={question.label}
+                  href={`/?recommend=${encodeURIComponent(question.query)}#ai-finder`}
                   className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#091322] px-4 py-3"
                 >
-                  <span className="text-sm text-slate-200">{question}</span>
+                  <span className="text-sm text-slate-200">{question.label}</span>
                   <span className="text-xs text-slate-500">0{index + 1}</span>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -155,12 +120,16 @@ export default async function Home() {
             <p className="text-sm font-medium text-slate-300">Built for every operator</p>
             <div className="mt-5 space-y-4">
               {aiFinderOptions.map((option) => (
-                <div key={option.title} className="rounded-2xl border border-white/8 bg-white/5 p-4">
+                <Link
+                  key={option.title}
+                  href={`/?recommend=${encodeURIComponent(option.query)}#ai-finder`}
+                  className="block rounded-2xl border border-white/8 bg-white/5 p-4 transition hover:border-cyan-300/25 hover:bg-white/8"
+                >
                   <h3 className="font-semibold text-white">{option.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-slate-400">
                     {option.description}
                   </p>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -169,13 +138,14 @@ export default async function Home() {
 
       <section className="grid gap-5 lg:grid-cols-3">
         {discoveryBands.map((band) => (
-          <div
+          <Link
             key={band.title}
+            href={`/?recommend=${encodeURIComponent(band.query)}#ai-finder`}
             className={`rounded-[30px] border border-white/10 bg-linear-to-br ${band.accent} p-6 shadow-[0_20px_60px_rgba(3,8,22,0.28)]`}
           >
             <p className="text-sm font-semibold text-white">{band.title}</p>
             <p className="mt-3 text-sm leading-7 text-slate-300">{band.description}</p>
-          </div>
+          </Link>
         ))}
       </section>
 

@@ -1,3 +1,8 @@
+import Link from "next/link";
+
+import { getAllBlogPosts } from "@/lib/blog-data";
+import { aiFinderOptions, discoveryBands, finderQuestions } from "@/lib/home-content";
+
 type SkeletonBlockProps = {
   className?: string;
 };
@@ -228,19 +233,44 @@ export function NewsGridSkeleton({ count = 9 }: { count?: number }) {
 }
 
 export function HomePageSkeleton() {
+  const blogPosts = getAllBlogPosts().slice(0, 6);
+
   return (
     <PageShellSkeleton>
       <section className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
         <div className="space-y-8">
-          <SkeletonBlock className="h-9 w-64 rounded-full" />
-          <div className="space-y-5">
-            <SkeletonLine className="h-16 w-full max-w-4xl sm:h-20" />
-            <SkeletonLine className="h-16 w-3/4 max-w-3xl sm:h-20" />
-            <SkeletonLine className="h-5 w-full max-w-2xl" />
-            <SkeletonLine className="h-5 w-5/6 max-w-xl" />
+          <div className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-cyan-100 uppercase">
+            Enterprise-grade AI discovery
           </div>
-          <div className="rounded-[28px] border border-white/10 bg-white/6 p-3">
-            <SkeletonBlock className="h-14 rounded-2xl" />
+          <div className="space-y-6">
+            <h1 className="max-w-5xl text-5xl font-semibold tracking-tight text-white sm:text-6xl lg:text-7xl">
+              Discover the Perfect AI Tool
+            </h1>
+            <p className="max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
+              AiverseWorld is your curated search engine for AI products across
+              assistants, coding, video, research, automation, and enterprise
+              platforms. Compare real tools, pricing signals, and use cases fast.
+            </p>
+          </div>
+          <div className="rounded-[32px] border border-white/10 bg-white/8 p-4 shadow-[0_24px_120px_rgba(8,15,35,0.45)] backdrop-blur-2xl">
+            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+              <div className="rounded-2xl border border-white/10 bg-[#071120] px-5 py-4 text-sm text-slate-500">
+                Search AI tools by use case, price, or category
+              </div>
+              <div className="rounded-2xl bg-white px-5 py-4 text-center text-sm font-semibold text-slate-950">
+                Recommend AI
+              </div>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {["AI for Sales", "Free Image Tools", "Code Assistants", "Education"].map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs text-slate-300"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             {[0, 1, 2].map((item) => (
@@ -254,29 +284,39 @@ export function HomePageSkeleton() {
 
         <div className="grid gap-4">
           <div className="rounded-[32px] border border-cyan-300/18 bg-white/6 p-7">
-            <SkeletonLine className="w-24" />
-            <SkeletonLine className="mt-4 h-7 w-4/5" />
+            <p className="text-xs font-semibold tracking-[0.28em] text-cyan-200 uppercase">
+              AI Finder
+            </p>
+            <h2 className="mt-3 text-2xl font-semibold text-white">
+              Answer a few questions and get a shortlist in seconds
+            </h2>
             <div className="mt-6 space-y-3">
-              {Array.from({ length: 6 }).map((_, index) => (
-                <div
-                  key={index}
+              {finderQuestions.map((question, index) => (
+                <Link
+                  key={question.label}
+                  href={`/?recommend=${encodeURIComponent(question.query)}#ai-finder`}
                   className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#091322] px-4 py-3"
                 >
-                  <SkeletonLine className="w-4/5" />
-                  <SkeletonLine className="w-6" />
-                </div>
+                  <span className="text-sm text-slate-200">{question.label}</span>
+                  <span className="text-xs text-slate-500">0{index + 1}</span>
+                </Link>
               ))}
             </div>
           </div>
           <div className="rounded-[32px] border border-white/10 bg-white/6 p-7">
-            <SkeletonLine className="w-40" />
+            <p className="text-sm font-medium text-slate-300">Built for every operator</p>
             <div className="mt-5 space-y-4">
-              {[0, 1, 2].map((item) => (
-                <div key={item} className="rounded-2xl border border-white/8 bg-white/5 p-4">
-                  <SkeletonLine className="h-5 w-32" />
-                  <SkeletonLine className="mt-3 w-full" />
-                  <SkeletonLine className="mt-2 w-2/3" />
-                </div>
+              {aiFinderOptions.map((option) => (
+                <Link
+                  key={option.title}
+                  href={`/?recommend=${encodeURIComponent(option.query)}#ai-finder`}
+                  className="block rounded-2xl border border-white/8 bg-white/5 p-4"
+                >
+                  <h3 className="font-semibold text-white">{option.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-400">
+                    {option.description}
+                  </p>
+                </Link>
               ))}
             </div>
           </div>
@@ -284,12 +324,15 @@ export function HomePageSkeleton() {
       </section>
 
       <section className="grid gap-5 lg:grid-cols-3">
-        {[0, 1, 2].map((item) => (
-          <div key={item} className="rounded-[30px] border border-white/10 bg-white/6 p-6">
-            <SkeletonLine className="h-5 w-32" />
-            <SkeletonLine className="mt-4 w-full" />
-            <SkeletonLine className="mt-3 w-3/4" />
-          </div>
+        {discoveryBands.map((band) => (
+          <Link
+            key={band.title}
+            href={`/?recommend=${encodeURIComponent(band.query)}#ai-finder`}
+            className={`rounded-[30px] border border-white/10 bg-linear-to-br ${band.accent} p-6 shadow-[0_20px_60px_rgba(3,8,22,0.28)]`}
+          >
+            <p className="text-sm font-semibold text-white">{band.title}</p>
+            <p className="mt-3 text-sm leading-7 text-slate-300">{band.description}</p>
+          </Link>
         ))}
       </section>
 
@@ -306,19 +349,35 @@ export function HomePageSkeleton() {
         </div>
       </section>
 
-      <SectionHeaderSkeleton />
+      <section>
+        <p className="text-xs font-semibold tracking-[0.28em] text-cyan-200 uppercase">Learning Hub</p>
+        <h2 className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+          AI Guides, Tips & Insights
+        </h2>
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">
+          Learn how to master AI tools, discover best practices, and stay updated with the latest AI trends and strategies.
+        </p>
+      </section>
       <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: 6 }).map((_, index) => (
-          <article key={index} className="rounded-[24px] border border-white/10 bg-white/5 p-6">
-            <div className="flex items-center justify-between">
-              <SkeletonBlock className="h-7 w-20 rounded" />
-              <SkeletonLine className="w-16" />
+        {blogPosts.map((post) => (
+          <Link
+            key={post.slug}
+            href={`/blog/${post.slug}`}
+            className="group rounded-[24px] border border-white/10 bg-white/5 p-6 transition hover:border-cyan-300/30 hover:bg-white/8"
+          >
+            <div className="mb-3 flex items-center justify-between">
+              <span className="rounded bg-cyan-300/10 px-2 py-1 text-xs font-medium text-cyan-200">
+                {post.category}
+              </span>
+              <span className="text-xs text-slate-500">{post.readTime}</span>
             </div>
-            <SkeletonLine className="mt-5 h-6 w-full" />
-            <SkeletonLine className="mt-3 h-6 w-4/5" />
-            <SkeletonLine className="mt-5 w-full" />
-            <SkeletonLine className="mt-3 w-2/3" />
-          </article>
+            <h3 className="line-clamp-2 font-semibold text-white transition group-hover:text-cyan-200">
+              {post.title}
+            </h3>
+            <p className="mt-3 line-clamp-2 text-sm text-slate-400">
+              {post.description}
+            </p>
+          </Link>
         ))}
       </section>
 
