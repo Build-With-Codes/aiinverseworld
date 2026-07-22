@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ToolCard } from "@/components/tool-card";
 import { SectionHeading } from "@/components/section-heading";
 import { StructuredDataScript } from "@/components/structured-data-script";
-import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
+import { buildUrl, defaultOpenGraphImage, formatDisplayDate, getLatestVerifiedDate } from "@/lib/seo";
 import { getBestLists, getBestListWithTools } from "@/lib/tool-catalog";
 
 type BestPageProps = {
@@ -20,6 +20,7 @@ export async function generateMetadata({ params }: BestPageProps): Promise<Metad
   const list = result?.list;
 
   if (!list) return { title: "Not Found | AiverseWorld" };
+  const dateModified = getLatestVerifiedDate(result?.tools ?? []);
 
   return {
     title: `${list.title} ${new Date().getFullYear()} — Ranked & Reviewed | AiverseWorld`,
@@ -65,6 +66,8 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
   }
 
   const { list, tools, pagination } = result;
+  const dateModified = getLatestVerifiedDate(tools);
+  const dateModifiedLabel = formatDisplayDate(dateModified);
 
   return (
     <div className="space-y-12 pb-10 pt-10 sm:pt-14">
@@ -77,6 +80,7 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
               name: list.title,
               description: list.description,
               url: buildUrl(`/best/${slug}`),
+              dateModified,
               numberOfItems: tools.length,
               itemListElement: tools.slice(0, 10).map((tool, i) => ({
                 "@type": "ListItem",
@@ -123,7 +127,9 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
           <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">{tools.length} tools listed</span>
           <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">{pagination.total} total matches</span>
           <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Sorted by popularity</span>
-          <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Updated 2025</span>
+          <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-emerald-100">
+            Last updated <time dateTime={dateModified}>{dateModifiedLabel}</time>
+          </span>
         </div>
       </section>
 

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
-import { buildCategoryMeta, defaultOpenGraphImage } from "@/lib/seo";
+import { buildCategoryMeta, defaultOpenGraphImage, formatDisplayDate, getLatestVerifiedDate, buildUrl } from "@/lib/seo";
+import { StructuredDataScript } from "@/components/structured-data-script";
 import { getCategoryWithTools } from "@/lib/tool-catalog";
 import { CategoryPageClient } from "./client";
 
@@ -34,29 +35,51 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
   const { page: pageParam } = (await searchParams) ?? {};
   const page = Math.max(1, Number(pageParam) || 1);
   const result = await getCategoryWithTools(slug, page, 24);
+  const category =
+    result?.category ?? {
+      name: slug
+        .split("-")
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" "),
+      slug,
+      count: 0,
+      description: "No data is available for this category right now.",
+    };
+  const tools = result?.tools ?? [];
+  const dateModified = getLatestVerifiedDate(tools);
 
   return (
-    <CategoryPageClient
-      category={
-        result?.category ?? {
-          name: slug
-            .split("-")
-            .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-            .join(" "),
-          slug,
-          count: 0,
-          description: "No data is available for this category right now.",
+    <>
+      <StructuredDataScript
+        id="category-schema"
+        data={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: `${category.name} tools`,
+          url: buildUrl(`/category/${slug}`),
+          description: category.description,
+          dateModified,
+          hasPart: tools.slice(0, 10).map((tool) => ({
+            "@type": "SoftwareApplication",
+            name: tool.name,
+            url: buildUrl(`/tool/${tool.slug}`),
+            dateModified: tool.lastVerified,
+          })),
+        }}
+      />
+      <CategoryPageClient
+        category={category}
+        tools={tools}
+        pagination={
+          result?.pagination ?? {
+            page,
+            limit: 24,
+            total: 0,
+            totalPages: 1,
+          }
         }
-      }
-      tools={result?.tools ?? []}
-      pagination={
-        result?.pagination ?? {
-          page,
-          limit: 24,
-          total: 0,
-          totalPages: 1,
-        }
-      }
-    />
+        lastUpdated={{ date: dateModified, label: formatDisplayDate(dateModified) }}
+      />
+    </>
   );
 }

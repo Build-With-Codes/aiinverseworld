@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 
 import { ComparisonTable } from "@/components/comparison-table";
 import { SectionHeading } from "@/components/section-heading";
-import { buildUrl } from "@/lib/seo";
+import { buildUrl, defaultOpenGraphImage, formatDisplayDate, getLatestVerifiedDate } from "@/lib/seo";
 import { getComparisonWithTools, getToolOptions } from "@/lib/tool-catalog";
+import { StructuredDataScript } from "@/components/structured-data-script";
 import { CompareSelector } from "../compare-selector";
 
 type ComparePageProps = {
@@ -15,11 +16,26 @@ export async function generateMetadata({ params }: ComparePageProps): Promise<Me
   const pair = await getComparisonWithTools(comparison);
 
   if (!pair) return { title: "Comparison not found | AiverseWorld" };
+  const dateModified = getLatestVerifiedDate([pair.left, pair.right]);
 
   return {
     title: `${pair.left.name} vs ${pair.right.name} | AiverseWorld`,
     description: `Compare ${pair.left.name} and ${pair.right.name} across category, pricing, platforms, and use cases.`,
     alternates: { canonical: buildUrl(`/compare/${comparison}`) },
+    openGraph: {
+      title: `${pair.left.name} vs ${pair.right.name} | AiverseWorld`,
+      description: `Compare ${pair.left.name} and ${pair.right.name} across category, pricing, platforms, and use cases.`,
+      url: buildUrl(`/compare/${comparison}`),
+      type: "article",
+      modifiedTime: dateModified,
+      images: [defaultOpenGraphImage],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${pair.left.name} vs ${pair.right.name} | AiverseWorld`,
+      description: `Compare ${pair.left.name} and ${pair.right.name} across category, pricing, platforms, and use cases.`,
+      images: [defaultOpenGraphImage.url],
+    },
   };
 }
 
@@ -44,15 +60,39 @@ export default async function ComparePage({ params }: ComparePageProps) {
       </div>
     );
   }
+  const dateModified = getLatestVerifiedDate([pair.left, pair.right]);
+  const dateModifiedLabel = formatDisplayDate(dateModified);
 
   return (
     <div className="space-y-10 pb-10 pt-10">
+      <StructuredDataScript
+        id="comparison-schema"
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          name: `${pair.left.name} vs ${pair.right.name}`,
+          url: buildUrl(`/compare/${comparison}`),
+          dateModified,
+          mainEntity: {
+            "@type": "ItemList",
+            itemListElement: [pair.left, pair.right].map((tool, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              name: tool.name,
+              url: buildUrl(`/tool/${tool.slug}`),
+            })),
+          },
+        }}
+      />
       <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
         <SectionHeading
           eyebrow="Compare"
           title={`${pair.left.name} vs ${pair.right.name}`}
           description="A direct comparison using the real catalog fields currently available for both products."
         />
+        <p className="mb-5 text-sm font-medium text-slate-400">
+          Last updated <time dateTime={dateModified}>{dateModifiedLabel}</time>
+        </p>
         <CompareSelector
           currentLeft={pair.left.id}
           currentRight={pair.right.id}

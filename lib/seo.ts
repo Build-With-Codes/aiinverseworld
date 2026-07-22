@@ -12,6 +12,28 @@ export function buildUrl(path: string) {
   return `${siteUrl}${path === "/" ? "" : path}`;
 }
 
+export function formatDisplayDate(date: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(date));
+}
+
+export function getLatestVerifiedDate(tools: Array<{ lastVerified?: string }>) {
+  const timestamps = tools
+    .map((tool) => tool.lastVerified)
+    .filter((value): value is string => Boolean(value))
+    .map((value) => new Date(value).getTime())
+    .filter((value) => !Number.isNaN(value));
+
+  if (timestamps.length === 0) {
+    return "2026-07-22";
+  }
+
+  return new Date(Math.max(...timestamps)).toISOString().slice(0, 10);
+}
+
 export function buildToolMeta(tool: {
   name: string;
   slug: string;

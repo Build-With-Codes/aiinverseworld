@@ -11,11 +11,15 @@ type Props = {
   category: Category;
   tools: AITool[];
   pagination: Pagination;
+  lastUpdated?: {
+    date: string;
+    label: string;
+  };
 };
 
 const allPricing = ["Free", "Freemium", "Subscription", "Usage-based", "Enterprise", "Custom"];
 
-export function CategoryPageClient({ category, tools, pagination }: Props) {
+export function CategoryPageClient({ category, tools, pagination, lastUpdated }: Props) {
   const firstRenderRef = useRef(true);
   const [currentTools, setCurrentTools] = useState(tools);
   const [currentPagination, setCurrentPagination] = useState(pagination);
@@ -165,6 +169,11 @@ export function CategoryPageClient({ category, tools, pagination }: Props) {
           title={`${category.name} tools`}
           description={category.description}
         />
+        {lastUpdated ? (
+          <p className="mb-5 text-sm font-medium text-slate-400">
+            Last updated <time dateTime={lastUpdated.date}>{lastUpdated.label}</time>
+          </p>
+        ) : null}
 
         <div className="mb-4">
           <input

@@ -37,6 +37,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       type: "article",
       url: buildUrl(`/blog/${slug}`),
       publishedTime: post.publishedAt,
+      modifiedTime: post.publishedAt,
       authors: [post.author],
       images: [defaultOpenGraphImage],
     },
@@ -244,6 +245,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     "description": post.description,
     "image": "https://aiverseworld.com/logo.webp",
     "datePublished": post.publishedAt,
+    "dateModified": post.publishedAt,
     "author": {
       "@type": "Organization",
       "name": post.author
@@ -312,6 +314,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               <span>{post.author}</span>
               <span aria-hidden="true">|</span>
               <time dateTime={post.publishedAt}>{post.publishedAt}</time>
+              <span aria-hidden="true">|</span>
+              <span>
+                Last updated <time dateTime={post.publishedAt}>{post.publishedAt}</time>
+              </span>
               <span aria-hidden="true">|</span>
               <span>{post.readTime} read</span>
             </div>
