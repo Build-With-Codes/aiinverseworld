@@ -2,6 +2,7 @@ import { authOptions } from "@/auth";
 import { AccountMenu } from "@/components/account-menu";
 import { AiToolsMenu } from "@/components/ai-tools-menu";
 import { AuthDialog } from "@/components/auth-dialog";
+import { ContentInternalLinks } from "@/components/content-internal-links";
 import { HeaderSearch } from "@/components/header-search";
 import { HeaderTrendingSearches } from "@/components/header-trending-searches";
 import { MobileMenu } from "@/components/mobile-menu";
@@ -146,6 +147,7 @@ export async function SiteShell({ children }: SiteShellProps) {
 
         <main className="flex-1">
           {children}
+          <ContentInternalLinks />
         </main>
 
         <footer className="app-glass mt-16 rounded-[32px] border border-white/10 bg-white/6 px-6 py-10 backdrop-blur-xl sm:px-8">

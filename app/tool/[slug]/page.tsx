@@ -33,6 +33,13 @@ function formatList(items: string[]) {
   return `${items.slice(0, -1).join(", ")}, and ${items.at(-1)}`;
 }
 
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export async function generateMetadata({ params }: ToolDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
   const tool = await getToolBySlug(slug);
@@ -287,18 +294,36 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
           <p className="mt-4 text-base leading-8 text-slate-300">
             {editorialOverview}
           </p>
+          <Link
+            href={`/category/${slugify(tool.category)}`}
+            className="mt-5 inline-flex text-sm font-semibold text-cyan-200 transition hover:text-cyan-100"
+          >
+            Explore more {tool.category} tools
+          </Link>
         </article>
         <article className="rounded-[30px] border border-white/10 bg-white/6 p-7">
           <h2 className="text-2xl font-semibold text-white">Best use cases</h2>
           <p className="mt-4 text-base leading-8 text-slate-300">
             {editorialUseCases}
           </p>
+          <Link
+            href="/search"
+            className="mt-5 inline-flex text-sm font-semibold text-cyan-200 transition hover:text-cyan-100"
+          >
+            Search tools for similar workflows
+          </Link>
         </article>
         <article className="rounded-[30px] border border-white/10 bg-white/6 p-7">
           <h2 className="text-2xl font-semibold text-white">Limitations to check</h2>
           <p className="mt-4 text-base leading-8 text-slate-300">
             {editorialLimitations}
           </p>
+          <Link
+            href="/compare"
+            className="mt-5 inline-flex text-sm font-semibold text-cyan-200 transition hover:text-cyan-100"
+          >
+            Compare before choosing a tool
+          </Link>
         </article>
       </section>
 
