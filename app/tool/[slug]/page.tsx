@@ -77,6 +77,11 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
   });
   const alternatives = alternativesResult.tools.filter((item) => item.slug !== tool.slug);
   const toolReviews = await getReviewsForTool(tool.slug);
+  const lastVerifiedLabel = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(tool.lastVerified));
 
   const priceLabel =
     tool.startingPriceUsd === null
@@ -99,6 +104,8 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
               operatingSystem: tool.platforms.join(", "),
               url: buildUrl(`/tool/${tool.slug}`),
               sameAs: tool.website,
+              dateModified: tool.lastVerified,
+              ...(tool.launchYear ? { datePublished: `${tool.launchYear}-01-01` } : {}),
               offers: tool.startingPriceUsd === null
                 ? undefined
                 : { "@type": "Offer", price: tool.startingPriceUsd, priceCurrency: "USD" },
@@ -159,6 +166,10 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
             </span>
             <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-300">
               {tool.pricingModel}
+            </span>
+            <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-xs text-emerald-100">
+              Last verified{" "}
+              <time dateTime={tool.lastVerified}>{lastVerifiedLabel}</time>
             </span>
             {tool.status !== "Active" && (
               <span className="rounded-full border border-amber-300/25 bg-amber-300/10 px-3 py-1 text-xs text-amber-200">
