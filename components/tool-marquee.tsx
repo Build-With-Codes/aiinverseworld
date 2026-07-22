@@ -28,7 +28,7 @@ export function ToolMarquee({ tools, direction = "left" }: Props) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={tool.favicon}
-              alt=""
+              alt={`${tool.name} logo`}
               width={16}
               height={16}
               className="rounded-sm"

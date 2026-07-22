@@ -243,9 +243,9 @@ export function HomePageSkeleton() {
             Enterprise-grade AI discovery
           </div>
           <div className="space-y-6">
-            <h1 className="max-w-5xl text-5xl font-semibold tracking-tight text-white sm:text-6xl lg:text-7xl">
+            <div className="max-w-5xl text-5xl font-semibold tracking-tight text-white sm:text-6xl lg:text-7xl">
               Discover the Perfect AI Tool
-            </h1>
+            </div>
             <p className="max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
               AiverseWorld is your curated search engine for AI products across
               assistants, coding, video, research, automation, and enterprise
