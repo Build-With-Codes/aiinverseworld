@@ -1,4 +1,5 @@
 import { BlogCard } from "@/components/blog-card";
+import { StructuredDataScript } from "@/components/structured-data-script";
 import { getAllBlogPosts } from "@/lib/blog-data";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -63,10 +64,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogStructuredData) }}
-      />
+      <StructuredDataScript id="blog-schema" data={blogStructuredData} />
 
       <div className="pb-12 pt-4">
         <section className="rounded-[22px] border border-white/10 bg-white/6 px-4 py-4 shadow-[0_14px_42px_rgba(2,6,23,0.18)] sm:px-5">

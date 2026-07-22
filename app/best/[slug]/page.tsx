@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { ToolCard } from "@/components/tool-card";
 import { SectionHeading } from "@/components/section-heading";
+import { StructuredDataScript } from "@/components/structured-data-script";
 import { buildUrl } from "@/lib/seo";
 import { getBestLists, getBestListWithTools } from "@/lib/tool-catalog";
 
@@ -65,10 +66,9 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
 
   return (
     <div className="space-y-12 pb-10 pt-10 sm:pt-14">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify([
+      <StructuredDataScript
+        id="best-list-schema"
+        data={[
             {
               "@context": "https://schema.org",
               "@type": "ItemList",
@@ -105,8 +105,7 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
                 },
               ],
             },
-          ]),
-        }}
+          ]}
       />
 
       <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
 import { ContentPage } from "@/components/content-page";
+import { SocialLink } from "@/components/social-link";
+import { socialLinks } from "@/lib/social-links";
 
 export const metadata: Metadata = {
   title: "Contact | AiverseWorld",
@@ -40,6 +42,19 @@ export default function ContactPage() {
           <p className="mt-3 text-base leading-8 text-slate-300">
             legal@aiverseworld.com
           </p>
+        </div>
+        <div className="rounded-[24px] border border-white/10 bg-[#081222] p-6 md:col-span-2">
+          <h2 className="text-2xl font-semibold text-white">Social</h2>
+          <div className="mt-4 flex flex-wrap gap-3">
+            {socialLinks.map((link) => (
+              <SocialLink
+                key={link.name}
+                href={link.href}
+                name={link.name}
+                label={link.label}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </ContentPage>

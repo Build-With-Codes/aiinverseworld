@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ContentPage } from "@/components/content-page";
+import { StructuredDataScript } from "@/components/structured-data-script";
 
 export const metadata: Metadata = {
   title: "About AiverseWorld | AI Tool Discovery Platform",
@@ -33,10 +34,7 @@ export default function AboutPage() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
+      <StructuredDataScript id="about-schema" data={structuredData} />
       <ContentPage
         eyebrow="Company"
         title="About AiverseWorld"
@@ -84,7 +82,7 @@ export default function AboutPage() {
             <li>Anyone interested in artificial intelligence</li>
           </ul>
           <p className="text-base leading-8 text-slate-300 mt-4">
-            Whether you're looking for the right AI tool, learning about emerging technologies, researching industry trends, or exploring the future of artificial intelligence, AiverseWorld provides the resources and insights to help you move forward with confidence.
+            Whether you&apos;re looking for the right AI tool, learning about emerging technologies, researching industry trends, or exploring the future of artificial intelligence, AiverseWorld provides the resources and insights to help you move forward with confidence.
           </p>
         </div>
 

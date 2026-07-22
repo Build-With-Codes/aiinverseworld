@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { StructuredDataScript } from "@/components/structured-data-script";
 import { blogPosts, getBlogPost, getAllBlogPosts } from "@/lib/blog-data";
 import { getBlogSuggestions } from "@/lib/blog-suggestions";
 import { Metadata } from "next";
@@ -271,19 +272,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
+      <StructuredDataScript id="blog-post-breadcrumb-schema" data={breadcrumbSchema} />
+      <StructuredDataScript id="blog-post-article-schema" data={articleSchema} />
       {faqSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
+        <StructuredDataScript id="blog-post-faq-schema" data={faqSchema} />
       )}
       <div className="pb-12 pt-8">
         <section className="rounded-[34px] border border-white/10 px-5 py-8 sm:px-8 lg:px-10" style={{

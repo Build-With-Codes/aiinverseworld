@@ -10,8 +10,10 @@ import { CookieConsent } from "@/components/cookie-consent";
 import { SiteShell } from "@/components/site-shell";
 import { googleAuthEnabled } from "@/lib/auth-config";
 import { buildUrl, siteUrl } from "@/lib/seo";
+import { buildGlobalStructuredData, jsonLd } from "@/lib/structured-data";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { headers } from "next/headers";
 import { getServerSession } from "next-auth";
 
 import "./globals.css";
@@ -59,13 +61,17 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerSession(authOptions);
+  const [session, requestHeaders] = await Promise.all([getServerSession(authOptions), headers()]);
+  const nonce = requestHeaders.get("x-nonce") ?? undefined;
+  const structuredData = buildGlobalStructuredData();
 
   return (
     <html lang="en" className="h-full antialiased" suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         <script
           id="theme-init"
+          nonce={nonce}
+          suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `
               (() => {
@@ -77,7 +83,14 @@ export default async function RootLayout({
             `,
           }}
         />
-        <ConsentMode />
+        <ConsentMode nonce={nonce} />
+        <script
+          id="aiverseworld-global-schema"
+          nonce={nonce}
+          suppressHydrationWarning
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLd(structuredData) }}
+        />
         {/* REMOVED: Next.js <Script> component and invalid meta tags are removed from <head> */}
       </head>
       <body className="min-h-full" suppressHydrationWarning>
@@ -86,35 +99,14 @@ export default async function RootLayout({
           id="google-adsense"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1921034562411070"
           crossOrigin="anonymous"
+          nonce={nonce}
         />
 
-        <Script id="aiverseworld-schema" type="application/ld+json">
-          {JSON.stringify([
-            {
-              "@context": "https://schema.org",
-              "@type": "Organization",
-              name: "AiverseWorld",
-              url: siteUrl,
-              logo: buildUrl("/logo.png"),
-            },
-            {
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              name: "AiverseWorld",
-              url: siteUrl,
-              potentialAction: {
-                "@type": "SearchAction",
-                target: `${siteUrl}/search?q={search_term_string}`,
-                "query-input": "required name=search_term_string",
-              },
-            },
-          ])}
-        </Script>
-        <AdNetworkScripts />
-        <SiteShell>{children}</SiteShell>
+        <AdNetworkScripts nonce={nonce} />
+        <SiteShell nonce={nonce}>{children}</SiteShell>
         <CookieConsent />
         {session?.user ? (
-          <Script id="chatbase-widget" strategy="afterInteractive">
+          <Script id="chatbase-widget" nonce={nonce} strategy="afterInteractive">
             {`(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="oqIeeF-NRJYMKRywqI8DE";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();`}
           </Script>
         ) : (

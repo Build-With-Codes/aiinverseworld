@@ -4,9 +4,10 @@ import { type AdPlacementKey, adPlacements, adsEnabled } from "@/lib/ads";
 type AdSlotProps = {
   placement: Extract<AdPlacementKey, "nativeBanner" | "banner468x60">;
   className?: string;
+  nonce?: string;
 };
 
-export function AdSlot({ placement, className = "" }: AdSlotProps) {
+export function AdSlot({ placement, className = "", nonce }: AdSlotProps) {
   const ad = adPlacements[placement];
 
   if (!adsEnabled || !ad.enabled || !ad.scriptUrl) {
@@ -34,7 +35,7 @@ export function AdSlot({ placement, className = "" }: AdSlotProps) {
         }}
       />
       {placement === "banner468x60" && ad.key ? (
-        <ConsentedScript id={`ad-options-${ad.id}`}>
+        <ConsentedScript id={`ad-options-${ad.id}`} nonce={nonce}>
           {`
             window.atOptions = {
               key: "${ad.key}",
@@ -52,6 +53,7 @@ export function AdSlot({ placement, className = "" }: AdSlotProps) {
         }}
         id={`ad-slot-script-${ad.id}`}
         src={ad.scriptUrl}
+        nonce={nonce}
       />
     </aside>
   );

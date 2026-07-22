@@ -2,6 +2,7 @@ import { authOptions } from "@/auth";
 import { AuthDialog } from "@/components/auth-dialog";
 import { FaviconBadge } from "@/components/favicon-badge";
 import { ReviewForm } from "@/components/review-form";
+import { StructuredDataScript } from "@/components/structured-data-script";
 import { googleAuthEnabled } from "@/lib/auth-config";
 import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
@@ -86,10 +87,9 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
 
   return (
     <div className="space-y-12 pb-10 pt-10">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify([
+      <StructuredDataScript
+        id="tool-detail-schema"
+        data={[
             {
               "@context": "https://schema.org",
               "@type": "SoftwareApplication",
@@ -138,8 +138,7 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
                 },
               ],
             },
-          ]),
-        }}
+          ]}
       />
 
       <section className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">

@@ -6,7 +6,11 @@ const globalScriptPlacements = [
   adPlacements.socialBar,
 ].filter((placement) => placement.enabled && placement.scriptUrl);
 
-export function AdNetworkScripts() {
+type AdNetworkScriptsProps = {
+  nonce?: string;
+};
+
+export function AdNetworkScripts({ nonce }: AdNetworkScriptsProps) {
   if (!adsEnabled || globalScriptPlacements.length === 0) {
     return null;
   }
@@ -22,6 +26,7 @@ export function AdNetworkScripts() {
           id={`ad-${placement.id}`}
           key={placement.id}
           src={placement.scriptUrl}
+          nonce={nonce}
         />
       ))}
     </>
