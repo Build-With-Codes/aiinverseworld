@@ -16,10 +16,15 @@ export type CookieConsentChoice = {
 export function CookieConsent() {
   const consentSnapshot = useSyncExternalStore(subscribeToConsent, getConsentSnapshot, getServerConsentSnapshot);
   const consent = useMemo(() => parseConsent(consentSnapshot), [consentSnapshot]);
+  const isClientReady = useSyncExternalStore(
+    subscribeToClientReady,
+    getClientReadySnapshot,
+    getServerClientReadySnapshot,
+  );
   const [showPreferences, setShowPreferences] = useState(false);
   const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);
-  const visible = consent === null;
+  const visible = isClientReady && consent === null;
 
   function saveConsent(choice: Omit<CookieConsentChoice, "necessary" | "updatedAt">) {
     window.localStorage.setItem(
@@ -136,6 +141,20 @@ export function getServerConsentSnapshot() {
   return "";
 }
 
+function subscribeToClientReady(onStoreChange: () => void) {
+  queueMicrotask(onStoreChange);
+
+  return () => {};
+}
+
+function getClientReadySnapshot() {
+  return true;
+}
+
+function getServerClientReadySnapshot() {
+  return false;
+}
+
 export function parseConsent(stored: string): CookieConsentChoice | null {
   if (!stored) {
     return null;
@@ -146,6 +165,15 @@ export function parseConsent(stored: string): CookieConsentChoice | null {
       necessary: true,
       analytics: true,
       marketing: true,
+      updatedAt: new Date(0).toISOString(),
+    };
+  }
+
+  if (stored === "rejected" || stored === "declined") {
+    return {
+      necessary: true,
+      analytics: false,
+      marketing: false,
       updatedAt: new Date(0).toISOString(),
     };
   }

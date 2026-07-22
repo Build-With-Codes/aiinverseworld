@@ -25,6 +25,14 @@ function splitSummaryParagraphs(value?: string | null) {
     .filter(Boolean);
 }
 
+function formatList(items: string[]) {
+  if (items.length === 0) return "";
+  if (items.length === 1) return items[0];
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+
+  return `${items.slice(0, -1).join(", ")}, and ${items.at(-1)}`;
+}
+
 export async function generateMetadata({ params }: ToolDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
   const tool = await getToolBySlug(slug);
@@ -85,6 +93,12 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
   const alternatives = alternativesResult.tools.filter((item) => item.slug !== tool.slug);
   const toolReviews = await getReviewsForTool(tool.slug);
   const summaryParagraphs = splitSummaryParagraphs(tool.summary);
+  const primaryFeatures = tool.features.slice(0, 4);
+  const primaryUseCases = tool.bestFor.slice(0, 4);
+  const primaryAudience = tool.targetAudience.slice(0, 4);
+  const editorialOverview = `${tool.name} is a ${tool.category.toLowerCase()} from ${tool.company} focused on ${formatList(primaryUseCases).toLowerCase() || "AI-assisted work"}. It is most relevant for ${formatList(primaryAudience).toLowerCase() || "teams and individual users"} who need ${tool.shortDescription.toLowerCase()}`;
+  const editorialUseCases = `${tool.name} is worth shortlisting when your workflow needs ${formatList(primaryFeatures).toLowerCase() || "repeatable AI support"}. The strongest fit is usually ${formatList(primaryUseCases).toLowerCase() || "day-to-day productivity"}, especially for users comparing tools by pricing, supported platforms, deployment model, and practical integrations.`;
+  const editorialLimitations = `${tool.name} should still be reviewed against your own security, accuracy, privacy, and budget requirements before rollout. Pricing, model availability, supported integrations, and product limits can change, so verify the latest details on the official ${tool.company} website before making a purchase or enterprise deployment decision.`;
   const lastVerifiedLabel = new Intl.DateTimeFormat("en-US", {
     month: "long",
     day: "numeric",
@@ -265,6 +279,27 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
             ))}
           </div>
         </div>
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-3">
+        <article className="rounded-[30px] border border-white/10 bg-white/6 p-7">
+          <h2 className="text-2xl font-semibold text-white">What is {tool.name}?</h2>
+          <p className="mt-4 text-base leading-8 text-slate-300">
+            {editorialOverview}
+          </p>
+        </article>
+        <article className="rounded-[30px] border border-white/10 bg-white/6 p-7">
+          <h2 className="text-2xl font-semibold text-white">Best use cases</h2>
+          <p className="mt-4 text-base leading-8 text-slate-300">
+            {editorialUseCases}
+          </p>
+        </article>
+        <article className="rounded-[30px] border border-white/10 bg-white/6 p-7">
+          <h2 className="text-2xl font-semibold text-white">Limitations to check</h2>
+          <p className="mt-4 text-base leading-8 text-slate-300">
+            {editorialLimitations}
+          </p>
+        </article>
       </section>
 
       <section className="grid gap-6 lg:grid-cols-4">

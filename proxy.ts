@@ -13,9 +13,14 @@ export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const normalizedPath = pathname.replace(/\/$/, "") || "/";
   const redirectTarget = legacyRedirects[normalizedPath];
+  const pluralToolMatch = normalizedPath.match(/^\/tools\/(.+)$/);
 
   if (redirectTarget) {
     return NextResponse.redirect(new URL(redirectTarget, request.url), 308);
+  }
+
+  if (pluralToolMatch) {
+    return NextResponse.redirect(new URL(`/tool/${pluralToolMatch[1]}`, request.url), 308);
   }
 
   if (pathname.length > 1 && pathname.endsWith("/")) {
