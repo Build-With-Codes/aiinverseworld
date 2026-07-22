@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -78,10 +79,11 @@ export function AccountMenu({ name, email, image, onClose }: AccountMenuProps) {
         className="flex cursor-pointer items-center gap-3 rounded-full border border-white/10 bg-white/6 px-3 py-2 transition hover:border-cyan-300/40 hover:bg-cyan-300/12 hover:text-white w-full"
       >
         {image ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={image}
             alt={displayName}
+            width={32}
+            height={32}
             className="h-8 w-8 rounded-full object-cover"
           />
         ) : (
@@ -102,10 +104,11 @@ export function AccountMenu({ name, email, image, onClose }: AccountMenuProps) {
           <div className="rounded-[22px] border border-white/10 bg-white/6 p-4">
             <div className="flex items-center gap-3">
               {image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   src={image}
                   alt={displayName}
+                  width={44}
+                  height={44}
                   className="h-11 w-11 rounded-full object-cover"
                 />
               ) : (

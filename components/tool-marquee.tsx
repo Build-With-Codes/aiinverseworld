@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import type { AITool } from "@/lib/catalog-types";
 
@@ -46,8 +47,7 @@ function ToolMarqueeIcon({ tool }: { tool: AITool }) {
   }
 
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src={tool.favicon}
       alt={`${tool.name} logo`}
       width={16}
