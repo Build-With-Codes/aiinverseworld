@@ -11,7 +11,7 @@ import { SocialLink } from "@/components/social-link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { googleAuthEnabled } from "@/lib/auth-config";
 import { socialLinks } from "@/lib/social-links";
-import logoImage from "@/public/logo.png";
+import logoImage from "@/public/logo.webp";
 import Image from "next/image";
 import Link from "next/link";
 import { getServerSession } from "next-auth";

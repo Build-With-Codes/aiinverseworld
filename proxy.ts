@@ -1,6 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 
+const legacyRedirects: Record<string, string> = {
+  "/about-us": "/about",
+  "/contact-us": "/contact",
+  "/cookies": "/cookie-policy",
+  "/privacy-policy": "/privacy",
+  "/terms-and-conditions": "/terms",
+  "/terms-of-service": "/terms",
+};
+
 export function proxy(request: NextRequest) {
+  const normalizedPath = request.nextUrl.pathname.replace(/\/$/, "") || "/";
+  const redirectTarget = legacyRedirects[normalizedPath];
+
+  if (redirectTarget) {
+    return NextResponse.redirect(new URL(redirectTarget, request.url), 308);
+  }
+
   const nonce = btoa(crypto.randomUUID());
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);

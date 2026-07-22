@@ -242,7 +242,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     "@type": "Article",
     "headline": post.title,
     "description": post.description,
-    "image": "https://aiinverseworld.com/logo.png",
+    "image": "https://aiinverseworld.com/logo.webp",
     "datePublished": post.publishedAt,
     "author": {
       "@type": "Organization",
@@ -253,7 +253,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       "name": "AiverseWorld",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://aiinverseworld.com/logo.png"
+        "url": "https://aiinverseworld.com/logo.webp"
       }
     }
   };

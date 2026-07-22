@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     title: "AiverseWorld",
     description:
       "Search and compare AI tools with an enterprise-grade discovery experience.",
-    images: ["/logo.png"],
+    images: ["/logo.webp"],
   },
   // FIXED: Moved verification tag into Next.js metadata and fixed the property key
   verification: {

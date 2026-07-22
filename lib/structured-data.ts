@@ -9,7 +9,7 @@ export function buildGlobalStructuredData() {
       "@id": `${siteUrl}/#organization`,
       name: siteName,
       url: siteUrl,
-      logo: buildUrl("/logo.png"),
+      logo: buildUrl("/logo.webp"),
       sameAs: socialLinks.map((link) => link.href),
     },
     {
