@@ -32,6 +32,21 @@ const nextConfig: NextConfig = {
         destination: "/cookie-policy",
         permanent: true,
       },
+      {
+        source: "/contact-us",
+        destination: "/contact",
+        permanent: true,
+      },
+      {
+        source: "/about-us",
+        destination: "/about",
+        permanent: true,
+      },
+      {
+        source: "/terms-of-service",
+        destination: "/terms",
+        permanent: true,
+      },
     ];
   },
   images: {
