@@ -4,12 +4,12 @@ import { StructuredDataScript } from "@/components/structured-data-script";
 import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "About AiverseWorld | AI Tool Discovery Platform",
+  title: "About AiverseWorld - AI Research Platform",
   description: "Learn about AiverseWorld - a platform dedicated to helping people and organizations discover, compare, understand, and adopt artificial intelligence technologies.",
   keywords: "AI tools, AI discovery, AI comparison, artificial intelligence platform, AI adoption, AI solutions, machine learning tools",
   alternates: { canonical: buildUrl("/about") },
   openGraph: {
-    title: "About AiverseWorld | AI Tool Discovery Platform",
+    title: "AiverseWorld Company Profile",
     description: "AiverseWorld is a trusted platform for discovering, comparing, and understanding AI technologies. Learn about our mission and vision.",
     type: "website",
     url: "https://aiinverseworld.com/about",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "About AiverseWorld | AI Tool Discovery Platform",
+    title: "About the AiverseWorld Platform",
     description: "Discover how AiverseWorld helps individuals and organizations navigate the AI landscape with clarity and confidence.",
     images: [defaultOpenGraphImage.url],
   },

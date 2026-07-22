@@ -10,11 +10,16 @@ const legacyRedirects: Record<string, string> = {
 };
 
 export function proxy(request: NextRequest) {
-  const normalizedPath = request.nextUrl.pathname.replace(/\/$/, "") || "/";
+  const pathname = request.nextUrl.pathname;
+  const normalizedPath = pathname.replace(/\/$/, "") || "/";
   const redirectTarget = legacyRedirects[normalizedPath];
 
   if (redirectTarget) {
     return NextResponse.redirect(new URL(redirectTarget, request.url), 308);
+  }
+
+  if (pathname.length > 1 && pathname.endsWith("/")) {
+    return NextResponse.redirect(new URL(normalizedPath, request.url), 308);
   }
 
   const nonce = btoa(crypto.randomUUID());
