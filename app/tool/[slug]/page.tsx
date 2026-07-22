@@ -18,6 +18,13 @@ type ToolDetailPageProps = {
   searchParams?: Promise<{ id?: string }>;
 };
 
+function splitSummaryParagraphs(value?: string | null) {
+  return (value ?? "")
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+}
+
 export async function generateMetadata({ params }: ToolDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
   const tool = await getToolBySlug(slug);
@@ -77,6 +84,7 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
   });
   const alternatives = alternativesResult.tools.filter((item) => item.slug !== tool.slug);
   const toolReviews = await getReviewsForTool(tool.slug);
+  const summaryParagraphs = splitSummaryParagraphs(tool.summary);
   const lastVerifiedLabel = new Intl.DateTimeFormat("en-US", {
     month: "long",
     day: "numeric",
@@ -182,9 +190,13 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
             {tool.name}
           </h1>
           <p className="mt-2 text-sm text-slate-400">{tool.company} · {tool.domain}</p>
-          <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">
-            {tool.summary ?? tool.shortDescription}
-          </p>
+          <div className="mt-4 max-w-3xl space-y-4 text-lg leading-8 text-slate-300">
+            {summaryParagraphs.length > 0 ? (
+              summaryParagraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)
+            ) : (
+              <p>{tool.shortDescription}</p>
+            )}
+          </div>
 
           {/* Tags */}
           <div className="mt-5 flex flex-wrap gap-2">
