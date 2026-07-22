@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 
 import { authOptions } from "@/auth";
-import { AdNetworkScripts } from "@/components/ad-network-scripts";
 import { ChatSupportGate } from "@/components/chat-support-gate";
+import { ConsentedAnalytics } from "@/components/consented-analytics";
 import { ConsentedScript } from "@/components/consented-script";
 import { ConsentMode } from "@/components/consent-mode";
 import { CookieConsent } from "@/components/cookie-consent";
@@ -11,8 +10,6 @@ import { SiteShell } from "@/components/site-shell";
 import { googleAuthEnabled } from "@/lib/auth-config";
 import { buildUrl, defaultOpenGraphImage, siteUrl } from "@/lib/seo";
 import { buildGlobalStructuredData, jsonLd } from "@/lib/structured-data";
-import { Analytics } from "@vercel/analytics/next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import { headers } from "next/headers";
 import { getServerSession } from "next-auth";
 
@@ -99,18 +96,16 @@ export default async function RootLayout({
           nonce={nonce}
         />
 
-        <AdNetworkScripts nonce={nonce} />
-        <SiteShell nonce={nonce}>{children}</SiteShell>
+        <SiteShell>{children}</SiteShell>
         <CookieConsent />
         {session?.user ? (
-          <Script id="chatbase-widget" nonce={nonce} strategy="afterInteractive">
+          <ConsentedScript id="chatbase-widget" nonce={nonce}>
             {`(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="oqIeeF-NRJYMKRywqI8DE";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();`}
-          </Script>
+          </ConsentedScript>
         ) : (
           <ChatSupportGate enabled={googleAuthEnabled} />
         )}
-        <Analytics />
-        <SpeedInsights />
+        <ConsentedAnalytics />
       </body>
     </html>
   );

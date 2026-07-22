@@ -1,6 +1,5 @@
 import { authOptions } from "@/auth";
 import { AccountMenu } from "@/components/account-menu";
-import { AdSlot } from "@/components/ad-slot";
 import { AiToolsMenu } from "@/components/ai-tools-menu";
 import { AuthDialog } from "@/components/auth-dialog";
 import { HeaderSearch } from "@/components/header-search";
@@ -19,7 +18,6 @@ import type { ReactNode } from "react";
 
 type SiteShellProps = {
   children: ReactNode;
-  nonce?: string;
 };
 
 const navItems = [
@@ -69,7 +67,7 @@ const footerGroups = [
   },
 ];
 
-export async function SiteShell({ children, nonce }: SiteShellProps) {
+export async function SiteShell({ children }: SiteShellProps) {
   const session = await getServerSession(authOptions);
 
   return (
@@ -148,8 +146,6 @@ export async function SiteShell({ children, nonce }: SiteShellProps) {
 
         <main className="flex-1">
           {children}
-          <AdSlot placement="nativeBanner" className="mx-auto mt-12" nonce={nonce} />
-          <AdSlot placement="banner468x60" className="mx-auto mt-8" nonce={nonce} />
         </main>
 
         <footer className="app-glass mt-16 rounded-[32px] border border-white/10 bg-white/6 px-6 py-10 backdrop-blur-xl sm:px-8">
