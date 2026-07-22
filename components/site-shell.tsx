@@ -4,6 +4,7 @@ import { AdSlot } from "@/components/ad-slot";
 import { AiToolsMenu } from "@/components/ai-tools-menu";
 import { AuthDialog } from "@/components/auth-dialog";
 import { HeaderSearch } from "@/components/header-search";
+import { HeaderTrendingSearches } from "@/components/header-trending-searches";
 import { MobileMenu } from "@/components/mobile-menu";
 import { NavLink } from "@/components/nav-link";
 import { SocialLink } from "@/components/social-link";
@@ -142,6 +143,7 @@ export async function SiteShell({ children, nonce }: SiteShellProps) {
               />
             </div>
           </div>
+          <HeaderTrendingSearches />
         </header>
 
         <main className="flex-1">
