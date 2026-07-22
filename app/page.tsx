@@ -361,41 +361,6 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
-        <div className="rounded-[34px] border border-white/10 bg-linear-to-br from-white/8 to-white/4 p-8">
-          <SectionHeading
-            eyebrow="Newsletter"
-            title="Stay on top of new AI releases and pricing changes"
-            description="Get a sharp weekly digest with new tools, rising categories, and product updates."
-          />
-          <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
-            <input
-              aria-label="Email address"
-              placeholder="team@company.com"
-              className="rounded-2xl border border-white/10 bg-[#071120] px-5 py-4 text-sm text-slate-300 outline-none"
-            />
-            <button className="rounded-2xl bg-white px-5 py-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200">
-              Join Newsletter
-            </button>
-          </div>
-        </div>
-        <div className="grid gap-4">
-          <div className="rounded-[28px] border border-white/10 bg-white/6 p-6">
-            <p className="text-sm text-slate-400">Review momentum</p>
-            <p className="mt-3 text-4xl font-semibold text-white">12,840</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">
-              Verified community reviews powering smarter AI tool selection.
-            </p>
-          </div>
-          <div className="rounded-[28px] border border-white/10 bg-white/6 p-6">
-            <p className="text-sm text-slate-400">Bookmark activity</p>
-            <p className="mt-3 text-4xl font-semibold text-white">38K</p>
-            <p className="mt-2 text-sm leading-6 text-slate-300">
-              Teams save, compare, and revisit tools before making buying decisions.
-            </p>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
