@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { HandDetectGameClient } from "@/components/games/hand-detect/game-client";
 import { SectionHeading } from "@/components/section-heading";
-import { buildUrl } from "@/lib/seo";
+import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Motion Truck Drive | AiverseWorld",
@@ -17,6 +17,14 @@ export const metadata: Metadata = {
       "Steer a 3D-style truck road game with two-hand browser motion tracking.",
     url: buildUrl("/games/hand-detect"),
     type: "website",
+    images: [defaultOpenGraphImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Motion Truck Drive | AiverseWorld",
+    description:
+      "Steer a 3D-style truck road game with two-hand browser motion tracking.",
+    images: [defaultOpenGraphImage.url],
   },
 };
 

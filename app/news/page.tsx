@@ -3,7 +3,7 @@ import { NewsCard } from "@/components/news-card";
 import { SectionHeading } from "@/components/section-heading";
 import { StructuredDataScript } from "@/components/structured-data-script";
 import { getNewsArticles } from "@/lib/news";
-import { buildUrl } from "@/lib/seo";
+import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "AI News | AiverseWorld",
@@ -18,6 +18,14 @@ export const metadata: Metadata = {
       "Enterprise AI news with short summaries, source attribution, and links back to original publishers.",
     url: buildUrl("/news"),
     type: "website",
+    images: [defaultOpenGraphImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI News | AiverseWorld",
+    description:
+      "Enterprise AI news with short summaries, source attribution, and links back to original publishers.",
+    images: [defaultOpenGraphImage.url],
   },
 };
 

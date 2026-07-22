@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { submitProblemAction } from "@/app/actions/problems";
 import { SubmitProblemButton } from "@/components/problems/submit-button";
 import { SectionHeading } from "@/components/section-heading";
-import { buildUrl } from "@/lib/seo";
+import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Submit Problem | AiverseWorld",
@@ -18,6 +18,14 @@ export const metadata: Metadata = {
       "Submit a real problem for the community to vote on whether AI can solve it.",
     url: buildUrl("/problems/submit"),
     type: "website",
+    images: [defaultOpenGraphImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Submit Problem | AiverseWorld",
+    description:
+      "Submit a real problem for the community to vote on whether AI can solve it.",
+    images: [defaultOpenGraphImage.url],
   },
 };
 

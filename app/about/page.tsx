@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ContentPage } from "@/components/content-page";
 import { StructuredDataScript } from "@/components/structured-data-script";
+import { defaultOpenGraphImage } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "About AiverseWorld | AI Tool Discovery Platform",
@@ -11,11 +12,13 @@ export const metadata: Metadata = {
     description: "AiverseWorld is a trusted platform for discovering, comparing, and understanding AI technologies. Learn about our mission and vision.",
     type: "website",
     url: "https://aiinverseworld.com/about",
+    images: [defaultOpenGraphImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "About AiverseWorld | AI Tool Discovery Platform",
     description: "Discover how AiverseWorld helps individuals and organizations navigate the AI landscape with clarity and confidence.",
+    images: [defaultOpenGraphImage.url],
   },
 };
 

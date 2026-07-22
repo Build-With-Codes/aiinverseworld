@@ -9,7 +9,7 @@ import { ConsentMode } from "@/components/consent-mode";
 import { CookieConsent } from "@/components/cookie-consent";
 import { SiteShell } from "@/components/site-shell";
 import { googleAuthEnabled } from "@/lib/auth-config";
-import { buildUrl, siteUrl } from "@/lib/seo";
+import { buildUrl, defaultOpenGraphImage, siteUrl } from "@/lib/seo";
 import { buildGlobalStructuredData, jsonLd } from "@/lib/structured-data";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -37,10 +37,7 @@ export const metadata: Metadata = {
     siteName: "AiverseWorld",
     type: "website",
     images: [
-      {
-        url: "/logo.png",
-        alt: "AiverseWorld logo",
-      },
+      defaultOpenGraphImage,
     ],
   },
   twitter: {

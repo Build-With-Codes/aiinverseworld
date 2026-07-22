@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { buildCategoryMeta } from "@/lib/seo";
+import { buildCategoryMeta, defaultOpenGraphImage } from "@/lib/seo";
 import { getCategoryWithTools } from "@/lib/tool-catalog";
 import { CategoryPageClient } from "./client";
 
@@ -24,8 +24,8 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     title,
     description,
     alternates: category ? { canonical: url } : undefined,
-    openGraph: { title, description, url, type: "website" },
-    twitter: { card: "summary_large_image", title, description },
+    openGraph: { title, description, url, type: "website", images: [defaultOpenGraphImage] },
+    twitter: { card: "summary_large_image", title, description, images: [defaultOpenGraphImage.url] },
   };
 }
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { DrawGuessGameClient } from "@/components/games/draw-guess/game-client";
 import { SectionHeading } from "@/components/section-heading";
-import { buildUrl } from "@/lib/seo";
+import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "AI Draw & Guess Game | AiverseWorld",
@@ -17,6 +17,14 @@ export const metadata: Metadata = {
       "Play an AI-powered draw and guess game with progressive SVG sketches, hints, and score tracking.",
     url: buildUrl("/games/draw-guess"),
     type: "website",
+    images: [defaultOpenGraphImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI Draw & Guess Game | AiverseWorld",
+    description:
+      "Play an AI-powered draw and guess game with progressive SVG sketches, hints, and score tracking.",
+    images: [defaultOpenGraphImage.url],
   },
 };
 

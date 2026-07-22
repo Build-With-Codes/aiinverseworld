@@ -3,6 +3,7 @@ import Link from "next/link";
 import { StructuredDataScript } from "@/components/structured-data-script";
 import { blogPosts, getBlogPost, getAllBlogPosts } from "@/lib/blog-data";
 import { getBlogSuggestions } from "@/lib/blog-suggestions";
+import { defaultOpenGraphImage } from "@/lib/seo";
 import { Metadata } from "next";
 
 interface BlogPostPageProps {
@@ -35,11 +36,13 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
       type: "article",
       publishedTime: post.publishedAt,
       authors: [post.author],
+      images: [defaultOpenGraphImage],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.description,
+      images: [defaultOpenGraphImage.url],
     },
   };
 }

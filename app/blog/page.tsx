@@ -1,6 +1,7 @@
 import { BlogCard } from "@/components/blog-card";
 import { StructuredDataScript } from "@/components/structured-data-script";
 import { getAllBlogPosts } from "@/lib/blog-data";
+import { defaultOpenGraphImage } from "@/lib/seo";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -16,12 +17,14 @@ export const metadata: Metadata = {
       "Discover the best AI tools, trends, and practical guides for 2026. Read expert insights on ChatGPT, Claude, image generation, and more.",
     type: "website",
     url: "https://aiinverseworld.com/blog",
+    images: [defaultOpenGraphImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "AI Blog | Latest AI Tools, Trends & Guides 2026",
     description:
       "Explore the latest AI trends, practical guides, tool reviews, tutorials, and industry insights.",
+    images: [defaultOpenGraphImage.url],
   },
 };
 

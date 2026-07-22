@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ToolCard } from "@/components/tool-card";
 import { SectionHeading } from "@/components/section-heading";
 import { StructuredDataScript } from "@/components/structured-data-script";
-import { buildUrl } from "@/lib/seo";
+import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 import { getBestLists, getBestListWithTools } from "@/lib/tool-catalog";
 
 type BestPageProps = {
@@ -30,11 +30,13 @@ export async function generateMetadata({ params }: BestPageProps): Promise<Metad
       description: list.description,
       url: buildUrl(`/best/${slug}`),
       type: "website",
+      images: [defaultOpenGraphImage],
     },
     twitter: {
       card: "summary_large_image",
       title: `${list.title} ${new Date().getFullYear()} | AiverseWorld`,
       description: list.description,
+      images: [defaultOpenGraphImage.url],
     },
   };
 }

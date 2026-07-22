@@ -1,7 +1,12 @@
 export const siteUrl = "https://aiverseworld.com";
 export const siteName = "AiverseWorld";
 export const siteDescription = "Discover, compare, and shortlist AI tools across writing, coding, video, research, and productivity.";
-export const defaultOgImage = `${siteUrl}/og-default.png`;
+export const defaultOgImage = `${siteUrl}/logo.png`;
+
+export const defaultOpenGraphImage = {
+  url: defaultOgImage,
+  alt: `${siteName} logo`,
+};
 
 export function buildUrl(path: string) {
   return `${siteUrl}${path === "/" ? "" : path}`;

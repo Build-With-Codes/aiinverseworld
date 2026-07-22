@@ -6,7 +6,7 @@ import { CategoryCard } from "@/components/category-card";
 import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
 import { getNewsArticles } from "@/lib/news";
-import { buildUrl } from "@/lib/seo";
+import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 import { getBestLists, getComparisons, getToolCatalog, recommendTools } from "@/lib/tool-catalog";
 import { getAllBlogPosts } from "@/lib/blog-data";
 import { blogSuggestionFAQs } from "@/lib/blog-suggestions";
@@ -20,8 +20,8 @@ import {
 } from "@/lib/home-content";
 
 export const metadata: Metadata = {
-  title: "AI Tools Directory & Reviews 2026 | Discover the Best AI Tools - AiverseWorld",
-  description: "Explore, compare, and review the best AI tools for productivity, coding, content creation, video, marketing, and business growth. 100+ tools ranked and reviewed.",
+  title: "Best AI Tools Directory & Reviews 2026 | AiverseWorld",
+  description: "Explore, compare, and review the best AI tools for productivity, coding, content creation, video, marketing, and business growth. 100+ tools ranked online.",
   alternates: {
     canonical: buildUrl("/"),
   },
@@ -30,11 +30,13 @@ export const metadata: Metadata = {
     description: "Discover the best AI tools for productivity, coding, writing, video, and marketing. Compare 100+ tools with real pricing and reviews.",
     url: buildUrl("/"),
     type: "website",
+    images: [defaultOpenGraphImage],
   },
   twitter: {
     card: "summary_large_image",
     title: "AI Tools Directory & Reviews 2026 | AiverseWorld",
     description: "Discover the best AI tools for productivity, coding, writing, video, and marketing.",
+    images: [defaultOpenGraphImage.url],
   },
 };
 

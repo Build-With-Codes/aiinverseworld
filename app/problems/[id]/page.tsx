@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 
 import { AiSolveVote } from "@/components/problems/ai-solve-vote";
 import { getProblemById } from "@/lib/problem-store";
-import { buildUrl } from "@/lib/seo";
+import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 type ProblemDetailsPageProps = {
   params: Promise<{
@@ -35,6 +35,13 @@ export async function generateMetadata({
       description: problem.description.slice(0, 160),
       url: buildUrl(`/problems/${problem.id}`),
       type: "article",
+      images: [defaultOpenGraphImage],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${problem.title} | AiverseWorld Problems`,
+      description: problem.description.slice(0, 160),
+      images: [defaultOpenGraphImage.url],
     },
   };
 }

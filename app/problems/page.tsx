@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AiSolveVote } from "@/components/problems/ai-solve-vote";
 import { SectionHeading } from "@/components/section-heading";
 import { getProblems } from "@/lib/problem-store";
-import { buildUrl } from "@/lib/seo";
+import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Startup Problems Feed | AiverseWorld",
@@ -19,6 +19,14 @@ export const metadata: Metadata = {
       "Browse real problems submitted by operators and founders, then vote on whether AI can solve them.",
     url: buildUrl("/problems"),
     type: "website",
+    images: [defaultOpenGraphImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Startup Problems Feed | AiverseWorld",
+    description:
+      "Browse real problems submitted by operators and founders, then vote on whether AI can solve them.",
+    images: [defaultOpenGraphImage.url],
   },
 };
 
