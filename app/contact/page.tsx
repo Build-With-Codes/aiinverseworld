@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 
 import { ContentPage } from "@/components/content-page";
 import { SocialLink } from "@/components/social-link";
+import { buildUrl } from "@/lib/seo";
 import { socialLinks } from "@/lib/social-links";
 
 export const metadata: Metadata = {
   title: "Contact | AiverseWorld",
   description:
     "Get in touch with AiverseWorld for enterprise partnerships, support, and legal requests.",
+  alternates: { canonical: buildUrl("/contact") },
 };
 
 export default function ContactPage() {

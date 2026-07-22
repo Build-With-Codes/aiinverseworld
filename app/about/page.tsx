@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { ContentPage } from "@/components/content-page";
 import { StructuredDataScript } from "@/components/structured-data-script";
-import { defaultOpenGraphImage } from "@/lib/seo";
+import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "About AiverseWorld | AI Tool Discovery Platform",
   description: "Learn about AiverseWorld - a platform dedicated to helping people and organizations discover, compare, understand, and adopt artificial intelligence technologies.",
   keywords: "AI tools, AI discovery, AI comparison, artificial intelligence platform, AI adoption, AI solutions, machine learning tools",
+  alternates: { canonical: buildUrl("/about") },
   openGraph: {
     title: "About AiverseWorld | AI Tool Discovery Platform",
     description: "AiverseWorld is a trusted platform for discovering, comparing, and understanding AI technologies. Learn about our mission and vision.",

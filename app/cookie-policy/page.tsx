@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 
 import { ContentPage } from "@/components/content-page";
+import { buildUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Cookie Policy | AiverseWorld",
   description:
     "Learn how AiverseWorld uses cookies, analytics technologies, and consent controls.",
+  alternates: { canonical: buildUrl("/cookie-policy") },
 };
 
 export default function CookiePolicyPage() {

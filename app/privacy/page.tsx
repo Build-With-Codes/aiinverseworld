@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 
 import { ContentPage } from "@/components/content-page";
+import { buildUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Privacy Policy | AiverseWorld",
   description:
     "Review how AiverseWorld collects, uses, stores, and protects information.",
+  alternates: { canonical: buildUrl("/privacy") },
 };
 
 export default function PrivacyPage() {

@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 
 import { ContentPage } from "@/components/content-page";
+import { buildUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Security | AiverseWorld",
   description:
     "Learn about the security principles and controls used by AiverseWorld.",
+  alternates: { canonical: buildUrl("/security") },
 };
 
 export default function SecurityPage() {

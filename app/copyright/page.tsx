@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 
 import { ContentPage } from "@/components/content-page";
+import { buildUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Copyright Policy | AiverseWorld",
   description:
     "Review AiverseWorld's copyright ownership, usage rules, and infringement reporting process.",
+  alternates: { canonical: buildUrl("/copyright") },
 };
 
 export default function CopyrightPage() {

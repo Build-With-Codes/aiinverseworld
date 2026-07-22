@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 
 import { ContentPage } from "@/components/content-page";
+import { buildUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Affiliate Disclosure | AiverseWorld",
   description:
     "Review how affiliate links may be used on AiverseWorld and how those relationships are disclosed.",
+  alternates: { canonical: buildUrl("/affiliate-disclosure") },
 };
 
 export default function AffiliateDisclosurePage() {

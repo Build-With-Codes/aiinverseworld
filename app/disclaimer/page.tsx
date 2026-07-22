@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 
 import { ContentPage } from "@/components/content-page";
+import { buildUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Disclaimer | AiverseWorld",
   description:
     "Read important disclaimers regarding accuracy, availability, and third-party software information on AiverseWorld.",
+  alternates: { canonical: buildUrl("/disclaimer") },
 };
 
 export default function DisclaimerPage() {

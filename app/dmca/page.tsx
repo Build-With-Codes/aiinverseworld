@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 
 import { ContentPage } from "@/components/content-page";
+import { buildUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "DMCA Policy | AiverseWorld",
   description:
     "Learn how to submit copyright infringement notices and counter-notices to AiverseWorld.",
+  alternates: { canonical: buildUrl("/dmca") },
 };
 
 export default function DmcaPage() {

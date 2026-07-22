@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 
 import { ContentPage } from "@/components/content-page";
+import { buildUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Advertising Disclosure | AiverseWorld",
   description:
     "Understand how AiverseWorld handles sponsored listings, paid placements, and advertising disclosures.",
+  alternates: { canonical: buildUrl("/advertising-disclosure") },
 };
 
 export default function AdvertisingDisclosurePage() {
