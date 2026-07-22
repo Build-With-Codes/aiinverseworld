@@ -1,7 +1,7 @@
 import { BlogCard } from "@/components/blog-card";
 import { StructuredDataScript } from "@/components/structured-data-script";
 import { getAllBlogPosts } from "@/lib/blog-data";
-import { defaultOpenGraphImage } from "@/lib/seo";
+import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 import { Metadata } from "next";
 import Link from "next/link";
 
@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     "Explore the latest AI trends, practical guides, tool reviews, tutorials, and industry insights to help you learn and leverage artificial intelligence.",
   keywords:
     "AI blog, artificial intelligence, AI tools, AI trends, machine learning, ChatGPT, Claude, AI guides, AI tutorials",
+  alternates: { canonical: buildUrl("/blog") },
   openGraph: {
     title: "AI Blog | Latest AI Tools, Trends & Guides 2026",
     description:

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { StructuredDataScript } from "@/components/structured-data-script";
 import { blogPosts, getBlogPost, getAllBlogPosts } from "@/lib/blog-data";
 import { getBlogSuggestions } from "@/lib/blog-suggestions";
-import { defaultOpenGraphImage } from "@/lib/seo";
+import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 import { Metadata } from "next";
 
 interface BlogPostPageProps {
@@ -30,10 +30,12 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
     title: post.seoTitle || post.title,
     description: post.metaDescription || post.description,
     keywords: `${post.category}, AI tools, artificial intelligence, ${post.title}`,
+    alternates: { canonical: buildUrl(`/blog/${slug}`) },
     openGraph: {
       title: post.title,
       description: post.description,
       type: "article",
+      url: buildUrl(`/blog/${slug}`),
       publishedTime: post.publishedAt,
       authors: [post.author],
       images: [defaultOpenGraphImage],

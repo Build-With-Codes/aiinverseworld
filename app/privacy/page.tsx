@@ -4,9 +4,9 @@ import { ContentPage } from "@/components/content-page";
 import { buildUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | AiverseWorld",
+  title: "AiverseWorld Privacy & Data Protection Policy",
   description:
-    "Review how AiverseWorld collects, uses, stores, and protects information.",
+    "Review how AiverseWorld collects, uses, stores, protects, and manages personal data across accounts, analytics, reviews, support, and platform services.",
   alternates: { canonical: buildUrl("/privacy") },
 };
 
