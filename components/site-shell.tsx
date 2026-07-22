@@ -200,6 +200,25 @@ export async function SiteShell({ children, nonce }: SiteShellProps) {
               </div>
             ))}
           </div>
+          <div className="mt-8 rounded-2xl border border-white/10 bg-slate-950/35 p-4 text-xs leading-6 text-slate-400">
+            AiverseWorld uses cookies and similar technologies for essential site
+            functions, analytics, and advertising. Third-party partners, including
+            Google AdSense where enabled, may use cookies or tracking scripts to
+            measure ads, prevent fraud, and personalize advertising with your
+            consent. Review our{" "}
+            <Link href="/cookie-policy" className="font-semibold text-cyan-200 hover:text-cyan-100">
+              Cookie Policy
+            </Link>
+            ,{" "}
+            <Link href="/privacy" className="font-semibold text-cyan-200 hover:text-cyan-100">
+              Privacy Policy
+            </Link>
+            , and{" "}
+            <Link href="/advertising-disclosure" className="font-semibold text-cyan-200 hover:text-cyan-100">
+              Advertising Disclosure
+            </Link>
+            .
+          </div>
           <div className="mt-10 border-t border-white/10 pt-6 text-sm text-slate-400">
             Copyright © 2026 AiverseWorld. All rights reserved.
           </div>

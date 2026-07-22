@@ -6,7 +6,7 @@ import { buildUrl } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Cookie Policy | AiverseWorld",
   description:
-    "Learn how AiverseWorld uses cookies, analytics technologies, and consent controls.",
+    "Learn how AiverseWorld uses cookies, analytics, advertising scripts, Google AdSense, tracking technologies, and consent controls.",
   alternates: { canonical: buildUrl("/cookie-policy") },
 };
 
@@ -28,10 +28,11 @@ export default function CookiePolicyPage() {
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Advertising and personalization</h2>
         <p className="text-base leading-8 text-slate-300">
-          If advertising, sponsored placements, or remarketing are enabled, cookies
-          may be used by AiverseWorld and approved partners to measure campaign
-          performance, cap frequency, and personalize experiences where legally
-          permitted.
+          AiverseWorld may load advertising and tracking scripts from approved
+          third-party partners, including Google AdSense where enabled. These
+          partners may use cookies, device identifiers, or similar technologies to
+          measure ad performance, limit repeated ads, prevent fraud, and personalize
+          advertising where legally permitted and consented.
         </p>
       </div>
       <div className="space-y-4">
