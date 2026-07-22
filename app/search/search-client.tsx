@@ -173,9 +173,9 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
     <div className="space-y-10 pb-10 pt-10">
       <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
         <SectionHeading
-          eyebrow="AI Finder"
-          title="Instant discovery with practical filters"
-          description="Describe what you need, and AiverseWorld will shortlist tools by use case, audience, platform, pricing, and catalog signals."
+          eyebrow="Catalog Search"
+          title="Filter AI tools by workflow, price, and platform"
+          description="Use the live catalog controls to narrow assistants, generators, automation apps, and developer tools without repeating the homepage discovery flow."
         />
 
         <div className="mb-4">
