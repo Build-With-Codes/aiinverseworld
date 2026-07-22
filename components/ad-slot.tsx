@@ -1,5 +1,4 @@
-import Script from "next/script";
-
+import { ConsentedScript } from "@/components/consented-script";
 import { type AdPlacementKey, adPlacements, adsEnabled } from "@/lib/ads";
 
 type AdSlotProps = {
@@ -35,7 +34,7 @@ export function AdSlot({ placement, className = "" }: AdSlotProps) {
         }}
       />
       {placement === "banner468x60" && ad.key ? (
-        <Script id={`ad-options-${ad.id}`} strategy="afterInteractive">
+        <ConsentedScript id={`ad-options-${ad.id}`}>
           {`
             window.atOptions = {
               key: "${ad.key}",
@@ -45,13 +44,14 @@ export function AdSlot({ placement, className = "" }: AdSlotProps) {
               params: {}
             };
           `}
-        </Script>
+        </ConsentedScript>
       ) : null}
-      <Script
-        data-ad-zone-id={ad.id}
+      <ConsentedScript
+        dataAttributes={{
+          "ad-zone-id": ad.id,
+        }}
         id={`ad-slot-script-${ad.id}`}
         src={ad.scriptUrl}
-        strategy="afterInteractive"
       />
     </aside>
   );

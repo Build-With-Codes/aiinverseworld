@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { AccountMenu } from "@/components/account-menu";
 import { AuthDialog } from "@/components/auth-dialog";
+import { HeaderSearch } from "@/components/header-search";
 
 type NavItem = {
   href: string;
@@ -103,7 +104,9 @@ export function MobileMenu({
           ref={contentRef}
           className="absolute right-0 top-[calc(100%+12px)] z-50 w-[min(22rem,calc(100vw-2rem))] rounded-[28px] border border-white/10 bg-[#071120]/96 p-4 shadow-[0_24px_80px_rgba(2,6,23,0.45)] backdrop-blur-xl"
         >
-          <div className="space-y-2">
+          <HeaderSearch onSubmit={handleClose} />
+
+          <div className="mt-4 space-y-2">
             {navItems.map((item) => (
               <Link
                 key={item.href}

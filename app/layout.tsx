@@ -4,6 +4,9 @@ import Script from "next/script";
 import { authOptions } from "@/auth";
 import { AdNetworkScripts } from "@/components/ad-network-scripts";
 import { ChatSupportGate } from "@/components/chat-support-gate";
+import { ConsentedScript } from "@/components/consented-script";
+import { ConsentMode } from "@/components/consent-mode";
+import { CookieConsent } from "@/components/cookie-consent";
 import { SiteShell } from "@/components/site-shell";
 import { googleAuthEnabled } from "@/lib/auth-config";
 import { buildUrl, siteUrl } from "@/lib/seo";
@@ -74,15 +77,15 @@ export default async function RootLayout({
             `,
           }}
         />
+        <ConsentMode />
         {/* REMOVED: Next.js <Script> component and invalid meta tags are removed from <head> */}
       </head>
       <body className="min-h-full" suppressHydrationWarning>
-        {/* FIXED: AdSense script placed correctly here inside <body> with proper loading strategy */}
-        <Script
+        <ConsentedScript
           async
+          id="google-adsense"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1921034562411070"
           crossOrigin="anonymous"
-          strategy="afterInteractive"
         />
 
         <Script id="aiverseworld-schema" type="application/ld+json">
@@ -109,6 +112,7 @@ export default async function RootLayout({
         </Script>
         <AdNetworkScripts />
         <SiteShell>{children}</SiteShell>
+        <CookieConsent />
         {session?.user ? (
           <Script id="chatbase-widget" strategy="afterInteractive">
             {`(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="oqIeeF-NRJYMKRywqI8DE";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();`}

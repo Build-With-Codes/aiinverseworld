@@ -3,6 +3,7 @@ import { AccountMenu } from "@/components/account-menu";
 import { AdSlot } from "@/components/ad-slot";
 import { AiToolsMenu } from "@/components/ai-tools-menu";
 import { AuthDialog } from "@/components/auth-dialog";
+import { HeaderSearch } from "@/components/header-search";
 import { MobileMenu } from "@/components/mobile-menu";
 import { NavLink } from "@/components/nav-link";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -101,6 +102,9 @@ export async function SiteShell({ children }: SiteShellProps) {
             </nav>
 
             <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+              <div className="hidden w-[min(22vw,17rem)] xl:block">
+                <HeaderSearch />
+              </div>
               <Link
                 href="/problems/submit"
                 className="hidden cursor-pointer rounded-full border border-cyan-300/25 bg-cyan-300/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:border-cyan-300/45 hover:bg-cyan-300/20 hover:text-white lg:inline-flex"

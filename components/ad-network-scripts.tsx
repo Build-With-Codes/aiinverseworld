@@ -1,5 +1,4 @@
-import Script from "next/script";
-
+import { ConsentedScript } from "@/components/consented-script";
 import { adPlacements, adsEnabled } from "@/lib/ads";
 
 const globalScriptPlacements = [
@@ -15,13 +14,14 @@ export function AdNetworkScripts() {
   return (
     <>
       {globalScriptPlacements.map((placement) => (
-        <Script
-          data-ad-zone-id={placement.id}
-          data-ad-zone-name={placement.name}
+        <ConsentedScript
+          dataAttributes={{
+            "ad-zone-id": placement.id,
+            "ad-zone-name": placement.name,
+          }}
           id={`ad-${placement.id}`}
           key={placement.id}
           src={placement.scriptUrl}
-          strategy="afterInteractive"
         />
       ))}
     </>
