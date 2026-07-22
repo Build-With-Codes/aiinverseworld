@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     description:
       "Discover the best AI tools, trends, and practical guides for 2026. Read expert insights on ChatGPT, Claude, image generation, and more.",
     type: "website",
-    url: "https://aiinverseworld.com/blog",
+    url: "https://aiverseworld.com/blog",
     images: [defaultOpenGraphImage],
   },
   twitter: {
@@ -52,7 +52,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
     "@type": "Blog",
     name: "AI Inverse World Blog",
     description: "Latest AI tools, trends, guides, and practical insights",
-    url: "https://aiinverseworld.com/blog",
+    url: "https://aiverseworld.com/blog",
     blogPost: posts.map((post) => ({
       "@type": "BlogPosting",
       headline: post.seoTitle || post.title,
@@ -62,7 +62,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         "@type": "Organization",
         name: post.author,
       },
-      url: `https://aiinverseworld.com/blog/${post.slug}`,
+      url: `https://aiverseworld.com/blog/${post.slug}`,
     })),
   };
 

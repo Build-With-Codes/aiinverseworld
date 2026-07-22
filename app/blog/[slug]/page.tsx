@@ -219,19 +219,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://aiinverseworld.com"
+        "item": "https://aiverseworld.com"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Blog",
-        "item": "https://aiinverseworld.com/blog"
+        "item": "https://aiverseworld.com/blog"
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": post.title,
-        "item": `https://aiinverseworld.com/blog/${post.slug}`
+        "item": `https://aiverseworld.com/blog/${post.slug}`
       }
     ]
   };
@@ -242,7 +242,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     "@type": "Article",
     "headline": post.title,
     "description": post.description,
-    "image": "https://aiinverseworld.com/logo.webp",
+    "image": "https://aiverseworld.com/logo.webp",
     "datePublished": post.publishedAt,
     "author": {
       "@type": "Organization",
@@ -253,7 +253,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       "name": "AiverseWorld",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://aiinverseworld.com/logo.webp"
+        "url": "https://aiverseworld.com/logo.webp"
       }
     }
   };

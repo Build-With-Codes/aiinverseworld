@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     title: "AiverseWorld Company Profile",
     description: "AiverseWorld is a trusted platform for discovering, comparing, and understanding AI technologies. Learn about our mission and vision.",
     type: "website",
-    url: "https://aiinverseworld.com/about",
+    url: "https://aiverseworld.com/about",
     images: [defaultOpenGraphImage],
   },
   twitter: {
@@ -29,10 +29,10 @@ export default function AboutPage() {
     "@type": "Organization",
     "name": "AiverseWorld",
     "description": "A platform dedicated to helping people and organizations discover, compare, understand, and adopt artificial intelligence technologies",
-    "url": "https://aiinverseworld.com",
+    "url": "https://aiverseworld.com",
     "sameAs": [
-      "https://twitter.com/aiinverseworld",
-      "https://linkedin.com/company/aiinverseworld"
+      "https://twitter.com/aiverseworld",
+      "https://linkedin.com/company/aiverseworld"
     ]
   };
 
