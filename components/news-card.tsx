@@ -46,7 +46,7 @@ export function NewsCard({ article }: NewsCardProps) {
   const updatedTime = article.processedAt || article.publishedAt;
 
   return (
-    <article className="overflow-hidden rounded-[30px] border border-white/10 bg-white/6 shadow-[0_18px_60px_rgba(2,6,23,0.24)]">
+    <article className="overflow-hidden rounded-card-lg border border-border-subtle bg-surface-2 shadow-[0_18px_60px_rgba(2,6,23,0.24)]">
       <div className="relative h-52 w-full">
         <Image
           src={article.imageUrl}
@@ -67,33 +67,33 @@ export function NewsCard({ article }: NewsCardProps) {
 
       <div className="space-y-5 p-6">
         <div className="space-y-3">
-          <p className="text-xs font-semibold tracking-[0.24em] text-cyan-200 uppercase">
+          <p className="text-xs font-semibold tracking-[0.24em] text-brand-cyan-strong uppercase">
             {article.sourceName}
           </p>
           <h3 className="text-2xl font-semibold tracking-tight text-white">
             {article.title}
           </h3>
-          <p className="text-sm leading-7 text-slate-300">{article.summary}</p>
+          <p className="text-sm leading-7 text-text-secondary">{article.summary}</p>
         </div>
 
         <div className="space-y-2">
           {article.keyPoints.map((point, index) => (
             <p
               key={`${article.id}-point-${index}`}
-              className="rounded-2xl border border-white/8 bg-[#081222] px-4 py-3 text-sm leading-6 text-slate-300"
+              className="rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm leading-6 text-text-secondary"
             >
               {point}
             </p>
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4 text-sm text-slate-400">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border-subtle pt-4 text-sm text-text-muted">
           <span>{`Updated ${formatRelativeTime(updatedTime)}`}</span>
           <Link
             href={article.sourceUrl}
             target="_blank"
             rel="noreferrer"
-            className="rounded-full border border-cyan-300/25 px-4 py-2 font-medium text-cyan-100 transition hover:bg-cyan-300/10"
+            className="rounded-full border border-border-accent px-4 py-2 font-medium text-cyan-100 transition hover:bg-brand-cyan/10"
           >
             Read original source
           </Link>

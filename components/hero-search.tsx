@@ -126,7 +126,7 @@ export function HeroSearch() {
   return (
     <div
       id="ai-finder"
-      className="home-ai-finder rounded-[32px] border border-white/10 bg-white/8 p-4 shadow-[0_24px_120px_rgba(8,15,35,0.45)] backdrop-blur-2xl"
+      className="home-ai-finder rounded-[32px] border border-border-subtle bg-surface-3 p-4 shadow-[0_24px_120px_rgba(8,15,35,0.45)] backdrop-blur-2xl"
     >
       <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
         <input
@@ -135,7 +135,7 @@ export function HeroSearch() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="rounded-2xl border border-white/10 bg-[#071120] px-5 py-4 text-sm text-slate-300 outline-none placeholder:text-slate-500 focus:border-cyan-300/30"
+          className="rounded-2xl border border-border-subtle bg-surface-1 px-5 py-4 text-sm text-text-secondary outline-none placeholder:text-text-muted focus:border-border-accent"
         />
         <button
           onClick={() => recommendAi()}
@@ -151,20 +151,20 @@ export function HeroSearch() {
             key={tag}
             onClick={() => selectPrompt(tag)}
             disabled={isLoading}
-            className="rounded-full border border-white/8 bg-white/5 px-3 py-2 text-xs text-slate-300 transition hover:border-cyan-300/20 hover:text-white disabled:opacity-60"
+            className="rounded-full border border-border-subtle bg-surface-2 px-3 py-2 text-xs text-text-secondary transition hover:border-border-accent hover:text-white disabled:opacity-60"
           >
             {tag}
           </button>
         ))}
       </div>
       {hasSearched ? (
-        <div className="home-ai-finder__results mt-4 overflow-hidden rounded-[24px] border border-cyan-300/15 bg-[#071120]/80 p-4">
-          <div className="home-ai-finder__result-header flex flex-col gap-3 rounded-[20px] border border-white/8 bg-white/5 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="home-ai-finder__results mt-4 overflow-hidden rounded-card border border-border-accent bg-surface-1/80 p-4">
+          <div className="home-ai-finder__result-header flex flex-col gap-3 rounded-sm border border-border-subtle bg-surface-2 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-xs font-semibold tracking-[0.2em] text-cyan-200 uppercase">Recommended AI</p>
-              <p className="mt-1 text-sm text-slate-400">Personalized shortlist from the live catalog</p>
+              <p className="text-xs font-semibold tracking-[0.2em] text-brand-cyan-strong uppercase">Recommended AI</p>
+              <p className="mt-1 text-sm text-text-muted">Personalized shortlist from the live catalog</p>
             </div>
-            <div className="home-ai-finder__status inline-flex w-fit items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-semibold text-cyan-100">
+            <div className="home-ai-finder__status inline-flex w-fit items-center gap-2 rounded-full border border-border-accent bg-brand-cyan/10 px-3 py-2 text-xs font-semibold text-cyan-100">
               <span className="h-2 w-2 rounded-full bg-cyan-300" aria-hidden="true" />
               Live ranking
             </div>
@@ -177,16 +177,16 @@ export function HeroSearch() {
               ))}
             </div>
           ) : error ? (
-            <div className="home-ai-finder__message home-ai-finder__message--error mt-4 rounded-[20px] border border-rose-300/20 bg-rose-300/10 p-4">
+            <div className="home-ai-finder__message home-ai-finder__message--error mt-4 rounded-sm border border-rose-300/20 bg-rose-300/10 p-4">
               <p className="text-sm font-semibold text-rose-100">Could not recommend tools</p>
               <p className="mt-2 text-sm leading-6 text-rose-200">{error}</p>
             </div>
           ) : tools?.length ? (
             <>
               {answer ? (
-                <div className="home-ai-finder__answer mt-4 rounded-[20px] border border-white/8 bg-white/5 p-4">
+                <div className="home-ai-finder__answer mt-4 rounded-sm border border-border-subtle bg-surface-2 p-4">
                   <p className="text-sm font-semibold text-white">AI summary</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-300">{answer}</p>
+                  <p className="mt-2 text-sm leading-6 text-text-secondary">{answer}</p>
                 </div>
               ) : null}
               <div className="mt-4 grid gap-3">
@@ -197,16 +197,16 @@ export function HeroSearch() {
                     <button
                       key={tool.id}
                       onClick={() => router.push(`/tool/${tool.slug}?id=${encodeURIComponent(tool.id)}`)}
-                      className="home-ai-finder__tool group rounded-2xl border border-white/10 bg-white/5 p-4 text-left transition hover:border-cyan-300/30 hover:bg-white/10"
+                      className="home-ai-finder__tool group rounded-2xl border border-border-subtle bg-surface-2 p-4 text-left transition hover:border-border-accent hover:bg-white/10"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex min-w-0 items-start gap-3">
-                          <span className="home-ai-finder__rank flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-300/10 text-sm font-semibold text-cyan-100">
+                          <span className="home-ai-finder__rank flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl border border-border-accent bg-brand-cyan/10 text-sm font-semibold text-cyan-100">
                             {index + 1}
                           </span>
                           <div className="min-w-0">
                             <p className="truncate font-semibold text-white">{tool.name}</p>
-                            <p className="mt-1 text-xs text-slate-400">{tool.category}</p>
+                            <p className="mt-1 text-xs text-text-muted">{tool.category}</p>
                           </div>
                         </div>
                         {matchScore ? (
@@ -215,10 +215,10 @@ export function HeroSearch() {
                           </span>
                         ) : null}
                       </div>
-                      <p className="mt-3 text-sm leading-6 text-slate-300">
+                      <p className="mt-3 text-sm leading-6 text-text-secondary">
                         {tool.recommendation?.reason ?? tool.shortDescription}
                       </p>
-                      <p className="mt-3 text-xs font-semibold text-cyan-200 transition group-hover:text-cyan-100">
+                      <p className="mt-3 text-xs font-semibold text-brand-cyan-strong transition group-hover:text-cyan-100">
                         View tool details
                       </p>
                     </button>
@@ -227,9 +227,9 @@ export function HeroSearch() {
               </div>
             </>
           ) : (
-            <div className="home-ai-finder__message mt-4 rounded-[20px] border border-white/8 bg-white/5 p-4">
+            <div className="home-ai-finder__message mt-4 rounded-sm border border-border-subtle bg-surface-2 p-4">
               <p className="text-sm font-semibold text-white">No strong match found</p>
-              <p className="mt-2 text-sm leading-6 text-slate-300">
+              <p className="mt-2 text-sm leading-6 text-text-secondary">
                 {answer ||
                   "We could not find a confident recommendation for that request. Try adding your goal, audience, budget, or preferred format."}
               </p>
@@ -238,7 +238,7 @@ export function HeroSearch() {
                   <button
                     key={suggestion}
                     onClick={() => selectPrompt(suggestion)}
-                    className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-2 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-300/15"
+                    className="rounded-full border border-border-accent bg-brand-cyan/10 px-3 py-2 text-xs font-semibold text-cyan-100 transition hover:bg-brand-cyan/10"
                   >
                     {suggestion}
                   </button>

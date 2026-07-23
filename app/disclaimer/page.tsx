@@ -20,7 +20,7 @@ export default function DisclaimerPage() {
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Information accuracy</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Tool descriptions, pricing, features, ratings, and availability may change
           over time. Users should independently verify details with the vendor before
           relying on them for purchasing or compliance decisions.
@@ -28,7 +28,7 @@ export default function DisclaimerPage() {
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">No professional advice</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Content on the platform does not constitute legal, financial, security, or
           procurement advice. Businesses should perform their own diligence based on
           internal risk, security, and compliance requirements.
@@ -36,7 +36,7 @@ export default function DisclaimerPage() {
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Third-party brands</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Product names, logos, trademarks, and service marks appearing on the
           platform remain the property of their respective owners.
         </p>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { signIn } from "next-auth/react";
 
@@ -10,7 +10,7 @@ type AuthDialogProps = {
   callbackUrl: string;
   enabled?: boolean;
   triggerClassName?: string;
-  triggerLabel?: string;
+  triggerLabel?: ReactNode;
   title?: string;
   description?: string;
 };
@@ -165,33 +165,33 @@ export function AuthDialog({
       >
         <div
           ref={panelRef}
-          className="auth-dialog__panel relative z-10 my-3 w-full max-w-[27rem] overflow-hidden rounded-[26px] border border-white/10 shadow-[0_24px_90px_rgba(2,6,23,0.5)] sm:my-0"
+          className="auth-dialog__panel relative z-10 my-3 w-full max-w-[27rem] overflow-hidden rounded-card border border-border-subtle shadow-[0_24px_90px_rgba(2,6,23,0.5)] sm:my-0"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="auth-dialog__content bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.14),_transparent_30%),linear-gradient(180deg,_rgba(255,255,255,0.06),_rgba(255,255,255,0.03))] p-4 sm:p-6">
             <div className="flex items-start justify-between gap-4">
               <div className="min-w-0">
-                <span className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1.5 text-[10px] font-semibold tracking-[0.2em] text-cyan-200 uppercase">
+                <span className="inline-flex rounded-full border border-border-accent bg-brand-cyan/10 px-3 py-1.5 text-[10px] font-semibold tracking-[0.2em] text-brand-cyan-strong uppercase">
                   Account Access
                 </span>
                 <h2 className="mt-3 text-2xl font-semibold tracking-tight text-white">
                   {title}
                 </h2>
-                <p className="mt-2 max-w-sm text-sm leading-6 text-slate-300">
+                <p className="mt-2 max-w-sm text-sm leading-6 text-text-secondary">
                   {description}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="auth-dialog__close shrink-0 rounded-full border border-white/10 px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-cyan-300/30 hover:text-white"
+                className="auth-dialog__close shrink-0 rounded-full border border-border-subtle px-3 py-1.5 text-xs font-medium text-text-secondary transition hover:border-border-accent hover:text-white"
               >
                 Close
               </button>
             </div>
 
-            <div className="mt-5 rounded-[22px] border border-white/10 bg-white/6 p-3.5 sm:p-4">
-              <div className="grid rounded-2xl border border-white/10 bg-[#071120]/80 p-1 sm:grid-cols-2">
+            <div className="mt-5 rounded-[22px] border border-border-subtle bg-surface-2 p-3.5 sm:p-4">
+              <div className="grid rounded-2xl border border-border-subtle bg-surface-1/80 p-1 sm:grid-cols-2">
                 <button
                   type="button"
                   onClick={() => {
@@ -202,7 +202,7 @@ export function AuthDialog({
                   className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
                     mode === "login"
                       ? "bg-white text-slate-950 shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
-                      : "text-slate-400 hover:bg-white/5 hover:text-white disabled:opacity-60"
+                      : "text-text-muted hover:bg-surface-2 hover:text-white disabled:opacity-60"
                   }`}
                 >
                   Login
@@ -217,7 +217,7 @@ export function AuthDialog({
                   className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
                     mode === "signup"
                       ? "bg-white text-slate-950 shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
-                      : "text-slate-400 hover:bg-white/5 hover:text-white disabled:opacity-60"
+                      : "text-text-muted hover:bg-surface-2 hover:text-white disabled:opacity-60"
                   }`}
                 >
                   Sign Up
@@ -241,7 +241,7 @@ export function AuthDialog({
                     minLength={2}
                     required={mode === "signup"}
                     disabled={submitting}
-                    className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 dark:border-white/10 dark:bg-[#081222] dark:text-white"
+                    className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 dark:border-border-subtle dark:bg-surface-1 dark:text-white"
                   />
                 ) : null}
                 <input
@@ -256,7 +256,7 @@ export function AuthDialog({
                   inputMode="email"
                   required
                   disabled={submitting}
-                  className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 dark:border-white/10 dark:bg-[#081222] dark:text-white"
+                  className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 dark:border-border-subtle dark:bg-surface-1 dark:text-white"
                 />
                 <input
                   type="password"
@@ -270,7 +270,7 @@ export function AuthDialog({
                   minLength={8}
                   required
                   disabled={submitting}
-                  className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 dark:border-white/10 dark:bg-[#081222] dark:text-white"
+                  className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 dark:border-border-subtle dark:bg-surface-1 dark:text-white"
                 />
                 {error ? (
                   <div role="alert" className="rounded-xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
@@ -291,9 +291,9 @@ export function AuthDialog({
               </form>
 
               <div className="mt-5 flex items-center">
-                <div className="flex-1 border-t border-gray-300 dark:border-white/10"></div>
-                <span className="mx-3 text-xs font-medium text-gray-500 dark:text-slate-400">OR</span>
-                <div className="flex-1 border-t border-gray-300 dark:border-white/10"></div>
+                <div className="flex-1 border-t border-gray-300 dark:border-border-subtle"></div>
+                <span className="mx-3 text-xs font-medium text-gray-500 dark:text-text-muted">OR</span>
+                <div className="flex-1 border-t border-gray-300 dark:border-border-subtle"></div>
               </div>
 
               <div className="mt-4 grid gap-3">
@@ -301,7 +301,7 @@ export function AuthDialog({
                   <GoogleSignInButton
                     callbackUrl={callbackUrl}
                     disabled={submitting}
-                    className="h-12 w-full rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 dark:border-white/10 dark:bg-white dark:text-slate-950 dark:hover:bg-cyan-100"
+                    className="h-12 w-full rounded-xl border border-slate-300 bg-white px-5 text-sm font-semibold text-slate-900 transition hover:bg-slate-100 dark:border-border-subtle dark:bg-white dark:text-slate-950 dark:hover:bg-cyan-100"
                     label="Continue with Google"
                   />
                 ) : (
@@ -309,12 +309,12 @@ export function AuthDialog({
                     Google OAuth is not configured yet.
                   </div>
                 )}
-                <span className="text-center text-xs leading-5 text-slate-400">
+                <span className="text-center text-xs leading-5 text-text-muted">
                   By continuing, you agree to our Terms and Privacy Policy.
                 </span>
               </div>
               {!enabled ? (
-                <p className="mt-4 text-xs leading-6 text-slate-400">
+                <p className="mt-4 text-xs leading-6 text-text-muted">
                   Add `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `AUTH_SECRET`, and
                   `AUTH_SERVICE_BASE_URL` in your local environment to enable login.
                 </p>

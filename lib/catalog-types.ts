@@ -61,4 +61,49 @@ export type AITool = {
   lastVerified: string;
   sourceUrl: string;
   sourceType: "Official" | "Directory" | "Review" | "Manual";
+  pros?: string[];
+  cons?: string[];
+  editorialVerdict?: string;
+  alternativesNote?: string;
+  faqs?: { question: string; answer: string }[];
+  featureNotes?: { feature: string; benefit: string }[];
+};
+
+export type Spotlight = {
+  key: string;
+  emoji: string;
+  label: string;
+  blurb: string;
+  tool: AITool;
+};
+
+export type CollectionSummary = {
+  slug: string;
+  emoji: string;
+  title: string;
+  tagline: string;
+};
+
+export type CollectionDetail = {
+  slug: string;
+  emoji: string;
+  title: string;
+  tagline: string;
+  intro: string;
+  body: string[];
+  buyingGuide: string[];
+  faqs: { question: string; answer: string }[];
+  seoTitle: string;
+  seoDescription: string;
+  tools: AITool[];
+};
+
+export type UserDashboard = {
+  saved: AITool[];
+  savedCount: number;
+  recentlyViewed: AITool[];
+  follows: string[];
+  recommendations: AITool[];
+  comparedCount: number;
+  streak: number;
 };

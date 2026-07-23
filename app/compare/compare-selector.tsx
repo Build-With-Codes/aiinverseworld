@@ -31,11 +31,11 @@ export function CompareSelector({
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
       <div className="flex-1 space-y-2">
-        <label className="text-xs font-semibold tracking-widest text-slate-400 uppercase">Tool A</label>
+        <label className="text-xs font-semibold tracking-widest text-text-muted uppercase">Tool A</label>
         <select
           value={left}
           onChange={(e) => setLeft(e.target.value)}
-          className="w-full rounded-2xl border border-white/10 bg-[#071120] px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/30"
+          className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-slate-200 outline-none focus:border-border-accent"
         >
           {toolOptions.map((o) => (
             <option key={o.value} value={o.value} disabled={o.value === right}>
@@ -45,14 +45,14 @@ export function CompareSelector({
         </select>
       </div>
 
-      <span className="shrink-0 text-center text-slate-500 font-semibold sm:pb-3">vs</span>
+      <span className="shrink-0 text-center text-text-muted font-semibold sm:pb-3">vs</span>
 
       <div className="flex-1 space-y-2">
-        <label className="text-xs font-semibold tracking-widest text-slate-400 uppercase">Tool B</label>
+        <label className="text-xs font-semibold tracking-widest text-text-muted uppercase">Tool B</label>
         <select
           value={right}
           onChange={(e) => setRight(e.target.value)}
-          className="w-full rounded-2xl border border-white/10 bg-[#071120] px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/30"
+          className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-slate-200 outline-none focus:border-border-accent"
         >
           {toolOptions.map((o) => (
             <option key={o.value} value={o.value} disabled={o.value === left}>

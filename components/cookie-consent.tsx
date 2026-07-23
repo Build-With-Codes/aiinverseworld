@@ -45,28 +45,28 @@ export function CookieConsent() {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-50 px-4 pb-4 sm:px-6">
-      <div className="app-glass mx-auto flex max-w-5xl flex-col gap-4 rounded-[28px] border border-white/10 bg-[#071120]/95 p-5 shadow-[0_24px_80px_rgba(2,6,23,0.45)] backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
+      <div className="app-glass mx-auto flex max-w-5xl flex-col gap-4 rounded-card border border-border-subtle bg-surface-1/95 p-5 shadow-[0_24px_80px_rgba(2,6,23,0.45)] backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between">
         <div className="max-w-3xl">
           <p className="text-sm font-semibold text-white">Cookie consent</p>
-          <p className="mt-1 text-sm leading-6 text-slate-300">
+          <p className="mt-1 text-sm leading-6 text-text-secondary">
             We use necessary cookies to run the site. With your permission, we also use analytics and advertising cookies to measure performance and support personalized ads.
             Review our{" "}
-            <Link href="/cookie-policy" className="font-semibold text-cyan-200 hover:text-cyan-100">
+            <Link href="/cookie-policy" className="font-semibold text-brand-cyan-strong hover:text-cyan-100">
               Cookie Policy
             </Link>{" "}
             and{" "}
-            <Link href="/privacy" className="font-semibold text-cyan-200 hover:text-cyan-100">
+            <Link href="/privacy" className="font-semibold text-brand-cyan-strong hover:text-cyan-100">
               Privacy Policy
             </Link>
             .
           </p>
           {showPreferences ? (
             <div className="mt-4 grid gap-3 text-sm text-slate-200 sm:grid-cols-3">
-              <label className="rounded-2xl border border-white/10 bg-white/5 p-3">
+              <label className="rounded-2xl border border-border-subtle bg-surface-2 p-3">
                 <span className="block font-semibold text-white">Necessary</span>
-                <span className="mt-1 block text-xs leading-5 text-slate-400">Always on for security and core site features.</span>
+                <span className="mt-1 block text-xs leading-5 text-text-muted">Always on for security and core site features.</span>
               </label>
-              <label className="cursor-pointer rounded-2xl border border-white/10 bg-white/5 p-3">
+              <label className="cursor-pointer rounded-2xl border border-border-subtle bg-surface-2 p-3">
                 <span className="flex items-center gap-2 font-semibold text-white">
                   <input
                     type="checkbox"
@@ -75,9 +75,9 @@ export function CookieConsent() {
                   />
                   Analytics
                 </span>
-                <span className="mt-1 block text-xs leading-5 text-slate-400">Helps us understand performance and improve pages.</span>
+                <span className="mt-1 block text-xs leading-5 text-text-muted">Helps us understand performance and improve pages.</span>
               </label>
-              <label className="cursor-pointer rounded-2xl border border-white/10 bg-white/5 p-3">
+              <label className="cursor-pointer rounded-2xl border border-border-subtle bg-surface-2 p-3">
                 <span className="flex items-center gap-2 font-semibold text-white">
                   <input
                     type="checkbox"
@@ -86,7 +86,7 @@ export function CookieConsent() {
                   />
                   Ads
                 </span>
-                <span className="mt-1 block text-xs leading-5 text-slate-400">Allows advertising cookies, including personalized ads where available.</span>
+                <span className="mt-1 block text-xs leading-5 text-text-muted">Allows advertising cookies, including personalized ads where available.</span>
               </label>
             </div>
           ) : null}
@@ -102,7 +102,7 @@ export function CookieConsent() {
           <button
             type="button"
             onClick={() => saveConsent({ analytics: false, marketing: false })}
-            className="rounded-full border border-white/10 bg-white/6 px-5 py-3 text-sm font-semibold text-slate-200 hover:border-cyan-300/30 hover:text-white"
+            className="rounded-full border border-border-subtle bg-surface-2 px-5 py-3 text-sm font-semibold text-slate-200 hover:border-border-accent hover:text-white"
           >
             Reject
           </button>
@@ -113,7 +113,7 @@ export function CookieConsent() {
                 ? saveConsent({ analytics, marketing })
                 : setShowPreferences(true)
             }
-            className="rounded-full border border-cyan-300/25 bg-cyan-300/10 px-5 py-3 text-center text-sm font-semibold text-cyan-100 hover:bg-cyan-300/15"
+            className="rounded-full border border-border-accent bg-brand-cyan/10 px-5 py-3 text-center text-sm font-semibold text-cyan-100 hover:bg-brand-cyan/10"
           >
             {showPreferences ? "Save" : "Manage"}
           </button>

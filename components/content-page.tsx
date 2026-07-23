@@ -32,9 +32,9 @@ const themeStyles: Record<
   company: {
     shell:
       "bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.14),_transparent_24%),radial-gradient(circle_at_bottom_right,_rgba(59,130,246,0.14),_transparent_28%)]",
-    badge: "border-cyan-300/20 bg-cyan-300/10 text-cyan-200",
+    badge: "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong",
     hero:
-      "border-cyan-300/14 bg-linear-to-br from-cyan-400/12 via-blue-500/8 to-transparent",
+      "border-border-accent bg-linear-to-br from-cyan-400/12 via-blue-500/8 to-transparent",
   },
   privacy: {
     shell:
@@ -85,7 +85,7 @@ export function ContentPage({
 
   return (
     <div className={`space-y-10 pb-10 pt-10 ${styles.shell}`}>
-      <section className={`rounded-[34px] border bg-white/6 p-8 ${styles.hero}`}>
+      <section className={`rounded-card-lg border bg-surface-2 p-8 ${styles.hero}`}>
         <span
           className={`inline-flex rounded-full border px-3 py-2 text-xs font-semibold tracking-[0.28em] uppercase ${styles.badge}`}
         >
@@ -95,12 +95,12 @@ export function ContentPage({
           <h1 className="max-w-4xl text-4xl font-bold tracking-tight text-cyan-100 sm:text-5xl">
             {title}
           </h1>
-          <p className="mt-4 max-w-3xl text-lg leading-8 text-slate-300">
+          <p className="mt-4 max-w-3xl text-lg leading-8 text-text-secondary">
             {description}
           </p>
           {metadata && (
-            <div className="mt-6 flex items-center gap-3 text-sm text-slate-400">
-              <span className="bg-cyan-300/10 text-cyan-200 px-2 py-1 rounded text-xs font-medium">
+            <div className="mt-6 flex items-center gap-3 text-sm text-text-muted">
+              <span className="bg-brand-cyan/10 text-brand-cyan-strong px-2 py-1 rounded text-xs font-medium">
                 {metadata.category}
               </span>
               <span>•</span>
@@ -112,7 +112,7 @@ export function ContentPage({
         </div>
       </section>
 
-      <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+      <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
         <div className="content-page-copy space-y-8">{children}</div>
       </section>
     </div>

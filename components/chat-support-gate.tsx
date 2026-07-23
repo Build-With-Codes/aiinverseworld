@@ -41,7 +41,7 @@ export function ChatSupportGate({ enabled }: ChatSupportGateProps) {
         triggerLabel={isScrolling ? "" : "Chat Support"}
         title="Sign in to chat with support"
         description="We keep support chat available to signed-in users so conversations stay tied to the right account and follow-up history."
-        triggerClassName={`support-chat-trigger inline-flex h-11 items-center justify-center rounded-full border border-cyan-300/20 py-3 text-sm font-semibold shadow-[0_18px_45px_rgba(2,6,23,0.38)] backdrop-blur-xl transition hover:border-cyan-300/40 ${
+        triggerClassName={`support-chat-trigger inline-flex h-11 items-center justify-center rounded-full border border-border-accent py-3 text-sm font-semibold shadow-[0_18px_45px_rgba(2,6,23,0.38)] backdrop-blur-xl transition hover:border-border-accent ${
           isScrolling ? "w-11 px-0" : "w-auto px-5"
         }`}
       />

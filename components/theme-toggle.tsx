@@ -24,15 +24,18 @@ function applyTheme(nextTheme: ThemeMode) {
 }
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<ThemeMode>("dark");
+  const [theme, setTheme] = useState<ThemeMode>(() =>
+    typeof window === "undefined" ? "dark" : getInitialTheme(),
+  );
   const [mounted, setMounted] = useState(false);
 
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
-    const initialTheme = getInitialTheme();
-    setTheme(initialTheme);
-    document.documentElement.setAttribute("data-theme", initialTheme);
+    document.documentElement.setAttribute("data-theme", theme);
     setMounted(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (!mounted) return;
@@ -62,7 +65,7 @@ export function ThemeToggle() {
       type="button"
       aria-label="Toggle color theme"
       onClick={handleToggle}
-      className="theme-toggle group inline-flex cursor-pointer items-center gap-2 rounded-full border px-2 py-2 text-xs font-medium transition hover:border-cyan-300/40 hover:bg-cyan-300/12 hover:text-white sm:gap-3 sm:px-3 sm:text-sm"
+      className="theme-toggle group inline-flex cursor-pointer items-center gap-2 rounded-full border px-2 py-2 text-xs font-medium transition hover:border-border-accent hover:bg-brand-cyan/10 hover:text-text-primary sm:gap-3 sm:px-3 sm:text-sm"
     >
       <span className="theme-toggle__label min-w-0 text-left sm:min-w-12">
         {theme === "light" ? "Light" : "Dark"}
@@ -80,7 +83,7 @@ export function ThemeToggle() {
           className={`theme-toggle__thumb absolute h-4 w-4 rounded-full transition sm:h-5 sm:w-5 ${
             theme === "light"
               ? "translate-x-5 bg-white sm:translate-x-6"
-              : "translate-x-1 bg-[#020617]"
+              : "translate-x-1 bg-surface-1"
           }`}
         />
       </span>

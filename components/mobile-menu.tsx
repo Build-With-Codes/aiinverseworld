@@ -19,6 +19,7 @@ type MobileMenuProps = {
   userName?: string | null;
   userEmail?: string | null;
   userImage?: string | null;
+  trendingQueries?: string[];
 };
 
 export function MobileMenu({
@@ -28,6 +29,7 @@ export function MobileMenu({
   userName,
   userEmail,
   userImage,
+  trendingQueries,
 }: MobileMenuProps) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -90,7 +92,7 @@ export function MobileMenu({
         aria-label={open ? "Close navigation menu" : "Open navigation menu"}
         aria-expanded={open}
         onClick={handleToggle}
-        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/6 text-slate-200 transition hover:border-cyan-300/40 hover:bg-cyan-300/12 hover:text-white"
+        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-pill border border-border-subtle bg-surface-2 text-text-secondary transition hover:border-border-accent hover:bg-brand-cyan/12 hover:text-text-primary"
       >
         <span className="flex flex-col gap-1.5">
           <span className="block h-0.5 w-4 rounded-full bg-current" />
@@ -102,9 +104,9 @@ export function MobileMenu({
       {open ? (
         <div
           ref={contentRef}
-          className="absolute right-0 top-[calc(100%+12px)] z-50 w-[min(22rem,calc(100vw-2rem))] rounded-[28px] border border-white/10 bg-[#071120]/96 p-4 shadow-[0_24px_80px_rgba(2,6,23,0.45)] backdrop-blur-xl"
+          className="absolute right-0 top-[calc(100%+12px)] z-50 w-[min(22rem,calc(100vw-2rem))] rounded-card-lg border border-border-subtle bg-surface-glass p-4 shadow-card-hover backdrop-blur-xl"
         >
-          <HeaderSearch onSubmit={handleClose} />
+          <HeaderSearch onSubmit={handleClose} trendingQueries={trendingQueries} />
 
           <div className="mt-4 space-y-2">
             {navItems.map((item) => (
@@ -112,14 +114,14 @@ export function MobileMenu({
                 key={item.href}
                 href={item.href}
                 onClick={handleClose}
-                className="block cursor-pointer rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-200 transition hover:border-cyan-300/25 hover:bg-cyan-300/10 hover:text-white"
+                className="block cursor-pointer rounded-sm border border-border-subtle bg-surface-3 px-4 py-3 text-sm text-text-secondary transition hover:border-border-accent hover:bg-brand-cyan/10 hover:text-text-primary"
               >
                 {item.label}
               </Link>
             ))}
           </div>
 
-          <div className="mt-4 border-t border-white/10 pt-4">
+          <div className="mt-4 border-t border-border-subtle pt-4">
             {isSignedIn ? (
               <AccountMenu
                 name={userName}
@@ -131,7 +133,7 @@ export function MobileMenu({
               <AuthDialog
                 callbackUrl="/"
                 enabled={authEnabled}
-                triggerClassName="w-full cursor-pointer rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
+                triggerClassName="w-full cursor-pointer rounded-sm bg-gradient-to-r from-brand-electric to-brand-violet px-4 py-3 text-sm font-semibold text-white shadow-glow-cyan transition hover:brightness-110"
               />
             )}
           </div>

@@ -1,14 +1,30 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { FaviconBadge } from "@/components/favicon-badge";
 import { NewsCard } from "@/components/news-card";
 import { CategoryCard } from "@/components/category-card";
+import { NewsletterSignup } from "@/components/newsletter-signup";
 import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { cardClass } from "@/components/ui/card";
+import { EditorialBlock } from "@/components/ui/editorial-block";
+import { FadeInSection, HoverLift, StaggerGrid, StaggerItem } from "@/components/ui/motion";
+import { DiscoveryRail } from "@/components/engagement/discovery-rail";
+import { RecentlyViewedRail } from "@/components/engagement/recently-viewed-rail";
+import { SpotlightCard } from "@/components/engagement/spotlight-card";
 import { getNewsArticles } from "@/lib/news";
 import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 import { getBestLists, getComparisons, getToolCatalog, recommendTools } from "@/lib/tool-catalog";
-import { getAllBlogPosts } from "@/lib/blog-data";
+import {
+  getCollections,
+  getRankings,
+  getSpotlights,
+  getTrending,
+} from "@/lib/engagement";
+import { getAllBlogPosts } from "@/lib/blog-api";
 import { blogSuggestionFAQs } from "@/lib/blog-suggestions";
 import { HeroSearch } from "@/components/hero-search";
 import { ToolMarquee } from "@/components/tool-marquee";
@@ -48,228 +64,258 @@ export default async function Home() {
   const liveCategories = catalog.categories;
   const liveComparisons = comparisonCatalog.comparisons;
   const liveBestLists = bestListCatalog.lists;
-  const trendingTools = liveTools.slice(0, 6);
-  const codingTools = liveTools.filter((tool) => tool.category === "Coding Assistant").slice(0, 6);
+
+  const featuredTools = liveTools.slice(0, 6);
+  const recentlyAddedTools = [...liveTools]
+    .sort((a, b) => new Date(b.lastVerified).getTime() - new Date(a.lastVerified).getTime())
+    .slice(0, 6);
   const creativeTools = liveTools
     .filter((tool) => ["Image Generation", "Video Generation", "Design Assistant"].includes(tool.category))
     .slice(0, 6);
-  const researchRecommendations = await recommendTools(homeRecommendationQuery, 3);
-  const newsArticles = await getNewsArticles(3);
-  const blogPosts = getAllBlogPosts().slice(0, 6);
-  
-  const spotlightMetrics = [
-    { label: "Indexed tools", value: `${liveTools.length}` },
-    { label: "Categories covered", value: `${liveCategories.length}` },
-    { label: "Free plan tools", value: `${liveTools.filter((t) => t.freePlan === "Yes").length}` },
+
+  // Backend-dynamic engagement data (falls back to popularity when sparse).
+  const [spotlights, trendingTools, mostSaved, collections, researchRecommendations, newsArticles, mostSearchedTools] =
+    await Promise.all([
+      getSpotlights(),
+      getTrending("7d", 10),
+      getRankings("most-saved", 10),
+      getCollections(),
+      recommendTools(homeRecommendationQuery, 8),
+      getNewsArticles(3),
+      getRankings("most-searched", 6),
+    ]);
+  const trendingQueries = mostSearchedTools.map((tool) => tool.name);
+  const blogPosts = (await getAllBlogPosts(12)).slice(0, 6);
+
+  const mostRecentVerified = liveTools.reduce((max, tool) => {
+    const time = new Date(tool.lastVerified).getTime();
+    return Number.isFinite(time) && time > max ? time : max;
+  }, 0);
+  // Request-time freshness label — intentionally impure (this is a Server
+  // Component computed per request, not memoized render output).
+  /* eslint-disable react-hooks/purity */
+  const daysSinceVerified = mostRecentVerified
+    ? Math.max(0, Math.floor((Date.now() - mostRecentVerified) / 86_400_000))
+    : null;
+  /* eslint-enable react-hooks/purity */
+  const freshnessLabel =
+    daysSinceVerified === null
+      ? "Weekly"
+      : daysSinceVerified === 0
+        ? "Today"
+        : `${daysSinceVerified}d ago`;
+
+  const proofPoints = [
+    { value: `${liveTools.length}+`, label: "AI tools, independently verified" },
+    { value: freshnessLabel, label: "Last catalog verification" },
+    { value: `${liveCategories.length}`, label: "Categories, each with a buying guide" },
   ];
 
   return (
-    <div className="space-y-20 pb-10 pt-10 sm:space-y-24 sm:pt-14">
-      <section className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
-        <div className="space-y-8">
-          <div className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-cyan-100 uppercase">
-            Enterprise-grade AI discovery
-          </div>
-          <div className="space-y-6">
-            <h1 className="max-w-5xl text-5xl font-semibold tracking-tight text-white sm:text-6xl lg:text-7xl">
-              Discover the Perfect AI Tool
+    <div className="space-y-12 pb-10 pt-10">
+      {/* Hero */}
+      <section className="relative grid gap-10 overflow-hidden lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
+        <div
+          className="hero-orb pointer-events-none absolute -top-32 left-[-10%] h-80 w-80 rounded-full blur-3xl"
+          style={{ background: "var(--hero-orb-electric)" }}
+          aria-hidden
+        />
+        <div
+          className="hero-orb hero-orb--delay pointer-events-none absolute top-10 right-[-8%] h-72 w-72 rounded-full blur-3xl"
+          style={{ background: "var(--hero-orb-violet)" }}
+          aria-hidden
+        />
+
+        <div className="relative space-y-8">
+          <FadeInSection>
+            <Badge variant="brand">Enterprise-grade AI discovery</Badge>
+          </FadeInSection>
+          <FadeInSection delay={0.05} className="space-y-6">
+            <h1 className="text-display-1 max-w-5xl text-text-primary">
+              Discover, Compare, and Choose the Best AI Tools
             </h1>
-            <p className="max-w-2xl text-lg leading-8 text-slate-300 sm:text-xl">
+            <p className="text-body-lg max-w-2xl text-text-secondary">
               AiverseWorld is your curated search engine for AI products across
               assistants, coding, video, research, automation, and enterprise
               platforms. Compare real tools, pricing signals, and use cases fast.
             </p>
-          </div>
+          </FadeInSection>
 
-          <HeroSearch />
+          <FadeInSection delay={0.1}>
+            <HeroSearch />
+          </FadeInSection>
 
-          <div className="grid gap-4 sm:grid-cols-3">
-            {spotlightMetrics.map((metric) => (
-              <div
-                key={metric.label}
-                className="rounded-[26px] border border-white/10 bg-white/5 p-5"
-              >
-                <p className="text-3xl font-semibold text-white">{metric.value}</p>
-                <p className="mt-2 text-sm text-slate-400">{metric.label}</p>
-              </div>
+          {trendingQueries.length > 0 ? (
+            <FadeInSection delay={0.12} className="flex flex-wrap items-center gap-2">
+              <span className="flex shrink-0 items-center gap-2 rounded-full border border-border-accent bg-brand-cyan/10 px-3 py-1.5 text-brand-cyan-strong">
+                <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
+                  <path
+                    d="M3 13.5 7.4 9l3 3 5.4-6.5M12.8 5.5h3v3"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="1.8"
+                  />
+                </svg>
+                <span className="flex flex-col text-[10px] font-semibold uppercase leading-none tracking-[0.18em]">
+                  <span>Trending</span>
+                  <span className="mt-0.5 text-cyan-100">now</span>
+                </span>
+              </span>
+              {trendingQueries.map((item) => (
+                <Link
+                  key={item}
+                  href={`/search?q=${encodeURIComponent(item)}`}
+                  className="shrink-0 rounded-full border border-border-subtle bg-surface-2 px-3 py-1.5 text-xs font-medium text-text-secondary transition hover:border-border-accent hover:bg-brand-cyan/10 hover:text-text-primary"
+                >
+                  {item}
+                </Link>
+              ))}
+            </FadeInSection>
+          ) : null}
+
+          <StaggerGrid className="grid gap-4 sm:grid-cols-3">
+            {proofPoints.map((point) => (
+              <StaggerItem key={point.label} className={cardClass()}>
+                <p className="flex items-center gap-1.5 text-display-2 text-text-primary [font-variant-numeric:tabular-nums]">
+                  <span aria-hidden className="text-base text-brand-cyan-strong">
+                    ✓
+                  </span>
+                  {point.value}
+                </p>
+                <p className="text-caption mt-2 text-text-muted">{point.label}</p>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerGrid>
+          <p className="text-caption text-text-muted">
+            No pay-to-rank. No sponsored placements in rankings. Every tool links its official
+            source so you can verify.
+          </p>
         </div>
 
-        <div className="grid gap-4">
-          <div className="rounded-[32px] border border-cyan-300/18 bg-linear-to-br from-cyan-400/14 via-blue-500/10 to-violet-500/10 p-7">
-            <p className="text-xs font-semibold tracking-[0.28em] text-cyan-200 uppercase">
-              AI Finder
-            </p>
-            <h2 className="mt-3 text-2xl font-semibold text-white">
+        <FadeInSection delay={0.15} className="relative grid gap-4">
+          <div className={`${cardClass({ padding: "lg", glow: "cyan" })} border-border-accent`}>
+            <p className="text-eyebrow text-brand-cyan-strong">AI Finder</p>
+            <h2 className="text-heading-1 mt-3 text-text-primary">
               Answer a few questions and get a shortlist in seconds
             </h2>
             <div className="mt-6 space-y-3">
-              {finderQuestions.map((question, index) => (
-                <Link
-                  key={question.label}
-                  href={`/?recommend=${encodeURIComponent(question.query)}#ai-finder`}
-                  className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#091322] px-4 py-3"
-                >
-                  <span className="text-sm text-slate-200">{question.label}</span>
-                  <span className="text-xs text-slate-500">0{index + 1}</span>
-                </Link>
+              {finderQuestions.slice(0, 4).map((question, index) => (
+                <HoverLift key={question.label}>
+                  <Link
+                    href={`/?recommend=${encodeURIComponent(question.query)}#ai-finder`}
+                    className="flex items-center justify-between rounded-sm border border-border-subtle bg-surface-1 px-4 py-3"
+                  >
+                    <span className="text-sm text-text-secondary">{question.label}</span>
+                    <span className="text-caption text-text-muted">0{index + 1}</span>
+                  </Link>
+                </HoverLift>
               ))}
             </div>
           </div>
-
-          <div className="rounded-[32px] border border-white/10 bg-white/6 p-7">
-            <p className="text-sm font-medium text-slate-300">Built for every operator</p>
-            <div className="mt-5 space-y-4">
-              {aiFinderOptions.map((option) => (
-                <Link
-                  key={option.title}
-                  href={`/?recommend=${encodeURIComponent(option.query)}#ai-finder`}
-                  className="block rounded-2xl border border-white/8 bg-white/5 p-4 transition hover:border-cyan-300/25 hover:bg-white/8"
-                >
-                  <h3 className="font-semibold text-white">{option.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-400">
-                    {option.description}
-                  </p>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
+        </FadeInSection>
       </section>
 
-      <section className="grid gap-5 lg:grid-cols-3">
+      {/* Persona shortcuts */}
+      <StaggerGrid className="grid gap-5 lg:grid-cols-3">
         {discoveryBands.map((band) => (
-          <Link
-            key={band.title}
-            href={`/?recommend=${encodeURIComponent(band.query)}#ai-finder`}
-            className={`rounded-[30px] border border-white/10 bg-linear-to-br ${band.accent} p-6 shadow-[0_20px_60px_rgba(3,8,22,0.28)]`}
-          >
-            <p className="text-sm font-semibold text-white">{band.title}</p>
-            <p className="mt-3 text-sm leading-7 text-slate-300">{band.description}</p>
-          </Link>
+          <StaggerItem key={band.title}>
+            <HoverLift>
+              <Link
+                href={`/?recommend=${encodeURIComponent(band.query)}#ai-finder`}
+                className={`block bg-gradient-to-br ${band.accent} ${cardClass({ padding: "md" })}`}
+              >
+                <p className="font-semibold text-text-primary">{band.title}</p>
+                <p className="text-body mt-3 text-text-secondary">{band.description}</p>
+              </Link>
+            </HoverLift>
+          </StaggerItem>
         ))}
-      </section>
+      </StaggerGrid>
 
       <section className="space-y-3 overflow-hidden">
         <ToolMarquee tools={liveTools.slice(0, 20)} direction="left" />
         <ToolMarquee tools={liveTools.slice(20, 40)} direction="right" />
       </section>
 
-      {/* Blog Posts Section */}
-      <section>
-        <SectionHeading
-          eyebrow="Learning Hub"
-          title="AI Guides, Tips & Insights"
-          description="Learn how to master AI tools, discover best practices, and stay updated with the latest AI trends and strategies."
-        />
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {blogPosts.map((post) => (
-            <Link
-              key={post.slug}
-              href={`/blog/${post.slug}`}
-              className="group rounded-[24px] border border-white/10 bg-white/5 p-6 transition hover:border-cyan-300/30 hover:bg-white/8"
-            >
-              <div className="flex items-center justify-between mb-3">
-                <span className="bg-cyan-300/10 text-cyan-200 px-2 py-1 rounded text-xs font-medium">
-                  {post.category}
-                </span>
-                <span className="text-xs text-slate-500">{post.readTime}</span>
-              </div>
-              <h3 className="font-semibold text-white group-hover:text-cyan-200 transition line-clamp-2">
-                {post.title}
-              </h3>
-              <p className="mt-3 text-sm text-slate-400 line-clamp-2">
-                {post.description}
-              </p>
-              <div className="mt-4 flex items-center justify-between">
-                <time className="text-xs text-slate-500">{post.publishedAt}</time>
-                <span className="text-sm text-cyan-300 group-hover:underline">Read →</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-        <div className="mt-8 text-center">
-          <Link
-            href="/blog"
-            className="inline-flex rounded-full border border-cyan-300/25 px-6 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/10"
-          >
-            View all blog posts →
-          </Link>
-        </div>
-      </section>
+      {/* Continue exploring — personalized (signed-in returning users) */}
+      <RecentlyViewedRail />
 
-      <section>
-        <SectionHeading
-          eyebrow="AI News"
-          title="Enterprise AI news, summarized with attribution"
-          description="Track governance, infrastructure, operations, and legal developments through short AI-assisted summaries that link back to the original publishers."
-        />
-        {newsArticles.length > 0 ? (
-          <>
-            <div className="mb-5 rounded-[26px] border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm leading-7 text-emerald-100">
-              We only display summaries, excerpts, and source metadata here. Readers should use the original links for the complete article and publisher context.
-            </div>
-            <div className="grid gap-6 lg:grid-cols-3">
-              {newsArticles.map((article) => (
-                <NewsCard key={article.id} article={article} />
-              ))}
-            </div>
-            <div className="mt-6">
-              <Link
-                href="/news"
-                className="inline-flex rounded-full border border-cyan-300/25 px-5 py-3 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-300/10"
-              >
-                Explore the full AI news desk
-              </Link>
-            </div>
-          </>
-        ) : null}
-      </section>
-
-      {researchRecommendations.length > 0 ? (
-        <section className="home-recommendations">
+      {/* AI Tool Spotlights — premium rotating picks */}
+      {spotlights.length > 0 ? (
+        <FadeInSection>
           <SectionHeading
-            eyebrow="Recommended from catalog"
-            title="Tell us the job, get an AI shortlist"
-            description="The finder now scores tools against user intent, categories, audiences, tags, platforms, and pricing metadata."
+            eyebrow="Spotlight"
+            title="Editor spotlights"
+            description="Rotating premium picks — Tool of the Day, Week, and Month, plus rising and highest-rated standouts."
           />
-          <div className="grid gap-6 lg:grid-cols-3">
-            {researchRecommendations.map((tool) => (
-              <ToolCard key={tool.slug} tool={tool} />
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {spotlights.map((spotlight) => (
+              <SpotlightCard key={spotlight.key} spotlight={spotlight} />
             ))}
           </div>
-        </section>
+        </FadeInSection>
       ) : null}
 
-      <section>
-        <SectionHeading
-          eyebrow="Featured"
-          title="Live AI tools from the current market"
-          description="AiverseWorld now showcases the real tools you provided across assistants, coding, creative, productivity, research, and enterprise AI."
-        />
-        <div className="grid gap-6 lg:grid-cols-3">
-          {trendingTools.map((tool) => (
-            <ToolCard key={tool.slug} tool={tool} />
-          ))}
-        </div>
-      </section>
+      {/* 1. Featured AI Tools */}
+      <DiscoveryRail
+        eyebrow="Featured"
+        title="Featured AI tools this month"
+        description="Editorially highlighted tools worth shortlisting first, based on category strength, pricing clarity, and real-world adoption."
+        tools={featuredTools}
+      />
 
-      <section>
-        <SectionHeading
-          eyebrow="Builders"
-          title="Coding tools for modern software teams"
-          description="From AI-native IDEs to autonomous coding agents, these are the development-focused tools in the live catalog."
-        />
-        <div className="grid gap-6 lg:grid-cols-3">
-          {codingTools.map((tool) => (
-            <ToolCard key={tool.slug} tool={tool} />
-          ))}
-        </div>
-      </section>
+      {/* 2. Trending AI Tools (backend-dynamic, recency-weighted) */}
+      <DiscoveryRail
+        eyebrow="Trending"
+        title="Trending AI tools right now"
+        description="Ranked by real engagement this week — views, saves, and comparisons across the catalog."
+        tools={trendingTools}
+        viewAllHref="/search?sort=popular"
+      />
 
+      {/* Most Saved */}
+      <DiscoveryRail
+        eyebrow="Most Saved"
+        title="Most saved by the community"
+        description="The tools people bookmark most to come back to."
+        tools={mostSaved}
+      />
+
+      {/* Curated collections strip */}
+      {collections.length > 0 ? (
+        <FadeInSection>
+          <SectionHeading
+            eyebrow="Collections"
+            title="Expert-curated collections"
+            description="Hand-picked, editorial roundups for specific goals and audiences."
+            action={
+              <Button href="/collections" variant="outline">
+                All collections →
+              </Button>
+            }
+          />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {collections.map((collection) => (
+              <Link
+                key={collection.slug}
+                href={`/collections/${collection.slug}`}
+                className={cardClass({ hover: true })}
+              >
+                <span aria-hidden className="text-2xl">
+                  {collection.emoji}
+                </span>
+                <p className="text-heading-2 mt-3 text-text-primary">{collection.title}</p>
+                <p className="text-body mt-2 text-text-secondary">{collection.tagline}</p>
+              </Link>
+            ))}
+          </div>
+        </FadeInSection>
+      ) : null}
+
+      {/* 3. AI Categories (+ comparisons) */}
       <section className="grid gap-6 xl:grid-cols-[0.88fr_1.12fr]">
-        <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+        <FadeInSection className={cardClass({ padding: "lg", radius: "card-lg" })}>
           <SectionHeading
             eyebrow="Explore"
             title="Browse by category"
@@ -280,9 +326,9 @@ export default async function Home() {
               <CategoryCard key={category.slug} category={category} />
             ))}
           </div>
-        </div>
+        </FadeInSection>
         <div>
-          <div className="rounded-[34px] border border-white/10 bg-white/6 p-8 mb-6">
+          <FadeInSection delay={0.05} className={`mb-6 ${cardClass({ padding: "lg", radius: "card-lg" })}`}>
             <SectionHeading
               eyebrow="Compare"
               title="Popular AI tool matchups"
@@ -293,43 +339,147 @@ export default async function Home() {
                 <Link
                   key={comparison.slug}
                   href={`/compare/${comparison.slug}`}
-                  className="flex flex-col gap-2 rounded-[24px] border border-white/10 bg-[#081222] p-5 transition hover:border-cyan-300/30 hover:bg-[#0a1628]"
+                  className="flex flex-col gap-2 rounded-sm border border-border-subtle bg-surface-1 p-5 transition hover:border-border-accent hover:bg-surface-3"
                 >
-                  <span className="text-lg font-semibold text-white">{comparison.title}</span>
-                  <span className="text-sm leading-6 text-slate-400">
-                    {comparison.summary}
-                  </span>
+                  <span className="font-semibold text-text-primary">{comparison.title}</span>
+                  <span className="text-body text-text-secondary">{comparison.summary}</span>
                 </Link>
               ))}
               <Link
                 href="/compare"
-                className="block rounded-[24px] border border-cyan-300/20 bg-cyan-300/8 p-4 text-center text-sm font-semibold text-cyan-200 transition hover:bg-cyan-300/12"
+                className="block rounded-sm border border-border-accent bg-brand-cyan/8 p-4 text-center text-sm font-semibold text-brand-cyan-strong transition hover:bg-brand-cyan/12"
               >
                 View all {liveComparisons.length} comparisons →
               </Link>
             </div>
-          </div>
-          <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
-            <p className="text-xs font-semibold tracking-[0.28em] text-cyan-200 uppercase mb-4">People Also Ask</p>
+          </FadeInSection>
+          <FadeInSection delay={0.1} className={cardClass({ padding: "lg", radius: "card-lg" })}>
+            <p className="text-eyebrow mb-4 text-brand-cyan-strong">People Also Ask</p>
             <div className="space-y-3">
               {(blogSuggestionFAQs["50-chatgpt-prompts-save-hours"] || []).map((faq) => (
                 <Link
                   key={faq.question}
                   href={`/blog/${faq.relatedSlug}`}
-                  className="group flex items-start gap-3 rounded-2xl border border-white/10 bg-[#081222] p-4 transition hover:border-cyan-300/30 hover:bg-[#0a1628]"
+                  className="group flex items-start gap-3 rounded-sm border border-border-subtle bg-surface-1 p-4 transition hover:border-border-accent hover:bg-surface-3"
                 >
-                  <span className="mt-1 text-cyan-400 group-hover:text-cyan-300 flex-shrink-0">▸</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-200 group-hover:text-white transition line-clamp-2">{faq.question}</p>
-                  </div>
+                  <span className="mt-1 shrink-0 text-brand-cyan-strong">▸</span>
+                  <p className="text-sm text-text-secondary transition group-hover:text-text-primary">
+                    {faq.question}
+                  </p>
                 </Link>
               ))}
             </div>
-          </div>
+          </FadeInSection>
         </div>
       </section>
 
-      <section>
+      {/* 4. Recently Added Tools */}
+      <FadeInSection>
+        <SectionHeading
+          eyebrow="Fresh"
+          title="Recently added and verified"
+          description="Newly verified catalog entries, sorted by the most recent verification date."
+        />
+        <StaggerGrid className="grid gap-6 lg:grid-cols-3">
+          {recentlyAddedTools.map((tool) => (
+            <StaggerItem key={tool.slug}>
+              <ToolCard tool={tool} />
+            </StaggerItem>
+          ))}
+        </StaggerGrid>
+      </FadeInSection>
+
+      {/* 5. AI Workflow Explorer */}
+      <FadeInSection id="ai-finder">
+        <SectionHeading
+          eyebrow="Workflow Explorer"
+          title="Built for every operator"
+          description="Pick the role closest to yours and jump straight to a shortlist tuned for that workflow."
+        />
+        <StaggerGrid className="grid gap-5 sm:grid-cols-3">
+          {aiFinderOptions.map((option) => (
+            <StaggerItem key={option.title}>
+              <HoverLift>
+                <Link
+                  href={`/?recommend=${encodeURIComponent(option.query)}#ai-finder`}
+                  className={cardClass({ hover: true })}
+                >
+                  <h3 className="font-semibold text-text-primary">{option.title}</h3>
+                  <p className="text-body mt-2 text-text-secondary">{option.description}</p>
+                </Link>
+              </HoverLift>
+            </StaggerItem>
+          ))}
+        </StaggerGrid>
+      </FadeInSection>
+
+      {/* 6. Expert Recommendations */}
+      {researchRecommendations.length > 0 ? (
+        <DiscoveryRail
+          eyebrow="Recommended from catalog"
+          title="Tell us the job, get an AI shortlist"
+          description="The finder scores tools against user intent, categories, audiences, tags, platforms, and pricing metadata."
+          tools={researchRecommendations}
+        />
+      ) : null}
+
+      {/* 7. Editorial Insights */}
+      <FadeInSection>
+        <SectionHeading
+          eyebrow="Editorial Insights"
+          title="AI guides, tips, and industry coverage"
+          description="Long-form guides from our editorial desk, plus short AI-assisted news summaries that link back to original publishers."
+        />
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {blogPosts.map((post) => (
+            <Link
+              key={post.slug}
+              href={`/blog/${post.slug}`}
+              className={`group ${cardClass({ hover: true })}`}
+            >
+              <div className="mb-3 flex items-center justify-between">
+                <Badge variant="brand">{post.category}</Badge>
+                <span className="text-caption text-text-muted">{post.readTime}</span>
+              </div>
+              <h3 className="font-semibold text-text-primary transition group-hover:text-brand-cyan-strong">
+                {post.title}
+              </h3>
+              <p className="text-body mt-3 text-text-secondary">{post.description}</p>
+              <div className="mt-4 flex items-center justify-between">
+                <time className="text-caption text-text-muted">{post.publishedAt}</time>
+                <span className="text-sm text-brand-cyan-strong group-hover:underline">Read →</span>
+              </div>
+            </Link>
+          ))}
+        </div>
+        <div className="mt-8 text-center">
+          <Button href="/blog" variant="outline">
+            View all blog posts →
+          </Button>
+        </div>
+
+        {newsArticles.length > 0 ? (
+          <div className="mt-12">
+            <EditorialBlock eyebrow="AI News" title="Enterprise AI news, summarized with attribution">
+              We only display summaries, excerpts, and source metadata here. Readers should use the
+              original links for the complete article and publisher context.
+            </EditorialBlock>
+            <div className="mt-6 grid gap-6 lg:grid-cols-3">
+              {newsArticles.map((article) => (
+                <NewsCard key={article.id} article={article} />
+              ))}
+            </div>
+            <div className="mt-6">
+              <Button href="/news" variant="outline">
+                Explore the full AI news desk
+              </Button>
+            </div>
+          </div>
+        ) : null}
+      </FadeInSection>
+
+      {/* Curated lists + creative tools */}
+      <FadeInSection>
         <SectionHeading
           eyebrow="Best Of"
           title="Curated AI tool lists"
@@ -337,32 +487,55 @@ export default async function Home() {
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {liveBestLists.map((list) => (
-            <Link
-              key={list.slug}
-              href={`/best/${list.slug}`}
-              className="rounded-[24px] border border-white/10 bg-white/6 p-5 transition hover:border-cyan-300/30 hover:bg-white/8"
-            >
-              <span className="text-xs font-semibold tracking-[0.22em] text-cyan-200 uppercase">{list.eyebrow}</span>
-              <p className="mt-2 font-semibold text-white">{list.title}</p>
-              <p className="mt-2 text-sm leading-6 text-slate-400 line-clamp-2">{list.description}</p>
+            <Link key={list.slug} href={`/best/${list.slug}`} className={cardClass({ hover: true })}>
+              <span className="text-caption text-brand-cyan-strong">{list.eyebrow}</span>
+              <p className="mt-2 font-semibold text-text-primary">{list.title}</p>
+              <p className="text-body mt-2 text-text-secondary">{list.description}</p>
             </Link>
           ))}
         </div>
-      </section>
+      </FadeInSection>
 
-      <section>
+      <FadeInSection>
         <SectionHeading
           eyebrow="Creative"
           title="Image, design, and video tools in one view"
-          description="Creative teams can explore image generation, design assistance, and video production tools from the provided live catalog."
+          description="Creative teams can explore image generation, design assistance, and video production tools from the live catalog."
         />
-        <div className="grid gap-6 lg:grid-cols-3">
+        <StaggerGrid className="grid gap-6 lg:grid-cols-3">
           {creativeTools.map((tool) => (
-            <ToolCard key={tool.slug} tool={tool} />
+            <StaggerItem key={tool.slug}>
+              <ToolCard tool={tool} />
+            </StaggerItem>
           ))}
-        </div>
-      </section>
+        </StaggerGrid>
+      </FadeInSection>
 
+      {/* 8. Newsletter / community */}
+      <FadeInSection>
+        <div className={`${cardClass({ padding: "lg", radius: "card-lg", glow: "violet" })} flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:justify-between`}>
+          <div className="flex items-center gap-4">
+            <FaviconBadge
+              name="AiverseWorld"
+              faviconUrl="/logo.webp"
+              className="hidden h-12 w-12 shrink-0 rounded-2xl sm:flex"
+            />
+            <div>
+              <p className="text-eyebrow text-brand-cyan-strong">Join the community</p>
+              <h2 className="text-heading-1 mt-2 text-text-primary">
+                Get the best new AI tools in your inbox
+              </h2>
+              <p className="text-body mt-2 max-w-xl text-text-secondary">
+                One email a week: new launches, category deep-dives, and shortlist-worthy tools our
+                editors verified.
+              </p>
+            </div>
+          </div>
+          <div className="w-full lg:w-auto lg:min-w-[22rem]">
+            <NewsletterSignup />
+          </div>
+        </div>
+      </FadeInSection>
     </div>
   );
 }

@@ -21,31 +21,31 @@ export default function ContactPage() {
       theme="contact"
     >
       <div className="grid gap-6 md:grid-cols-2">
-        <div className="rounded-[24px] border border-white/10 bg-[#081222] p-6">
+        <div className="rounded-card border border-border-subtle bg-surface-1 p-6">
           <h2 className="text-2xl font-semibold text-white">Support</h2>
-          <p className="mt-3 text-base leading-8 text-slate-300">
+          <p className="mt-3 text-base leading-8 text-text-secondary">
             support@aiverseworld.com
           </p>
         </div>
-        <div className="rounded-[24px] border border-white/10 bg-[#081222] p-6">
+        <div className="rounded-card border border-border-subtle bg-surface-1 p-6">
           <h2 className="text-2xl font-semibold text-white">Enterprise Sales</h2>
-          <p className="mt-3 text-base leading-8 text-slate-300">
+          <p className="mt-3 text-base leading-8 text-text-secondary">
             sales@aiverseworld.com
           </p>
         </div>
-        <div className="rounded-[24px] border border-white/10 bg-[#081222] p-6">
+        <div className="rounded-card border border-border-subtle bg-surface-1 p-6">
           <h2 className="text-2xl font-semibold text-white">Security</h2>
-          <p className="mt-3 text-base leading-8 text-slate-300">
+          <p className="mt-3 text-base leading-8 text-text-secondary">
             support@aiverseworld.com
           </p>
         </div>
-        <div className="rounded-[24px] border border-white/10 bg-[#081222] p-6">
+        <div className="rounded-card border border-border-subtle bg-surface-1 p-6">
           <h2 className="text-2xl font-semibold text-white">Legal</h2>
-          <p className="mt-3 text-base leading-8 text-slate-300">
+          <p className="mt-3 text-base leading-8 text-text-secondary">
             legal@aiverseworld.com
           </p>
         </div>
-        <div className="rounded-[24px] border border-white/10 bg-[#081222] p-6 md:col-span-2">
+        <div className="rounded-card border border-border-subtle bg-surface-1 p-6 md:col-span-2">
           <h2 className="text-2xl font-semibold text-white">Social</h2>
           <div className="mt-4 flex flex-wrap gap-3">
             {socialLinks.map((link) => (

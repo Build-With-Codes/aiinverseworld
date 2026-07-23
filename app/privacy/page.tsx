@@ -20,7 +20,7 @@ export default function PrivacyPage() {
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Information we collect</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           We may collect account details, contact information, saved preferences,
           usage analytics, review submissions, and support messages. For enterprise
           accounts, we may also process team and workspace metadata required to
@@ -29,7 +29,7 @@ export default function PrivacyPage() {
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">How we use information</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           We use collected data to operate the platform, personalize discovery,
           secure accounts, improve search quality, communicate product updates, and
           comply with legal obligations.
@@ -37,7 +37,7 @@ export default function PrivacyPage() {
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Advertising and analytics partners</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           If we enable advertising, sponsored placements, remarketing, or conversion
           tracking, approved partners may process limited technical identifiers and
           usage data in accordance with their services, our contracts, and applicable
@@ -46,7 +46,7 @@ export default function PrivacyPage() {
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Data protection</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           We apply technical and organizational safeguards such as access controls,
           encryption in transit, logging, monitoring, and vendor risk reviews.
           Retention periods are limited to business and compliance needs.
@@ -54,7 +54,7 @@ export default function PrivacyPage() {
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Your choices</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Users may request access, correction, deletion, or export of eligible
           personal data, subject to local law and contractual obligations.
         </p>

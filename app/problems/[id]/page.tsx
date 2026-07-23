@@ -57,11 +57,11 @@ export default async function ProblemDetailsPage({
   }
 
   return (
-    <div className="space-y-10 pb-10 pt-10 sm:space-y-12 sm:pt-14">
+    <div className="space-y-12 pb-10 pt-10">
       <section className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-        <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+        <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-cyan-200 uppercase">
+            <span className="rounded-full border border-border-accent bg-brand-cyan/10 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-brand-cyan-strong uppercase">
               Problem
             </span>
             <span className="rounded-full border border-amber-300/20 bg-amber-300/10 px-4 py-2 text-sm font-semibold text-amber-100">
@@ -73,26 +73,26 @@ export default async function ProblemDetailsPage({
             {problem.title}
           </h1>
 
-          <div className="mt-6 flex flex-wrap gap-3 text-sm text-slate-300">
-            <span className="rounded-full border border-white/10 px-3 py-2">
+          <div className="mt-6 flex flex-wrap gap-3 text-sm text-text-secondary">
+            <span className="rounded-full border border-border-subtle px-3 py-2">
               {problem.industry}
             </span>
-            <span className="rounded-full border border-white/10 px-3 py-2">
+            <span className="rounded-full border border-border-subtle px-3 py-2">
               {problem.frequency}
             </span>
           </div>
 
-          <p className="mt-8 text-base leading-8 text-slate-300">
+          <p className="mt-8 text-base leading-8 text-text-secondary">
             {problem.description}
           </p>
         </div>
 
-        <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+        <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
           <p className="text-sm font-semibold tracking-[0.24em] text-emerald-200 uppercase">
             Community Vote
           </p>
 
-          <p className="mt-4 text-sm leading-7 text-slate-300">
+          <p className="mt-4 text-sm leading-7 text-text-secondary">
             Vote on whether this problem looks solvable with AI. The score is
             based only on user responses for now.
           </p>
@@ -103,10 +103,10 @@ export default async function ProblemDetailsPage({
         </div>
       </section>
 
-      <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+      <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold tracking-[0.24em] text-cyan-200 uppercase">
+            <p className="text-sm font-semibold tracking-[0.24em] text-brand-cyan-strong uppercase">
               Problem Context
             </p>
             <h2 className="mt-3 text-3xl font-semibold text-white">
@@ -121,7 +121,7 @@ export default async function ProblemDetailsPage({
           </Link>
         </div>
 
-        <p className="mt-6 max-w-3xl text-sm leading-7 text-slate-300">
+        <p className="mt-6 max-w-3xl text-sm leading-7 text-text-secondary">
           This board is currently community-driven. We save submitted problems
           and collect votes on whether AI can solve them.
         </p>

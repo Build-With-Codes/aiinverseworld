@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { ADMIN_COOKIE_NAME } from "@/lib/admin-constants";
+
 const legacyRedirects: Record<string, string> = {
   "/about-us": "/about",
   "/contact-us": "/contact",
@@ -19,6 +21,15 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(redirectTarget, request.url), 308);
   }
 
+  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
+    const hasAdminKey = Boolean(request.cookies.get(ADMIN_COOKIE_NAME)?.value);
+    if (!hasAdminKey) {
+      const loginUrl = new URL("/admin/login", request.url);
+      loginUrl.searchParams.set("from", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+  }
+
   if (pluralToolMatch) {
     return NextResponse.redirect(new URL(`/tool/${pluralToolMatch[1]}`, request.url), 308);
   }
@@ -30,6 +41,9 @@ export function proxy(request: NextRequest) {
   const nonce = btoa(crypto.randomUUID());
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);
+  if (pathname.startsWith("/admin")) {
+    requestHeaders.set("x-route-section", "admin");
+  }
 
   const isDev = process.env.NODE_ENV !== "production";
   const csp = [

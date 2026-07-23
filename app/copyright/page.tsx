@@ -20,7 +20,7 @@ export default function CopyrightPage() {
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Ownership</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Unless otherwise stated, the AiverseWorld website, platform design,
           original copy, indexes, graphics, and proprietary data arrangements are
           owned by AiverseWorld and protected by applicable intellectual property
@@ -29,7 +29,7 @@ export default function CopyrightPage() {
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Permitted use</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Users may access platform content for internal evaluation and lawful
           business use. Reproduction, redistribution, scraping at scale, or
           commercial republication requires written permission.
@@ -37,7 +37,7 @@ export default function CopyrightPage() {
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Infringement notices</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           If you believe content on the platform infringes your rights, please send
           a detailed notice including ownership information, the infringing material,
           and your contact details for review.

@@ -314,7 +314,7 @@ export function EnglishTutorClient() {
             <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-white sm:text-5xl lg:text-6xl">
               AI English Speaking Tutor
             </h1>
-            <p className="max-w-2xl text-lg leading-8 text-slate-300">
+            <p className="max-w-2xl text-lg leading-8 text-text-secondary">
               Speak naturally, hear a tutor response, and get instant grammar
               corrections, fluency scoring, and a next question for continued
               practice.
@@ -330,7 +330,7 @@ export function EnglishTutorClient() {
             />
           </div>
 
-          <div className="rounded-[28px] border border-white/10 bg-white/6 p-6">
+          <div className="rounded-card border border-border-subtle bg-surface-2 p-6">
             <p className="text-sm font-semibold text-white">AI pipeline</p>
             <div className="mt-5 grid gap-3">
               {[
@@ -343,19 +343,19 @@ export function EnglishTutorClient() {
                 (item, index) => (
                   <div
                     key={item}
-                    className="flex items-center gap-3 rounded-2xl border border-white/10 bg-[#081222] px-4 py-3"
+                    className="flex items-center gap-3 rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3"
                   >
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-300/10 text-sm font-semibold text-cyan-200">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-cyan/10 text-sm font-semibold text-brand-cyan-strong">
                       {index + 1}
                     </span>
-                    <span className="text-sm text-slate-300">{item}</span>
+                    <span className="text-sm text-text-secondary">{item}</span>
                   </div>
                 ),
               )}
             </div>
           </div>
 
-          <div className="rounded-[28px] border border-white/10 bg-white/6 p-6">
+          <div className="rounded-card border border-border-subtle bg-surface-2 p-6">
             <p className="text-sm font-semibold text-white">Learning memory</p>
             <div className="mt-4 space-y-3">
               {isProgressLoading ? (
@@ -363,7 +363,7 @@ export function EnglishTutorClient() {
                   {[0, 1, 2].map((item) => (
                     <div
                       key={item}
-                      className="rounded-2xl border border-white/10 bg-[#081222] p-3"
+                      className="rounded-2xl border border-border-subtle bg-surface-1 p-3"
                     >
                       <div className="skeleton-shimmer h-4 w-4/5 rounded-full" />
                       <div className="skeleton-shimmer mt-3 h-3 w-2/5 rounded-full" />
@@ -374,19 +374,19 @@ export function EnglishTutorClient() {
                 progress.commonMistakes.slice(0, 4).map((mistake) => (
                   <div
                     key={`${mistake.mistake}-${mistake.correction}`}
-                    className="rounded-2xl border border-white/10 bg-[#081222] p-3"
+                    className="rounded-2xl border border-border-subtle bg-surface-1 p-3"
                   >
                     <p className="text-sm font-semibold text-slate-200">
                       {mistake.mistake} -&gt; {mistake.correction}
                     </p>
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-1 text-xs text-text-muted">
                       {mistake.category} - {mistake.count} time
                       {mistake.count === 1 ? "" : "s"}
                     </p>
                   </div>
                 ))
               ) : (
-                <p className="text-sm leading-6 text-slate-400">
+                <p className="text-sm leading-6 text-text-muted">
                   Saved mistakes and session scores will appear here after
                   practice.
                 </p>
@@ -395,18 +395,18 @@ export function EnglishTutorClient() {
           </div>
         </div>
 
-        <div className="rounded-[32px] border border-white/10 bg-[#071120]/90 p-4 shadow-[0_24px_80px_rgba(2,6,23,0.34)] sm:p-5">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4">
+        <div className="rounded-[32px] border border-border-subtle bg-surface-1/90 p-4 shadow-[0_24px_80px_rgba(2,6,23,0.34)] sm:p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border-subtle pb-4">
             <div>
               <p className="text-sm font-semibold text-white">Live tutor room</p>
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="mt-1 text-xs text-text-muted">
                 Mic input, transcript, corrections, and spoken reply
               </p>
             </div>
             <select
               value={focus}
               onChange={(event) => setFocus(event.target.value)}
-              className="rounded-full border border-white/10 bg-[#081222] px-4 py-2 text-sm text-slate-200 outline-none"
+              className="rounded-full border border-border-subtle bg-surface-1 px-4 py-2 text-sm text-slate-200 outline-none"
               aria-label="Practice focus"
             >
               {focusOptions.map((option) => (
@@ -415,15 +415,15 @@ export function EnglishTutorClient() {
             </select>
           </div>
 
-          <div className="mt-4 rounded-[22px] border border-cyan-300/20 bg-cyan-300/10 p-4">
+          <div className="mt-4 rounded-[22px] border border-border-accent bg-brand-cyan/10 p-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-semibold text-white">OpenRouter voice practice</p>
-                <p className="mt-1 text-xs leading-5 text-slate-300">
+                <p className="mt-1 text-xs leading-5 text-text-secondary">
                   {realtimeStatus}
                 </p>
               </div>
-              <span className="rounded-full border border-cyan-300/25 bg-cyan-300/10 px-5 py-3 text-sm font-semibold text-cyan-100">
+              <span className="rounded-full border border-border-accent bg-brand-cyan/10 px-5 py-3 text-sm font-semibold text-cyan-100">
                 Use mic below
               </span>
             </div>
@@ -433,20 +433,20 @@ export function EnglishTutorClient() {
             {messages.map((message) => (
               <div
                 key={message.id}
-                className={`rounded-[24px] border p-4 ${
+                className={`rounded-card border p-4 ${
                   message.role === "user"
-                    ? "ml-auto border-cyan-300/20 bg-cyan-300/10"
-                    : "mr-auto border-white/10 bg-white/6"
+                    ? "ml-auto border-border-accent bg-brand-cyan/10"
+                    : "mr-auto border-border-subtle bg-surface-2"
                 } max-w-[92%]`}
               >
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-200">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-cyan-strong">
                   {message.role === "user" ? "You" : "Tutor"}
                 </p>
                 <p className="mt-2 text-sm leading-6 text-slate-200">{message.text}</p>
                 {message.correction ? (
                   <div className="mt-3 rounded-2xl border border-emerald-300/15 bg-emerald-300/8 p-3">
                     <p className="text-xs font-semibold text-emerald-200">Correction</p>
-                    <p className="mt-1 text-sm leading-6 text-slate-300">
+                    <p className="mt-1 text-sm leading-6 text-text-secondary">
                       {message.correction}
                     </p>
                   </div>
@@ -455,7 +455,7 @@ export function EnglishTutorClient() {
             ))}
             {isSending ? (
               <div
-                className="mr-auto max-w-[92%] rounded-[24px] border border-white/10 bg-white/6 p-4"
+                className="mr-auto max-w-[92%] rounded-card border border-border-subtle bg-surface-2 p-4"
                 aria-busy="true"
                 aria-live="polite"
               >
@@ -466,12 +466,12 @@ export function EnglishTutorClient() {
             ) : null}
           </div>
 
-          <div className="mt-5 rounded-[24px] border border-white/10 bg-white/5 p-3">
+          <div className="mt-5 rounded-card border border-border-subtle bg-surface-2 p-3">
             <textarea
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
               placeholder="Speak or type: I want practice English..."
-              className="min-h-24 w-full resize-none rounded-2xl border border-white/10 bg-[#081222] px-4 py-3 text-sm leading-6 text-slate-100 outline-none"
+              className="min-h-24 w-full resize-none rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm leading-6 text-slate-100 outline-none"
             />
             <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
               <button
@@ -480,7 +480,7 @@ export function EnglishTutorClient() {
                 className={`rounded-full px-5 py-3 text-sm font-semibold ${
                   isListening
                     ? "bg-rose-300 text-slate-950"
-                    : "border border-cyan-300/25 bg-cyan-300/10 text-cyan-100"
+                    : "border border-border-accent bg-brand-cyan/10 text-cyan-100"
                 }`}
               >
                 {isListening ? "Stop mic" : "Start mic"}
@@ -510,9 +510,9 @@ export function EnglishTutorClient() {
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[24px] border border-white/10 bg-white/6 p-5">
+    <div className="rounded-card border border-border-subtle bg-surface-2 p-5">
       <p className="text-3xl font-semibold text-white">{value}</p>
-      <p className="mt-2 text-sm text-slate-400">{label}</p>
+      <p className="mt-2 text-sm text-text-muted">{label}</p>
     </div>
   );
 }

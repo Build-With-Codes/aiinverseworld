@@ -20,7 +20,7 @@ export default function AdvertisingDisclosurePage() {
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Sponsored placements</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Some listings, category placements, newsletters, or comparison modules may
           be paid promotions. When this happens, the related content should be clearly
           labeled with terms such as Sponsored, Promoted, or Advertisement.
@@ -28,7 +28,7 @@ export default function AdvertisingDisclosurePage() {
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Editorial independence</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Commercial relationships should not be presented as neutral editorial
           rankings without disclosure. We maintain separation between sponsored
           placements and organic discovery areas wherever possible.
@@ -36,7 +36,7 @@ export default function AdvertisingDisclosurePage() {
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Measurement and policy compliance</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Advertising may use analytics, click measurement, or conversion tracking in
           line with our privacy and cookie policies, applicable laws, and platform
           advertising standards.

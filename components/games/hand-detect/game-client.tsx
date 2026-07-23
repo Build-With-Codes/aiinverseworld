@@ -951,8 +951,8 @@ export function HandDetectGameClient() {
 
   return (
     <div className="mx-auto max-w-6xl">
-      <section className="rounded-[32px] border border-white/10 bg-white/6 p-3 sm:p-5">
-        <div ref={containerRef} className="relative overflow-hidden rounded-[28px] border border-white/10 bg-[#050b14]">
+      <section className="rounded-[32px] border border-border-subtle bg-surface-2 p-3 sm:p-5">
+        <div ref={containerRef} className="relative overflow-hidden rounded-card border border-border-subtle bg-surface-1">
           {status === "idle" || status === "error" || status === "crashed" ? (
             <button
               type="button"
@@ -967,7 +967,7 @@ export function HandDetectGameClient() {
             <button
               type="button"
               disabled
-              className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white/85 px-7 py-4 text-base font-semibold text-slate-950 shadow-[0_18px_60px_rgba(2,6,23,0.45)]"
+              className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-surface-35 px-7 py-4 text-base font-semibold text-slate-950 shadow-[0_18px_60px_rgba(2,6,23,0.45)]"
             >
               Loading
             </button>
@@ -978,12 +978,12 @@ export function HandDetectGameClient() {
               <button
                 type="button"
                 onClick={toggleFullscreen}
-                className="absolute right-3 top-3 z-20 rounded-2xl border border-white/15 bg-slate-950/70 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(2,6,23,0.32)] transition hover:border-cyan-300/50 hover:bg-slate-900/90"
+                className="absolute right-3 top-3 z-20 rounded-2xl border border-white/15 bg-slate-950/70 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_30px_rgba(2,6,23,0.32)] transition hover:border-border-accent hover:bg-slate-900/90"
                 title="Fullscreen mode (Press ESC to exit)"
               >
                 ⛶
               </button>
-              <p className="absolute right-3 bottom-3 text-xs text-slate-400 pointer-events-none">
+              <p className="absolute right-3 bottom-3 text-xs text-text-muted pointer-events-none">
                 Press ESC to exit fullscreen
               </p>
             </>

@@ -13,7 +13,7 @@ export function SocialLink({ href, name, label }: SocialLinkProps) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label ? `${name}: ${label}` : name}
-      className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:border-cyan-300/35 hover:bg-cyan-300/15 hover:text-white"
+      className="inline-flex items-center gap-2 rounded-full border border-border-accent bg-brand-cyan/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:border-border-accent hover:bg-brand-cyan/10 hover:text-white"
     >
       <SocialIcon name={name} />
       <span>{label ? `${name}: ${label}` : name}</span>

@@ -20,14 +20,14 @@ export default function CookiePolicyPage() {
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">What we use cookies for</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Cookies help us keep users signed in, remember preferences, measure site
           performance, understand traffic patterns, and support product analytics.
         </p>
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Advertising and personalization</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           AiverseWorld may load advertising and tracking scripts from approved
           third-party partners, including Google AdSense where enabled. These
           partners may use cookies, device identifiers, or similar technologies to
@@ -37,7 +37,7 @@ export default function CookiePolicyPage() {
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">User controls</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Users can manage cookie choices through browser settings and, where
           applicable, our consent banner or preferences center for non-essential
           cookies.

@@ -40,7 +40,7 @@ const frequencyOptions = [
 export default function SubmitProblemPage() {
   return (
     <div className="space-y-12 pb-10 pt-10 sm:pt-14">
-      <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+      <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
         <SectionHeading
           eyebrow="Submit Problem"
           title="Share a painful business problem"
@@ -56,7 +56,7 @@ export default function SubmitProblemPage() {
               required
               name="title"
               placeholder="Scheduling staff shifts is a nightmare"
-              className="w-full rounded-2xl border border-white/10 bg-[#081222] px-4 py-4 text-sm text-white outline-none"
+              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-4 text-sm text-white outline-none"
             />
           </div>
 
@@ -69,7 +69,7 @@ export default function SubmitProblemPage() {
               name="description"
               rows={6}
               placeholder="We manage 50 employees and spend hours every week creating schedules."
-              className="w-full rounded-2xl border border-white/10 bg-[#081222] px-4 py-4 text-sm text-white outline-none"
+              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-4 text-sm text-white outline-none"
             />
           </div>
 
@@ -81,7 +81,7 @@ export default function SubmitProblemPage() {
               required
               name="industry"
               placeholder="Retail"
-              className="w-full rounded-2xl border border-white/10 bg-[#081222] px-4 py-4 text-sm text-white outline-none"
+              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-4 text-sm text-white outline-none"
             />
           </div>
 
@@ -93,7 +93,7 @@ export default function SubmitProblemPage() {
               required
               name="frequency"
               defaultValue=""
-              className="w-full rounded-2xl border border-white/10 bg-[#081222] px-4 py-4 text-sm text-white outline-none"
+              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-4 text-sm text-white outline-none"
             >
               <option value="" disabled>
                 Select frequency
@@ -117,7 +117,7 @@ export default function SubmitProblemPage() {
               type="number"
               name="painScore"
               placeholder="9"
-              className="w-full rounded-2xl border border-white/10 bg-[#081222] px-4 py-4 text-sm text-white outline-none"
+              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-4 text-sm text-white outline-none"
             />
           </div>
 
@@ -129,12 +129,12 @@ export default function SubmitProblemPage() {
               type="email"
               name="email"
               placeholder="you@company.com"
-              className="w-full rounded-2xl border border-white/10 bg-[#081222] px-4 py-4 text-sm text-white outline-none"
+              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-4 text-sm text-white outline-none"
             />
           </div>
 
-          <div className="lg:col-span-2 rounded-[28px] border border-white/10 bg-[#071120] p-5">
-            <p className="text-sm leading-7 text-slate-300">
+          <div className="lg:col-span-2 rounded-card border border-border-subtle bg-surface-1 p-5">
+            <p className="text-sm leading-7 text-text-secondary">
               Keep the problem specific and grounded in real recurring pain.
               After submission, other users can vote on whether AI can solve it.
             </p>

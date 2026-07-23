@@ -16,20 +16,20 @@ export function AiSolveVote({ problem, compact = false }: AiSolveVoteProps) {
     <div
       className={
         compact
-          ? "rounded-2xl border border-white/10 bg-slate-950/20 p-4"
-          : "rounded-[24px] border border-white/10 bg-slate-950/20 p-5"
+          ? "rounded-2xl border border-border-subtle bg-slate-950/20 p-4"
+          : "rounded-card border border-border-subtle bg-slate-950/20 p-5"
       }
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold tracking-[0.22em] text-cyan-200 uppercase">
+          <p className="text-xs font-semibold tracking-[0.22em] text-brand-cyan-strong uppercase">
             Community AI Score
           </p>
           <p className={compact ? "mt-1 text-2xl font-semibold text-white" : "mt-1 text-3xl font-semibold text-white"}>
             {summary.aiScore}%
           </p>
         </div>
-        <p className="text-right text-xs leading-5 text-slate-400">
+        <p className="text-right text-xs leading-5 text-text-muted">
           {summary.total} vote{summary.total === 1 ? "" : "s"}
           <br />
           {summary.aiSolvable} yes / {summary.notAiSolvable} no

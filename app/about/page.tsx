@@ -47,20 +47,20 @@ export default function AboutPage() {
       >
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-cyan-100">Our Mission</h2>
-          <p className="text-base leading-8 text-slate-300">
+          <p className="text-base leading-8 text-text-secondary">
             Our mission is to make AI more accessible through trusted tool discovery, unbiased comparisons, practical guides, industry insights, and educational resources. We help users navigate the rapidly evolving AI landscape with clarity and confidence.
           </p>
         </div>
 
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-cyan-100">What We Provide</h2>
-          <p className="text-base leading-8 text-slate-300">
+          <p className="text-base leading-8 text-text-secondary">
             AiverseWorld brings together AI tools, product comparisons, reviews, tutorials, guides, industry news, and technology insights in one place.
           </p>
-          <p className="text-base leading-8 text-slate-300">
+          <p className="text-base leading-8 text-text-secondary">
             Our platform helps users:
           </p>
-          <ul className="list-disc list-inside space-y-2 text-slate-300">
+          <ul className="list-disc list-inside space-y-2 text-text-secondary">
             <li>Discover AI tools across multiple categories</li>
             <li>Compare products, features, and pricing</li>
             <li>Explore reviews and evaluations</li>
@@ -73,10 +73,10 @@ export default function AboutPage() {
 
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-cyan-100">Who We Serve</h2>
-          <p className="text-base leading-8 text-slate-300">
+          <p className="text-base leading-8 text-text-secondary">
             AiverseWorld is designed for:
           </p>
-          <ul className="list-disc list-inside space-y-2 text-slate-300">
+          <ul className="list-disc list-inside space-y-2 text-text-secondary">
             <li>Business leaders and entrepreneurs</li>
             <li>Developers and technology professionals</li>
             <li>Marketers and content creators</li>
@@ -85,14 +85,14 @@ export default function AboutPage() {
             <li>Organizations evaluating AI solutions</li>
             <li>Anyone interested in artificial intelligence</li>
           </ul>
-          <p className="text-base leading-8 text-slate-300 mt-4">
+          <p className="text-base leading-8 text-text-secondary mt-4">
             Whether you&apos;re looking for the right AI tool, learning about emerging technologies, researching industry trends, or exploring the future of artificial intelligence, AiverseWorld provides the resources and insights to help you move forward with confidence.
           </p>
         </div>
 
         <div className="space-y-4">
           <h2 className="text-2xl font-bold text-cyan-100">Our Vision</h2>
-          <p className="text-base leading-8 text-slate-300">
+          <p className="text-base leading-8 text-text-secondary">
             We believe artificial intelligence will reshape how people work, learn, create, and innovate. AiverseWorld aims to become a trusted destination where individuals and organizations can discover reliable information, evaluate AI solutions, and stay ahead in an AI-powered world.
           </p>
         </div>

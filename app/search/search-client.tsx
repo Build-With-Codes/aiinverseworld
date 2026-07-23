@@ -171,7 +171,7 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
 
   return (
     <div className="space-y-10 pb-10 pt-10">
-      <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+      <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
         <SectionHeading
           eyebrow="Catalog Search"
           title="Filter AI tools by workflow, price, and platform"
@@ -184,7 +184,7 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
             placeholder="Example: I need AI for summarizing PDFs and research"
             value={query}
             onChange={(e) => updateQuery(e.target.value)}
-            className="w-full rounded-2xl border border-white/10 bg-[#071120] px-5 py-4 text-sm text-slate-300 outline-none placeholder:text-slate-500 focus:border-cyan-300/30"
+            className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-5 py-4 text-sm text-text-secondary outline-none placeholder:text-text-muted focus:border-border-accent"
           />
         </div>
 
@@ -192,15 +192,15 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
           <div className="relative">
             <button
               onClick={() => toggleDropdown("category")}
-              className={`rounded-2xl border px-4 py-2.5 text-sm transition ${category ? "border-cyan-300/40 bg-cyan-300/10 text-cyan-200" : "border-white/10 bg-[#081222] text-slate-200 hover:border-cyan-300/30"}`}
+              className={`rounded-2xl border px-4 py-2.5 text-sm transition ${category ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong" : "border-border-subtle bg-surface-1 text-slate-200 hover:border-border-accent"}`}
             >
               {category || "Category"} v
             </button>
             {activeDropdown === "category" && (
-              <div className="absolute left-0 top-[calc(100%+8px)] z-50 min-w-[180px] rounded-[20px] border border-white/10 bg-[#071120] p-2 shadow-xl">
-                <button onClick={() => { updateCategory(""); setActiveDropdown(null); }} className="block w-full rounded-xl px-3 py-2 text-left text-sm text-slate-400 hover:bg-white/5">All</button>
+              <div className="absolute left-0 top-[calc(100%+8px)] z-50 min-w-[180px] rounded-sm border border-border-subtle bg-surface-1 p-2 shadow-xl">
+                <button onClick={() => { updateCategory(""); setActiveDropdown(null); }} className="block w-full rounded-xl px-3 py-2 text-left text-sm text-text-muted hover:bg-surface-2">All</button>
                 {allCategories.map((c) => (
-                  <button key={c} onClick={() => { updateCategory(c); setActiveDropdown(null); }} className={`block w-full rounded-xl px-3 py-2 text-left text-sm transition hover:bg-white/5 ${category === c ? "text-cyan-300" : "text-slate-200"}`}>{c}</button>
+                  <button key={c} onClick={() => { updateCategory(c); setActiveDropdown(null); }} className={`block w-full rounded-xl px-3 py-2 text-left text-sm transition hover:bg-surface-2 ${category === c ? "text-brand-cyan-strong" : "text-slate-200"}`}>{c}</button>
                 ))}
               </div>
             )}
@@ -209,15 +209,15 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
           <div className="relative">
             <button
               onClick={() => toggleDropdown("pricing")}
-              className={`rounded-2xl border px-4 py-2.5 text-sm transition ${pricing ? "border-cyan-300/40 bg-cyan-300/10 text-cyan-200" : "border-white/10 bg-[#081222] text-slate-200 hover:border-cyan-300/30"}`}
+              className={`rounded-2xl border px-4 py-2.5 text-sm transition ${pricing ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong" : "border-border-subtle bg-surface-1 text-slate-200 hover:border-border-accent"}`}
             >
               {pricing || "Pricing"} v
             </button>
             {activeDropdown === "pricing" && (
-              <div className="absolute left-0 top-[calc(100%+8px)] z-50 min-w-[160px] rounded-[20px] border border-white/10 bg-[#071120] p-2 shadow-xl">
-                <button onClick={() => { updatePricing(""); setActiveDropdown(null); }} className="block w-full rounded-xl px-3 py-2 text-left text-sm text-slate-400 hover:bg-white/5">All</button>
+              <div className="absolute left-0 top-[calc(100%+8px)] z-50 min-w-[160px] rounded-sm border border-border-subtle bg-surface-1 p-2 shadow-xl">
+                <button onClick={() => { updatePricing(""); setActiveDropdown(null); }} className="block w-full rounded-xl px-3 py-2 text-left text-sm text-text-muted hover:bg-surface-2">All</button>
                 {allPricing.map((p) => (
-                  <button key={p} onClick={() => { updatePricing(p); setActiveDropdown(null); }} className={`block w-full rounded-xl px-3 py-2 text-left text-sm transition hover:bg-white/5 ${pricing === p ? "text-cyan-300" : "text-slate-200"}`}>{p}</button>
+                  <button key={p} onClick={() => { updatePricing(p); setActiveDropdown(null); }} className={`block w-full rounded-xl px-3 py-2 text-left text-sm transition hover:bg-surface-2 ${pricing === p ? "text-brand-cyan-strong" : "text-slate-200"}`}>{p}</button>
                 ))}
               </div>
             )}
@@ -226,15 +226,15 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
           <div className="relative">
             <button
               onClick={() => toggleDropdown("platform")}
-              className={`rounded-2xl border px-4 py-2.5 text-sm transition ${platform ? "border-cyan-300/40 bg-cyan-300/10 text-cyan-200" : "border-white/10 bg-[#081222] text-slate-200 hover:border-cyan-300/30"}`}
+              className={`rounded-2xl border px-4 py-2.5 text-sm transition ${platform ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong" : "border-border-subtle bg-surface-1 text-slate-200 hover:border-border-accent"}`}
             >
               {platform || "Platform"} v
             </button>
             {activeDropdown === "platform" && (
-              <div className="absolute left-0 top-[calc(100%+8px)] z-50 min-w-[160px] rounded-[20px] border border-white/10 bg-[#071120] p-2 shadow-xl">
-                <button onClick={() => { updatePlatform(""); setActiveDropdown(null); }} className="block w-full rounded-xl px-3 py-2 text-left text-sm text-slate-400 hover:bg-white/5">All</button>
+              <div className="absolute left-0 top-[calc(100%+8px)] z-50 min-w-[160px] rounded-sm border border-border-subtle bg-surface-1 p-2 shadow-xl">
+                <button onClick={() => { updatePlatform(""); setActiveDropdown(null); }} className="block w-full rounded-xl px-3 py-2 text-left text-sm text-text-muted hover:bg-surface-2">All</button>
                 {allPlatforms.map((p) => (
-                  <button key={p} onClick={() => { updatePlatform(p); setActiveDropdown(null); }} className={`block w-full rounded-xl px-3 py-2 text-left text-sm transition hover:bg-white/5 ${platform === p ? "text-cyan-300" : "text-slate-200"}`}>{p}</button>
+                  <button key={p} onClick={() => { updatePlatform(p); setActiveDropdown(null); }} className={`block w-full rounded-xl px-3 py-2 text-left text-sm transition hover:bg-surface-2 ${platform === p ? "text-brand-cyan-strong" : "text-slate-200"}`}>{p}</button>
                 ))}
               </div>
             )}
@@ -248,26 +248,26 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
             <button
               key={label}
               onClick={toggle}
-              className={`rounded-2xl border px-4 py-2.5 text-sm transition ${active ? "border-emerald-300/40 bg-emerald-300/10 text-emerald-300" : "border-white/10 bg-[#081222] text-slate-200 hover:border-cyan-300/30"}`}
+              className={`rounded-2xl border px-4 py-2.5 text-sm transition ${active ? "border-emerald-300/40 bg-emerald-300/10 text-emerald-300" : "border-border-subtle bg-surface-1 text-slate-200 hover:border-border-accent"}`}
             >
               {label}
             </button>
           ))}
 
           {hasFilters && (
-            <button onClick={clearAll} className="rounded-2xl border border-white/10 px-4 py-2.5 text-sm text-slate-400 transition hover:text-white">
+            <button onClick={clearAll} className="rounded-2xl border border-border-subtle px-4 py-2.5 text-sm text-text-muted transition hover:text-white">
               Clear all x
             </button>
           )}
 
-          <span className="ml-auto text-sm text-slate-500">{resultCountLabel}</span>
+          <span className="ml-auto text-sm text-text-muted">{resultCountLabel}</span>
         </div>
       </section>
 
       {isLoading ? (
         <ToolGridSkeleton count={9} />
       ) : error ? (
-        <div className="rounded-[28px] border border-rose-300/20 bg-rose-300/8 p-10 text-center text-sm text-rose-100">
+        <div className="rounded-card border border-rose-300/20 bg-rose-300/8 p-10 text-center text-sm text-rose-100">
           {error}
         </div>
       ) : tools.length > 0 ? (
@@ -277,7 +277,7 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
               <ToolCard key={tool.id} tool={tool} />
             ))}
           </section>
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[28px] border border-white/10 bg-white/6 p-5 text-sm text-slate-300">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-border-subtle bg-surface-2 p-5 text-sm text-text-secondary">
             <span>
               Page {currentPagination.page} of {currentPagination.totalPages} | {currentPagination.total} tools
             </span>
@@ -285,7 +285,7 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
               <button
                 aria-disabled={currentPagination.page <= 1}
                 disabled={currentPagination.page <= 1}
-                className={`rounded-2xl border border-white/10 px-4 py-2 ${currentPagination.page <= 1 ? "pointer-events-none opacity-40" : "hover:border-cyan-300/30 hover:text-white"}`}
+                className={`rounded-2xl border border-border-subtle px-4 py-2 ${currentPagination.page <= 1 ? "pointer-events-none opacity-40" : "hover:border-border-accent hover:text-white"}`}
                 onClick={() => setPage((value) => Math.max(1, value - 1))}
               >
                 Previous
@@ -293,7 +293,7 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
               <button
                 aria-disabled={currentPagination.page >= currentPagination.totalPages}
                 disabled={currentPagination.page >= currentPagination.totalPages}
-                className={`rounded-2xl border border-white/10 px-4 py-2 ${currentPagination.page >= currentPagination.totalPages ? "pointer-events-none opacity-40" : "hover:border-cyan-300/30 hover:text-white"}`}
+                className={`rounded-2xl border border-border-subtle px-4 py-2 ${currentPagination.page >= currentPagination.totalPages ? "pointer-events-none opacity-40" : "hover:border-border-accent hover:text-white"}`}
                 onClick={() => setPage((value) => value + 1)}
               >
                 Next
@@ -302,7 +302,7 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
           </div>
         </>
       ) : (
-        <div className="rounded-[28px] border border-white/10 bg-white/6 p-10 text-center text-sm text-slate-400">
+        <div className="rounded-card border border-border-subtle bg-surface-2 p-10 text-center text-sm text-text-muted">
           No tools match your current filters. Try describing the job in simpler words.
         </div>
       )}

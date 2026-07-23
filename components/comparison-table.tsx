@@ -1,8 +1,8 @@
 import type { AITool } from "@/lib/catalog-types";
 
 type ComparisonTableProps = {
-  left: AITool;
-  right: AITool;
+  tools: AITool[];
+  highlightDifferences?: boolean;
 };
 
 const rows: { label: string; key: keyof AITool }[] = [
@@ -36,21 +36,51 @@ function readValue(tool: AITool, key: keyof AITool) {
   return String(value);
 }
 
-export function ComparisonTable({ left, right }: ComparisonTableProps) {
-  return (
-    <div className="overflow-hidden rounded-[30px] border border-white/10 bg-white/6 backdrop-blur-xl">
-      <div className="grid grid-cols-[1.1fr_1fr_1fr] gap-px bg-white/10">
-        <div className="bg-[#091120] p-5 text-sm font-semibold text-slate-400">Comparison Area</div>
-        <div className="bg-[#091120] p-5 text-lg font-semibold text-white">{left.name}</div>
-        <div className="bg-[#091120] p-5 text-lg font-semibold text-white">{right.name}</div>
+export function ComparisonTable({ tools, highlightDifferences = false }: ComparisonTableProps) {
+  if (tools.length < 2) return null;
 
-        {rows.map((row) => (
-          <div key={row.label} className="contents">
-            <div className="bg-[#08101d] p-5 text-sm font-medium text-slate-300">{row.label}</div>
-            <div className="bg-[#08101d] p-5 text-sm leading-6 text-slate-200">{readValue(left, row.key)}</div>
-            <div className="bg-[#08101d] p-5 text-sm leading-6 text-slate-200">{readValue(right, row.key)}</div>
+  return (
+    <div className="no-scrollbar overflow-x-auto rounded-card-lg border border-border-subtle bg-surface-2 backdrop-blur-xl">
+      <div
+        className="grid gap-px bg-border-subtle"
+        style={{ gridTemplateColumns: `1.1fr repeat(${tools.length}, 1fr)` }}
+      >
+        <div className="bg-surface-1 p-5 text-sm font-semibold text-text-muted">Comparison Area</div>
+        {tools.map((tool) => (
+          <div key={tool.slug} className="bg-surface-1 p-5 text-lg font-semibold text-text-primary">
+            {tool.name}
           </div>
         ))}
+
+        {rows.map((row) => {
+          const values = tools.map((tool) => readValue(tool, row.key));
+          const differs =
+            highlightDifferences && new Set(values).size > 1;
+          const cellBg = differs ? "bg-brand-cyan/5" : "bg-surface-2";
+
+          return (
+            <div key={row.label} className="contents">
+              <div className={`${cellBg} p-5 text-sm font-medium text-text-secondary`}>
+                {differs ? (
+                  <span className="inline-flex items-center gap-1.5">
+                    <span aria-hidden className="text-brand-cyan-strong">•</span>
+                    {row.label}
+                  </span>
+                ) : (
+                  row.label
+                )}
+              </div>
+              {values.map((value, index) => (
+                <div
+                  key={`${row.label}-${tools[index].slug}`}
+                  className={`text-body ${cellBg} p-5 text-text-secondary`}
+                >
+                  {value}
+                </div>
+              ))}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

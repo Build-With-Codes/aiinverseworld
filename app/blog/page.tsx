@@ -1,9 +1,14 @@
-import { BlogCard } from "@/components/blog-card";
-import { StructuredDataScript } from "@/components/structured-data-script";
-import { getAllBlogPosts } from "@/lib/blog-data";
-import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import Link from "next/link";
+
+import { BlogCard } from "@/components/blog-card";
+import { SectionHeading } from "@/components/section-heading";
+import { StructuredDataScript } from "@/components/structured-data-script";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { cardClass } from "@/components/ui/card";
+import { FadeInSection } from "@/components/ui/motion";
+import { getAllBlogPosts, getBlogCategories } from "@/lib/blog-api";
+import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "AI Blog | Latest AI Tools, Trends & Guides 2026",
@@ -17,7 +22,7 @@ export const metadata: Metadata = {
     description:
       "Discover the best AI tools, trends, and practical guides for 2026. Read expert insights on ChatGPT, Claude, image generation, and more.",
     type: "website",
-    url: "https://aiverseworld.com/blog",
+    url: buildUrl("/blog"),
     images: [defaultOpenGraphImage],
   },
   twitter: {
@@ -30,143 +35,108 @@ export const metadata: Metadata = {
 };
 
 type BlogPageProps = {
-  searchParams?: Promise<{
-    topic?: string;
-  }>;
+  searchParams?: Promise<{ topic?: string }>;
 };
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
-  const posts = getAllBlogPosts();
-  const params = await searchParams;
+  const [posts, categories, params] = await Promise.all([
+    getAllBlogPosts(),
+    getBlogCategories(),
+    searchParams,
+  ]);
+
   const selectedTopic = params?.topic || "";
   const visiblePosts = selectedTopic
     ? posts.filter((post) => post.category === selectedTopic)
     : posts;
   const featuredPost = visiblePosts[0];
-  const latestPosts = visiblePosts.slice(1);
-  const topPicks = posts.slice(0, 5);
-  const categories = Array.from(new Set(posts.map((post) => post.category))).slice(0, 8);
+  const restPosts = visiblePosts.slice(1);
 
   const blogStructuredData = {
     "@context": "https://schema.org",
     "@type": "Blog",
-    name: "AI Inverse World Blog",
+    name: "AiverseWorld Blog",
     description: "Latest AI tools, trends, guides, and practical insights",
-    url: "https://aiverseworld.com/blog",
-    blogPost: posts.map((post) => ({
+    url: buildUrl("/blog"),
+    blogPost: posts.slice(0, 20).map((post) => ({
       "@type": "BlogPosting",
-      headline: post.seoTitle || post.title,
+      headline: post.title,
       description: post.description,
       datePublished: post.publishedAt,
-      author: {
-        "@type": "Organization",
-        name: post.author,
-      },
-      url: `https://aiverseworld.com/blog/${post.slug}`,
+      author: { "@type": "Organization", name: post.author },
+      url: buildUrl(`/blog/${post.slug}`),
     })),
   };
 
   return (
-    <>
+    <div className="space-y-10 pb-12 pt-6">
       <StructuredDataScript id="blog-schema" data={blogStructuredData} />
 
-      <div className="pb-12 pt-4">
-        <section className="rounded-[22px] border border-white/10 bg-white/6 px-4 py-4 shadow-[0_14px_42px_rgba(2,6,23,0.18)] sm:px-5">
-          <div className="grid gap-4 xl:grid-cols-[minmax(14rem,0.35fr)_minmax(0,1fr)] xl:items-center">
-            <div className="min-w-0">
-              <span className="blog-section-label text-xs font-semibold tracking-[0.22em] uppercase">
-                AI Learning Hub
-              </span>
-              <h1 className="blog-section-title mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
-                AI Blog
-              </h1>
-            </div>
-
-            <div>
-              <div className="flex flex-wrap gap-2">
-                <Link
-                  href="/blog"
-                  className={`blog-filter-chip rounded-full border px-3 py-1.5 text-xs font-medium transition ${
-                    selectedTopic
-                      ? ""
-                      : "blog-filter-chip--active"
-                  }`}
-                >
-                  All
-                </Link>
-                {categories.map((category) => (
-                  <Link
-                    key={category}
-                    href={`/blog?topic=${encodeURIComponent(category)}`}
-                    className={`blog-filter-chip rounded-full border px-3 py-1.5 text-xs font-medium transition ${
-                      selectedTopic === category
-                        ? "blog-filter-chip--active"
-                        : ""
-                    }`}
-                  >
-                    {category}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <div className="mt-4 grid gap-5 xl:grid-cols-[minmax(0,1fr)_20rem]">
-          <div className="space-y-5">
-            {featuredPost ? (
-              <section>
-                <BlogCard post={featuredPost} featured />
-              </section>
-            ) : null}
-
-            {latestPosts.length > 0 ? (
-              <section>
-                <div className="mb-3 flex items-center justify-between gap-3">
-                  <h2 className="blog-section-title text-lg font-bold">
-                    Latest Articles
-                  </h2>
-                </div>
-                <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-                  {latestPosts.map((post) => (
-                    <BlogCard key={post.slug} post={post} />
-                  ))}
-                </div>
-              </section>
-            ) : null}
-          </div>
-
-          <aside className="xl:sticky xl:top-28 xl:self-start">
-            <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-[0_18px_50px_rgba(15,23,42,0.10)]">
-              <p className="text-sm font-semibold uppercase tracking-[0.22em] text-cyan-700">
-                Suggested
-              </p>
-              <h2 className="mt-2 text-xl font-bold text-slate-950">Popular guides</h2>
-              <div className="mt-5 space-y-3">
-                {topPicks.map((post, index) => (
-                  <Link
-                    key={post.slug}
-                    href={`/blog/${post.slug}`}
-                    className="group block cursor-pointer rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-cyan-300/60 hover:bg-cyan-50"
-                  >
-                    <div className="flex gap-3">
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-cyan-100 text-xs font-bold text-cyan-700">
-                        {index + 1}
-                      </span>
-                      <div className="min-w-0">
-                        <h3 className="line-clamp-2 text-sm font-semibold leading-5 text-slate-950 group-hover:text-cyan-800">
-                          {post.title}
-                        </h3>
-                        <p className="mt-2 text-xs text-slate-400">{post.readTime} read</p>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </aside>
-        </div>
+      <div className="pt-4">
+        <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Blog" }]} />
       </div>
-    </>
+
+      <FadeInSection className={cardClass({ padding: "lg", radius: "card-lg" })}>
+        <SectionHeading
+          eyebrow="AI Learning Hub"
+          title="Guides, trends & deep dives on AI"
+          description="Practical, editor-written coverage of the tools, models, and workflows shaping how people actually use AI."
+        />
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/blog"
+            className={`rounded-pill border px-4 py-1.5 text-sm font-medium transition ${
+              selectedTopic
+                ? "border-border-subtle bg-surface-1 text-text-secondary hover:border-border-accent"
+                : "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong"
+            }`}
+          >
+            All
+          </Link>
+          {categories.map((category) => (
+            <Link
+              key={category.name}
+              href={`/blog?topic=${encodeURIComponent(category.name)}`}
+              className={`rounded-pill border px-4 py-1.5 text-sm font-medium transition ${
+                selectedTopic === category.name
+                  ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong"
+                  : "border-border-subtle bg-surface-1 text-text-secondary hover:border-border-accent"
+              }`}
+            >
+              {category.name}
+            </Link>
+          ))}
+        </div>
+      </FadeInSection>
+
+      {featuredPost ? (
+        <FadeInSection>
+          <p className="text-eyebrow mb-4 text-brand-cyan-strong">Featured</p>
+          <BlogCard post={featuredPost} featured />
+        </FadeInSection>
+      ) : null}
+
+      {restPosts.length > 0 ? (
+        <FadeInSection>
+          <h2 className="text-heading-1 mb-5 text-text-primary">
+            {selectedTopic ? `More in ${selectedTopic}` : "Latest articles"}
+          </h2>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {restPosts.map((post) => (
+              <BlogCard key={post.slug} post={post} />
+            ))}
+          </div>
+        </FadeInSection>
+      ) : null}
+
+      {visiblePosts.length === 0 ? (
+        <div className={`text-center text-sm text-text-muted ${cardClass({ padding: "lg" })}`}>
+          No articles in this topic yet.{" "}
+          <Link href="/blog" className="font-semibold text-brand-cyan-strong">
+            View all articles
+          </Link>
+        </div>
+      ) : null}
+    </div>
   );
 }

@@ -77,6 +77,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "**",
       },
+      // Local media fallback (backend /uploads) during development.
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
     ],
   },
   allowedDevOrigins: ["192.168.29.100"],

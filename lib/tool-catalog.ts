@@ -237,6 +237,12 @@ export async function searchTools(options: {
   };
 }
 
+/** Most recently verified tools — used for "New" badges in the mega menu. */
+export async function getNewestTools(limit = 6) {
+  const payload = await apiGet<ToolListResponse>(`/api/tools?limit=${limit}&sort=newest`);
+  return payload?.data ?? [];
+}
+
 export async function recommendTools(query: string, limit = 8) {
   if (!query.trim()) {
     const catalog = await getToolCatalog(limit);

@@ -49,7 +49,7 @@ export default async function ComparePage({ params }: ComparePageProps) {
   if (!pair) {
     return (
       <div className="space-y-10 pb-10 pt-10">
-        <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+        <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
           <SectionHeading
             eyebrow="Compare"
             title="No comparison data available"
@@ -84,13 +84,13 @@ export default async function ComparePage({ params }: ComparePageProps) {
           },
         }}
       />
-      <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+      <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
         <SectionHeading
           eyebrow="Compare"
           title={`${pair.left.name} vs ${pair.right.name}`}
           description="A direct comparison using the real catalog fields currently available for both products."
         />
-        <p className="mb-5 text-sm font-medium text-slate-400">
+        <p className="mb-5 text-sm font-medium text-text-muted">
           Last updated <time dateTime={dateModified}>{dateModifiedLabel}</time>
         </p>
         <CompareSelector
@@ -100,12 +100,12 @@ export default async function ComparePage({ params }: ComparePageProps) {
         />
       </section>
 
-      <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
-        <ComparisonTable left={pair.left} right={pair.right} />
+      <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
+        <ComparisonTable tools={[pair.left, pair.right]} />
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
+        <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-7">
           <h2 className="text-2xl font-semibold text-white">{pair.left.name} best for</h2>
           <div className="mt-5 space-y-3">
             {pair.left.bestFor.map((item) => (
@@ -115,7 +115,7 @@ export default async function ComparePage({ params }: ComparePageProps) {
             ))}
           </div>
         </div>
-        <div className="rounded-[30px] border border-white/10 bg-white/6 p-7">
+        <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-7">
           <h2 className="text-2xl font-semibold text-white">{pair.right.name} best for</h2>
           <div className="mt-5 space-y-3">
             {pair.right.bestFor.map((item) => (

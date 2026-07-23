@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { CategoryCard } from "@/components/category-card";
 import { SectionHeading } from "@/components/section-heading";
+import { cardClass } from "@/components/ui/card";
 import type { Category } from "@/lib/catalog-types";
 
 type CategoriesClientProps = {
@@ -28,7 +29,7 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
 
   return (
     <div className="space-y-10 pb-10 pt-10">
-      <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+      <section className={cardClass({ padding: "lg", radius: "card-lg" })}>
         <SectionHeading
           eyebrow="Browse"
           title="All AI tool categories"
@@ -40,10 +41,10 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           suppressHydrationWarning
-          className="w-full rounded-2xl border border-white/10 bg-[#071120] px-5 py-4 text-sm text-slate-300 outline-none placeholder:text-slate-500 focus:border-cyan-300/30"
+          className="w-full rounded-sm border border-border-subtle bg-surface-1 px-5 py-4 text-sm text-text-secondary outline-none placeholder:text-text-muted focus:border-border-accent"
         />
         {query && (
-          <p className="mt-3 text-sm text-slate-500">
+          <p className="text-sm mt-3 text-text-muted">
             {filtered.length} categor{filtered.length !== 1 ? "ies" : "y"} found
           </p>
         )}
@@ -56,7 +57,7 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
           ))}
         </section>
       ) : (
-        <div className="rounded-[28px] border border-white/10 bg-white/6 p-10 text-center text-sm text-slate-400">
+        <div className={`text-center text-sm text-text-muted ${cardClass({ padding: "lg" })}`}>
           No categories match your search.
         </div>
       )}

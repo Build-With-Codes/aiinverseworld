@@ -50,7 +50,7 @@ export default async function NewsPage() {
   };
 
   return (
-    <div className="space-y-14 pb-10 pt-10 sm:space-y-16 sm:pt-14">
+    <div className="space-y-12 pb-10 pt-10">
       <StructuredDataScript id="news-schema" data={structuredData} />
       <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
         <div className="space-y-6">
@@ -61,7 +61,7 @@ export default async function NewsPage() {
             <h1 className="max-w-4xl text-5xl font-semibold tracking-tight text-white sm:text-6xl">
               Enterprise AI news with summaries, source links, and safer legal posture
             </h1>
-            <p className="max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">
+            <p className="max-w-3xl text-lg leading-8 text-text-secondary sm:text-xl">
               We collect AI news metadata, generate concise summaries through our
               OpenRouter pipeline, and send readers back to the original publishers
               for full context.
@@ -69,11 +69,11 @@ export default async function NewsPage() {
           </div>
         </div>
 
-        <div className="rounded-[32px] border border-white/10 bg-white/6 p-7">
-          <p className="text-sm font-semibold tracking-[0.24em] text-cyan-200 uppercase">
+        <div className="rounded-[32px] border border-border-subtle bg-surface-2 p-7">
+          <p className="text-sm font-semibold tracking-[0.24em] text-brand-cyan-strong uppercase">
             Legal guardrails
           </p>
-          <div className="mt-5 space-y-3 text-sm leading-7 text-slate-300">
+          <div className="mt-5 space-y-3 text-sm leading-7 text-text-secondary">
             <p>Summaries are generated, not copied from source articles.</p>
             <p>Every card keeps canonical source attribution and outbound links.</p>
             <p>Full article text is not displayed in the product experience.</p>

@@ -1,27 +1,21 @@
+import type { ReactNode } from "react";
+
 type SectionHeadingProps = {
   eyebrow: string;
   title: string;
-  description: string;
+  description?: string;
+  action?: ReactNode;
 };
 
-export function SectionHeading({
-  eyebrow,
-  title,
-  description,
-}: SectionHeadingProps) {
+export function SectionHeading({ eyebrow, title, description, action }: SectionHeadingProps) {
   return (
-    <div className="mb-8 flex flex-col gap-3">
-      <span className="text-xs font-semibold tracking-[0.3em] text-cyan-300 uppercase">
-        {eyebrow}
-      </span>
+    <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div className="max-w-3xl space-y-3">
-        <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-          {title}
-        </h2>
-        <p className="text-base leading-7 text-slate-300 sm:text-lg">
-          {description}
-        </p>
+        <span className="text-eyebrow text-brand-cyan-strong">{eyebrow}</span>
+        <h2 className="text-display-2 text-text-primary">{title}</h2>
+        {description ? <p className="text-body-lg text-text-secondary">{description}</p> : null}
       </div>
+      {action ? <div className="shrink-0">{action}</div> : null}
     </div>
   );
 }

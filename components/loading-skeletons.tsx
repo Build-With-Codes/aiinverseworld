@@ -46,7 +46,7 @@ export function HeroSkeleton({ split = true }: { split?: boolean }) {
       </div>
 
       {split ? (
-        <div className="rounded-[32px] border border-white/10 bg-white/6 p-7">
+        <div className="rounded-[32px] border border-border-subtle bg-surface-2 p-7">
           <SkeletonLine className="w-40" />
           <div className="mt-6 space-y-4">
             <SkeletonLine className="w-full" />
@@ -66,7 +66,7 @@ export function HeroSkeleton({ split = true }: { split?: boolean }) {
 
 export function FilterBarSkeleton() {
   return (
-    <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+    <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
       <SkeletonLine className="w-32" />
       <SkeletonLine className="mt-4 h-8 w-full max-w-xl" />
       <SkeletonLine className="mt-3 w-full max-w-2xl" />
@@ -87,7 +87,7 @@ export function ToolGridSkeleton({ count = 9 }: { count?: number }) {
       {Array.from({ length: count }).map((_, index) => (
         <article
           key={index}
-          className="rounded-[28px] border border-white/10 bg-white/6 p-6 shadow-[0_24px_80px_rgba(4,10,25,0.18)]"
+          className="rounded-card border border-border-subtle bg-surface-2 p-6 shadow-[0_24px_80px_rgba(4,10,25,0.18)]"
         >
           <div className="flex items-start gap-4">
             <SkeletonBlock className="h-14 w-14 shrink-0 rounded-2xl" />
@@ -116,7 +116,7 @@ export function CategoryGridSkeleton({ count = 9 }: { count?: number }) {
   return (
     <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: count }).map((_, index) => (
-        <article key={index} className="rounded-[28px] border border-white/10 bg-white/6 p-6">
+        <article key={index} className="rounded-card border border-border-subtle bg-surface-2 p-6">
           <SkeletonBlock className="h-11 w-11 rounded-2xl" />
           <SkeletonLine className="mt-5 h-6 w-3/5" />
           <SkeletonLine className="mt-4 w-full" />
@@ -132,7 +132,7 @@ export function ProblemGridSkeleton({ count = 6 }: { count?: number }) {
   return (
     <section className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
       {Array.from({ length: count }).map((_, index) => (
-        <article key={index} className="rounded-[28px] border border-white/10 bg-white/6 p-6">
+        <article key={index} className="rounded-card border border-border-subtle bg-surface-2 p-6">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 space-y-4">
               <SkeletonLine className="w-28" />
@@ -158,15 +158,15 @@ export function ProblemGridSkeleton({ count = 6 }: { count?: number }) {
 
 export function CompareSkeleton() {
   return (
-    <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+    <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
       <div className="grid gap-4 md:grid-cols-[1fr_auto_1fr] md:items-end">
         <SkeletonBlock className="h-14 rounded-2xl" />
         <SkeletonBlock className="h-10 w-10 rounded-full" />
         <SkeletonBlock className="h-14 rounded-2xl" />
       </div>
-      <div className="mt-8 overflow-hidden rounded-[26px] border border-white/10">
+      <div className="mt-8 overflow-hidden rounded-card border border-border-subtle">
         {Array.from({ length: 7 }).map((_, index) => (
-          <div key={index} className="grid grid-cols-3 gap-4 border-b border-white/10 p-4 last:border-b-0">
+          <div key={index} className="grid grid-cols-3 gap-4 border-b border-border-subtle p-4 last:border-b-0">
             <SkeletonLine className="w-3/4" />
             <SkeletonLine className="w-full" />
             <SkeletonLine className="w-11/12" />
@@ -180,7 +180,7 @@ export function CompareSkeleton() {
 export function DetailSkeleton() {
   return (
     <section className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-      <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+      <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
         <div className="flex items-center gap-4">
           <SkeletonBlock className="h-16 w-16 rounded-2xl" />
           <div className="flex-1 space-y-3">
@@ -198,7 +198,7 @@ export function DetailSkeleton() {
           <SkeletonBlock className="h-24 rounded-2xl" />
         </div>
       </div>
-      <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+      <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
         <SkeletonLine className="w-36" />
         <SkeletonBlock className="mt-6 h-14 rounded-2xl" />
         <SkeletonBlock className="mt-4 h-14 rounded-2xl" />
@@ -212,7 +212,7 @@ export function NewsGridSkeleton({ count = 9 }: { count?: number }) {
   return (
     <section className="grid gap-6 lg:grid-cols-3">
       {Array.from({ length: count }).map((_, index) => (
-        <article key={index} className="rounded-[28px] border border-white/10 bg-white/6 p-6">
+        <article key={index} className="rounded-card border border-border-subtle bg-surface-2 p-6">
           <SkeletonBlock className="h-44 rounded-3xl" />
           <SkeletonLine className="mt-6 h-6 w-4/5" />
           <SkeletonLine className="mt-4 w-full" />
@@ -239,7 +239,7 @@ export function HomePageSkeleton() {
             <SkeletonLine className="h-5 w-full max-w-2xl" />
             <SkeletonLine className="h-5 w-5/6 max-w-xl" />
           </div>
-          <div className="rounded-[32px] border border-white/10 bg-white/8 p-4 shadow-[0_24px_120px_rgba(8,15,35,0.45)] backdrop-blur-2xl">
+          <div className="rounded-[32px] border border-border-subtle bg-surface-3 p-4 shadow-[0_24px_120px_rgba(8,15,35,0.45)] backdrop-blur-2xl">
             <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
               <SkeletonBlock className="h-14 rounded-2xl" />
               <SkeletonBlock className="h-14 rounded-2xl sm:w-36" />
@@ -252,7 +252,7 @@ export function HomePageSkeleton() {
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             {[0, 1, 2].map((item) => (
-              <div key={item} className="rounded-[26px] border border-white/10 bg-white/5 p-5">
+              <div key={item} className="rounded-card border border-border-subtle bg-surface-2 p-5">
                 <SkeletonLine className="h-8 w-16" />
                 <SkeletonLine className="mt-4 w-28" />
               </div>
@@ -261,7 +261,7 @@ export function HomePageSkeleton() {
         </div>
 
         <div className="grid gap-4">
-          <div className="rounded-[32px] border border-cyan-300/18 bg-white/6 p-7">
+          <div className="rounded-[32px] border border-border-accent bg-surface-2 p-7">
             <SkeletonLine className="w-28" />
             <SkeletonLine className="mt-4 h-7 w-full" />
             <SkeletonLine className="mt-3 h-7 w-4/5" />
@@ -271,11 +271,11 @@ export function HomePageSkeleton() {
               ))}
             </div>
           </div>
-          <div className="rounded-[32px] border border-white/10 bg-white/6 p-7">
+          <div className="rounded-[32px] border border-border-subtle bg-surface-2 p-7">
             <SkeletonLine className="w-44" />
             <div className="mt-5 space-y-4">
               {Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="rounded-2xl border border-white/8 bg-white/5 p-4">
+                <div key={index} className="rounded-2xl border border-border-subtle bg-surface-2 p-4">
                   <SkeletonLine className="w-32" />
                   <SkeletonLine className="mt-3 w-full" />
                   <SkeletonLine className="mt-2 w-4/5" />
@@ -288,7 +288,7 @@ export function HomePageSkeleton() {
 
       <section className="grid gap-5 lg:grid-cols-3">
         {Array.from({ length: 3 }).map((_, index) => (
-          <div key={index} className="rounded-[30px] border border-white/10 bg-white/6 p-6 shadow-[0_20px_60px_rgba(3,8,22,0.28)]">
+          <div key={index} className="rounded-card-lg border border-border-subtle bg-surface-2 p-6 shadow-[0_20px_60px_rgba(3,8,22,0.28)]">
             <SkeletonLine className="w-36" />
             <SkeletonLine className="mt-4 w-full" />
             <SkeletonLine className="mt-3 w-5/6" />
@@ -312,7 +312,7 @@ export function HomePageSkeleton() {
       <SectionHeaderSkeleton />
       <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, index) => (
-          <article key={index} className="rounded-[24px] border border-white/10 bg-white/5 p-6">
+          <article key={index} className="rounded-card border border-border-subtle bg-surface-2 p-6">
             <div className="mb-5 flex items-center justify-between">
               <SkeletonBlock className="h-6 w-20 rounded" />
               <SkeletonLine className="w-16" />
@@ -335,7 +335,7 @@ export function ToolDetailPageSkeleton() {
   return (
     <PageShellSkeleton>
       <section className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+        <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
           <div className="flex flex-wrap items-center gap-3">
             <SkeletonBlock className="h-12 w-12 rounded-2xl" />
             <SkeletonBlock className="h-8 w-32 rounded-full" />
@@ -357,7 +357,7 @@ export function ToolDetailPageSkeleton() {
           </div>
           <div className="mt-10 grid gap-4 sm:grid-cols-4">
             {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="rounded-[24px] border border-white/10 bg-[#081222] p-5">
+              <div key={index} className="rounded-card border border-border-subtle bg-surface-1 p-5">
                 <SkeletonLine className="w-24" />
                 <SkeletonLine className="mt-4 h-5 w-16" />
               </div>
@@ -365,7 +365,7 @@ export function ToolDetailPageSkeleton() {
           </div>
         </div>
 
-        <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+        <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
           <SectionHeaderSkeleton compact />
           <div className="mt-6 space-y-3">
             {Array.from({ length: 6 }).map((_, index) => (
@@ -377,7 +377,7 @@ export function ToolDetailPageSkeleton() {
 
       <section className="grid gap-6 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
-          <div key={index} className="rounded-[30px] border border-white/10 bg-white/6 p-7">
+          <div key={index} className="rounded-card-lg border border-border-subtle bg-surface-2 p-7">
             <SkeletonLine className="h-6 w-32" />
             <div className="mt-5 space-y-3">
               {[0, 1, 2, 3].map((item) => (
@@ -397,7 +397,7 @@ export function ToolDetailPageSkeleton() {
 export function BestListPageSkeleton() {
   return (
     <PageShellSkeleton>
-      <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+      <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
         <SkeletonBlock className="h-9 w-36 rounded-full" />
         <SkeletonLine className="mt-5 h-12 w-full max-w-3xl" />
         <SkeletonLine className="mt-4 h-5 w-full max-w-2xl" />
@@ -468,13 +468,13 @@ export function TutorPageSkeleton() {
           <SkeletonLine className="h-5 w-full max-w-2xl" />
           <div className="grid gap-4 sm:grid-cols-3">
             {[0, 1, 2].map((item) => (
-              <div key={item} className="rounded-[24px] border border-white/10 bg-white/6 p-5">
+              <div key={item} className="rounded-card border border-border-subtle bg-surface-2 p-5">
                 <SkeletonLine className="h-8 w-16" />
                 <SkeletonLine className="mt-4 w-24" />
               </div>
             ))}
           </div>
-          <div className="rounded-[28px] border border-white/10 bg-white/6 p-6">
+          <div className="rounded-card border border-border-subtle bg-surface-2 p-6">
             <SkeletonLine className="w-28" />
             <div className="mt-5 grid gap-3">
               {Array.from({ length: 5 }).map((_, index) => (
@@ -483,8 +483,8 @@ export function TutorPageSkeleton() {
             </div>
           </div>
         </div>
-        <div className="rounded-[32px] border border-white/10 bg-[#071120]/90 p-5">
-          <div className="flex items-center justify-between border-b border-white/10 pb-4">
+        <div className="rounded-[32px] border border-border-subtle bg-surface-1/90 p-5">
+          <div className="flex items-center justify-between border-b border-border-subtle pb-4">
             <div className="space-y-3">
               <SkeletonLine className="h-5 w-32" />
               <SkeletonLine className="w-56" />
@@ -495,11 +495,11 @@ export function TutorPageSkeleton() {
             {[0, 1, 2, 3].map((item) => (
               <SkeletonBlock
                 key={item}
-                className={`h-28 rounded-[24px] ${item % 2 === 0 ? "mr-auto w-4/5" : "ml-auto w-3/4"}`}
+                className={`h-28 rounded-card ${item % 2 === 0 ? "mr-auto w-4/5" : "ml-auto w-3/4"}`}
               />
             ))}
           </div>
-          <SkeletonBlock className="mt-5 h-40 rounded-[24px]" />
+          <SkeletonBlock className="mt-5 h-40 rounded-card" />
         </div>
       </section>
     </PageShellSkeleton>
@@ -519,7 +519,7 @@ function SectionHeaderSkeleton({ compact = false }: { compact?: boolean }) {
 
 function PaginationSkeleton() {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-[28px] border border-white/10 bg-white/6 p-5">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-border-subtle bg-surface-2 p-5">
       <SkeletonLine className="w-44" />
       <div className="flex gap-2">
         <SkeletonBlock className="h-10 w-24 rounded-2xl" />
@@ -531,7 +531,7 @@ function PaginationSkeleton() {
 
 function ExploreLinksSkeleton() {
   return (
-    <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+    <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
       <SkeletonLine className="w-32" />
       <div className="mt-5 flex flex-wrap gap-3">
         {Array.from({ length: 8 }).map((_, index) => (
@@ -539,5 +539,73 @@ function ExploreLinksSkeleton() {
         ))}
       </div>
     </section>
+  );
+}
+
+export function BlogListPageSkeleton() {
+  return (
+    <PageShellSkeleton compact>
+      <FilterBarSkeleton />
+      <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-6 sm:flex-row sm:p-7">
+        <div className="flex flex-col gap-6 sm:flex-row">
+          <SkeletonBlock className="aspect-[16/10] rounded-2xl sm:w-1/2" />
+          <div className="flex-1 space-y-3 py-2">
+            <SkeletonBlock className="h-6 w-24 rounded-full" />
+            <SkeletonLine className="h-7 w-full" />
+            <SkeletonLine className="h-7 w-4/5" />
+            <SkeletonLine className="w-full" />
+            <SkeletonLine className="w-2/3" />
+          </div>
+        </div>
+      </section>
+      <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <article key={index} className="overflow-hidden rounded-card border border-border-subtle bg-surface-2">
+            <SkeletonBlock className="aspect-[16/9] rounded-none" />
+            <div className="space-y-3 p-5">
+              <SkeletonBlock className="h-5 w-20 rounded-full" />
+              <SkeletonLine className="h-5 w-full" />
+              <SkeletonLine className="w-4/5" />
+              <SkeletonLine className="w-full" />
+            </div>
+          </article>
+        ))}
+      </section>
+    </PageShellSkeleton>
+  );
+}
+
+export function BlogPostPageSkeleton() {
+  return (
+    <PageShellSkeleton compact>
+      <SkeletonLine className="w-40" />
+      <div className="space-y-6">
+        <div className="max-w-3xl space-y-4">
+          <SkeletonBlock className="h-6 w-28 rounded-full" />
+          <SkeletonLine className="h-10 w-full" />
+          <SkeletonLine className="h-10 w-3/4" />
+          <SkeletonLine className="w-full" />
+          <SkeletonLine className="w-2/3" />
+        </div>
+        <SkeletonBlock className="aspect-[16/9] rounded-card-lg" />
+      </div>
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_15rem]">
+        <div className="space-y-4">
+          <SkeletonLine className="w-full" />
+          <SkeletonLine className="w-11/12" />
+          <SkeletonLine className="w-full" />
+          <SkeletonLine className="w-5/6" />
+          <SkeletonBlock className="mt-4 h-48 rounded-2xl" />
+          <SkeletonLine className="w-full" />
+          <SkeletonLine className="w-4/5" />
+        </div>
+        <div className="hidden space-y-3 lg:block">
+          <SkeletonLine className="w-24" />
+          <SkeletonLine className="w-full" />
+          <SkeletonLine className="w-5/6" />
+          <SkeletonLine className="w-4/6" />
+        </div>
+      </div>
+    </PageShellSkeleton>
   );
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Inter, Sora } from "next/font/google";
 
 import { authOptions } from "@/auth";
 import { ChatSupportGate } from "@/components/chat-support-gate";
@@ -6,6 +7,8 @@ import { ConsentedAnalytics } from "@/components/consented-analytics";
 import { ConsentedScript } from "@/components/consented-script";
 import { ConsentMode } from "@/components/consent-mode";
 import { CookieConsent } from "@/components/cookie-consent";
+import { CompareBar } from "@/components/engagement/compare-tray";
+import { Providers } from "@/components/providers";
 import { SiteShell } from "@/components/site-shell";
 import { googleAuthEnabled } from "@/lib/auth-config";
 import { buildUrl, defaultOpenGraphImage, siteUrl } from "@/lib/seo";
@@ -14,6 +17,18 @@ import { headers } from "next/headers";
 import { getServerSession } from "next-auth";
 
 import "./globals.css";
+
+const bodyFont = Inter({
+  subsets: ["latin"],
+  variable: "--font-body-sans",
+  display: "swap",
+});
+
+const displayFont = Sora({
+  subsets: ["latin"],
+  variable: "--font-display-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -57,10 +72,16 @@ export default async function RootLayout({
 }>) {
   const [session, requestHeaders] = await Promise.all([getServerSession(authOptions), headers()]);
   const nonce = requestHeaders.get("x-nonce") ?? undefined;
+  const isAdminSection = requestHeaders.get("x-route-section") === "admin";
   const structuredData = buildGlobalStructuredData();
 
   return (
-    <html lang="en" className="h-full antialiased" suppressHydrationWarning data-scroll-behavior="smooth">
+    <html
+      lang="en"
+      className={`h-full antialiased ${bodyFont.variable} ${displayFont.variable}`}
+      suppressHydrationWarning
+      data-scroll-behavior="smooth"
+    >
       <head>
         <script
           id="theme-init"
@@ -88,24 +109,33 @@ export default async function RootLayout({
         {/* REMOVED: Next.js <Script> component and invalid meta tags are removed from <head> */}
       </head>
       <body className="min-h-full" suppressHydrationWarning>
-        <ConsentedScript
-          async
-          id="google-adsense"
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1921034562411070"
-          crossOrigin="anonymous"
-          nonce={nonce}
-        />
-
-        <SiteShell>{children}</SiteShell>
-        <CookieConsent />
-        {session?.user ? (
-          <ConsentedScript id="chatbase-widget" nonce={nonce}>
-            {`(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="oqIeeF-NRJYMKRywqI8DE";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();`}
-          </ConsentedScript>
+        {isAdminSection ? (
+          <Providers session={session}>{children}</Providers>
         ) : (
-          <ChatSupportGate enabled={googleAuthEnabled} />
+          <>
+            <ConsentedScript
+              async
+              id="google-adsense"
+              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1921034562411070"
+              crossOrigin="anonymous"
+              nonce={nonce}
+            />
+
+            <Providers session={session}>
+              <SiteShell>{children}</SiteShell>
+              <CompareBar />
+            </Providers>
+            <CookieConsent />
+            {session?.user ? (
+              <ConsentedScript id="chatbase-widget" nonce={nonce}>
+                {`(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="oqIeeF-NRJYMKRywqI8DE";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();`}
+              </ConsentedScript>
+            ) : (
+              <ChatSupportGate enabled={googleAuthEnabled} />
+            )}
+            <ConsentedAnalytics />
+          </>
         )}
-        <ConsentedAnalytics />
       </body>
     </html>
   );

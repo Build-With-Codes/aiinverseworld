@@ -254,8 +254,8 @@ export function DrawGuessGameClient() {
   return (
     <div className="space-y-8">
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-[30px] border border-white/10 bg-white/6 p-6">
-          <p className="text-xs font-semibold tracking-[0.28em] text-cyan-200 uppercase">
+        <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-6">
+          <p className="text-xs font-semibold tracking-[0.28em] text-brand-cyan-strong uppercase">
             Game Setup
           </p>
           <div className="mt-6 space-y-5">
@@ -271,8 +271,8 @@ export function DrawGuessGameClient() {
                     onClick={() => setCategory(option)}
                     className={`rounded-2xl border px-4 py-3 text-sm ${
                       category === option
-                        ? "border-cyan-300/35 bg-cyan-300/12 text-white"
-                        : "border-white/10 bg-[#081222] text-slate-300"
+                        ? "border-border-accent bg-brand-cyan/10 text-white"
+                        : "border-border-subtle bg-surface-1 text-text-secondary"
                     }`}
                   >
                     {option}
@@ -294,7 +294,7 @@ export function DrawGuessGameClient() {
                     className={`rounded-2xl border px-4 py-3 text-sm ${
                       difficulty === option
                         ? "border-violet-300/35 bg-violet-300/12 text-white"
-                        : "border-white/10 bg-[#081222] text-slate-300"
+                        : "border-border-subtle bg-surface-1 text-text-secondary"
                     }`}
                   >
                     {option}
@@ -314,42 +314,42 @@ export function DrawGuessGameClient() {
           </div>
         </div>
 
-        <div className="rounded-[30px] border border-white/10 bg-white/6 p-6">
+        <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-xs font-semibold tracking-[0.28em] text-emerald-200 uppercase">
                 Live Round
               </p>
-              <p className="mt-2 text-sm text-slate-300">
+              <p className="mt-2 text-sm text-text-secondary">
                 Guess the drawing within one minute.
               </p>
             </div>
-            <div className="flex flex-wrap gap-2 text-xs text-slate-300">
-              <span className="rounded-full border border-white/10 px-3 py-2">
+            <div className="flex flex-wrap gap-2 text-xs text-text-secondary">
+              <span className="rounded-full border border-border-subtle px-3 py-2">
                 {Math.max(0, ROUND_DURATION_SECONDS - elapsedSeconds)}s left
               </span>
-              <span className="rounded-full border border-white/10 px-3 py-2">
+              <span className="rounded-full border border-border-subtle px-3 py-2">
                 {round ? `${revealedCount}/${round.parsedSvg.parts.length} parts` : "0/0 parts"}
               </span>
               <button
                 type="button"
                 onClick={() => setSoundEnabled((current) => !current)}
-                className="rounded-full border border-white/10 px-3 py-2"
+                className="rounded-full border border-border-subtle px-3 py-2"
               >
                 {soundEnabled ? "Sound On" : "Sound Off"}
               </button>
             </div>
           </div>
 
-          <div className="mt-6 rounded-[28px] border border-white/10 bg-[#071120] p-4">
-            <div className="flex aspect-square items-center justify-center rounded-[24px] border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.12),_transparent_36%),#060d18] p-4">
+          <div className="mt-6 rounded-card border border-border-subtle bg-surface-1 p-4">
+            <div className="flex aspect-square items-center justify-center rounded-card border border-border-subtle bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.12),_transparent_36%),#060d18] p-4">
               {visibleSvg ? (
                 <div
                   className="draw-guess-canvas h-full w-full text-white"
                   dangerouslySetInnerHTML={{ __html: visibleSvg }}
                 />
               ) : (
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-text-muted">
                   Start a round to see the drawing.
                 </p>
               )}
@@ -366,20 +366,20 @@ export function DrawGuessGameClient() {
                 }
               }}
               placeholder="Type your guess"
-              className="rounded-2xl border border-white/10 bg-[#081222] px-4 py-4 text-sm text-white outline-none"
+              className="rounded-2xl border border-border-subtle bg-surface-1 px-4 py-4 text-sm text-white outline-none"
             />
             <button
               type="button"
               onClick={submitGuess}
               disabled={status !== "playing"}
-              className="rounded-2xl border border-cyan-300/30 bg-cyan-300/12 px-5 py-4 text-sm font-semibold text-cyan-100 disabled:opacity-50"
+              className="rounded-2xl border border-border-accent bg-brand-cyan/10 px-5 py-4 text-sm font-semibold text-cyan-100 disabled:opacity-50"
             >
               Submit Guess
             </button>
           </div>
 
           {message ? (
-            <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200">
+            <div className="mt-4 rounded-2xl border border-border-subtle bg-surface-2 px-4 py-3 text-sm text-slate-200">
               {message}
             </div>
           ) : null}
@@ -395,7 +395,7 @@ export function DrawGuessGameClient() {
                 </span>
               ))
             ) : (
-              <span className="rounded-full border border-white/10 px-3 py-2 text-xs text-slate-400">
+              <span className="rounded-full border border-border-subtle px-3 py-2 text-xs text-text-muted">
                 Hints unlock at 20s, 40s, and 55s
               </span>
             )}
@@ -412,9 +412,9 @@ export function DrawGuessGameClient() {
         ].map((item) => (
           <div
             key={item.label}
-            className="rounded-[24px] border border-white/10 bg-white/6 p-5"
+            className="rounded-card border border-border-subtle bg-surface-2 p-5"
           >
-            <p className="text-sm text-slate-400">{item.label}</p>
+            <p className="text-sm text-text-muted">{item.label}</p>
             <p className="mt-3 text-3xl font-semibold text-white">{item.value}</p>
           </div>
         ))}
@@ -422,32 +422,32 @@ export function DrawGuessGameClient() {
 
       {status === "won" || status === "lost" ? (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-slate-950/70 p-4 backdrop-blur-md">
-          <div className="w-full max-w-lg rounded-[32px] border border-white/10 bg-[#071120] p-7 shadow-[0_24px_120px_rgba(2,6,23,0.5)]">
-            <p className="text-xs font-semibold tracking-[0.28em] text-cyan-200 uppercase">
+          <div className="w-full max-w-lg rounded-[32px] border border-border-subtle bg-surface-1 p-7 shadow-[0_24px_120px_rgba(2,6,23,0.5)]">
+            <p className="text-xs font-semibold tracking-[0.28em] text-brand-cyan-strong uppercase">
               {status === "won" ? "Round Complete" : "Round Over"}
             </p>
             <h3 className="mt-4 text-3xl font-semibold text-white">
               {status === "won" ? "Nice guess!" : "Better luck next round"}
             </h3>
-            <p className="mt-3 text-base leading-7 text-slate-300">
+            <p className="mt-3 text-base leading-7 text-text-secondary">
               {message}
             </p>
 
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-sm text-slate-400">Answer</p>
+              <div className="rounded-2xl border border-border-subtle bg-surface-2 p-4">
+                <p className="text-sm text-text-muted">Answer</p>
                 <p className="mt-2 text-lg font-semibold text-white">
                   {round?.answer ?? "-"}
                 </p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-sm text-slate-400">Score</p>
+              <div className="rounded-2xl border border-border-subtle bg-surface-2 p-4">
+                <p className="text-sm text-text-muted">Score</p>
                 <p className="mt-2 text-lg font-semibold text-white">
                   {score ?? 0}
                 </p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <p className="text-sm text-slate-400">Time</p>
+              <div className="rounded-2xl border border-border-subtle bg-surface-2 p-4">
+                <p className="text-sm text-text-muted">Time</p>
                 <p className="mt-2 text-lg font-semibold text-white">
                   {elapsedSeconds}s
                 </p>
@@ -469,7 +469,7 @@ export function DrawGuessGameClient() {
                   setMessage("");
                   setScore(null);
                 }}
-                className="rounded-2xl border border-white/10 px-5 py-3 text-sm font-medium text-slate-300 transition hover:border-cyan-300/30 hover:text-white"
+                className="rounded-2xl border border-border-subtle px-5 py-3 text-sm font-medium text-text-secondary transition hover:border-border-accent hover:text-white"
               >
                 Close
               </button>

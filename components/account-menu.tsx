@@ -14,6 +14,7 @@ type AccountMenuProps = {
 };
 
 const quickLinks = [
+  { href: "/saved", label: "Saved tools" },
   { href: "/privacy", label: "Privacy" },
   { href: "/terms", label: "Terms" },
   { href: "/contact", label: "Support" },
@@ -76,7 +77,7 @@ export function AccountMenu({ name, email, image, onClose }: AccountMenuProps) {
         ref={buttonRef}
         type="button"
         onClick={handleToggle}
-        className="flex cursor-pointer items-center gap-3 rounded-full border border-white/10 bg-white/6 px-3 py-2 transition hover:border-cyan-300/40 hover:bg-cyan-300/12 hover:text-white w-full"
+        className="flex cursor-pointer items-center gap-3 rounded-full border border-border-subtle bg-surface-2 px-3 py-2 transition hover:border-border-accent hover:bg-brand-cyan/10 hover:text-white w-full"
       >
         {image ? (
           <Image
@@ -87,7 +88,7 @@ export function AccountMenu({ name, email, image, onClose }: AccountMenuProps) {
             className="h-8 w-8 rounded-full object-cover"
           />
         ) : (
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-300/12 text-xs font-semibold text-cyan-200">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-cyan/10 text-xs font-semibold text-brand-cyan-strong">
             {(displayName || "U").slice(0, 1)}
           </div>
         )}
@@ -99,9 +100,9 @@ export function AccountMenu({ name, email, image, onClose }: AccountMenuProps) {
       {open ? (
         <div
           ref={contentRef}
-          className="absolute right-0 top-[calc(100%+12px)] z-50 w-72 rounded-[26px] border border-white/10 bg-[#071120]/96 p-4 shadow-[0_24px_80px_rgba(2,6,23,0.45)] backdrop-blur-xl"
+          className="absolute right-0 top-[calc(100%+12px)] z-50 w-72 rounded-card border border-border-subtle bg-surface-1/96 p-4 shadow-[0_24px_80px_rgba(2,6,23,0.45)] backdrop-blur-xl"
         >
-          <div className="rounded-[22px] border border-white/10 bg-white/6 p-4">
+          <div className="rounded-[22px] border border-border-subtle bg-surface-2 p-4">
             <div className="flex items-center gap-3">
               {image ? (
                 <Image
@@ -112,14 +113,14 @@ export function AccountMenu({ name, email, image, onClose }: AccountMenuProps) {
                   className="h-11 w-11 rounded-full object-cover"
                 />
               ) : (
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-cyan-300/12 text-sm font-semibold text-cyan-200">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-cyan/10 text-sm font-semibold text-brand-cyan-strong">
                   {(displayName || "U").slice(0, 1)}
                 </div>
               )}
               <div className="min-w-0">
                 <p className="truncate text-sm font-semibold text-white">{displayName}</p>
                 {email ? (
-                  <p className="truncate text-xs text-slate-400">{email}</p>
+                  <p className="truncate text-xs text-text-muted">{email}</p>
                 ) : null}
               </div>
             </div>
@@ -130,7 +131,7 @@ export function AccountMenu({ name, email, image, onClose }: AccountMenuProps) {
               <Link
                 key={link.href}
                 href={link.href}
-                className="block cursor-pointer rounded-2xl border border-white/8 bg-white/5 px-4 py-3 text-sm text-slate-300 transition hover:border-cyan-300/25 hover:bg-cyan-300/10 hover:text-white"
+                className="block cursor-pointer rounded-2xl border border-border-subtle bg-surface-2 px-4 py-3 text-sm text-text-secondary transition hover:border-border-accent hover:bg-brand-cyan/10 hover:text-white"
                 onClick={handleClose}
               >
                 {link.label}
@@ -140,7 +141,7 @@ export function AccountMenu({ name, email, image, onClose }: AccountMenuProps) {
 
           <div className="mt-4">
             <GoogleSignOutButton
-              className="w-full rounded-2xl border border-white/10 px-4 py-3 text-sm font-medium text-slate-300 transition hover:border-cyan-300/30 hover:text-white"
+              className="w-full rounded-2xl border border-border-subtle px-4 py-3 text-sm font-medium text-text-secondary transition hover:border-border-accent hover:text-white"
             />
           </div>
         </div>

@@ -25,7 +25,7 @@ export function ToolMarquee({ tools, direction = "left" }: Props) {
           <Link
             key={`${tool.slug}-${i}`}
             href={`/tool/${tool.slug}`}
-            className="flex shrink-0 items-center gap-2 rounded-full border border-white/10 bg-white/6 px-4 py-2.5 text-sm text-slate-200 transition hover:border-cyan-300/30 hover:bg-white/10 hover:text-white"
+            className="flex shrink-0 items-center gap-2 rounded-full border border-border-subtle bg-surface-2 px-4 py-2.5 text-sm text-slate-200 transition hover:border-border-accent hover:bg-white/10 hover:text-white"
           >
             <ToolMarqueeIcon tool={tool} />
             <span>{tool.name}</span>

@@ -1,135 +1,90 @@
 import Link from "next/link";
-import { BlogPost } from "@/lib/blog-data";
 
-interface BlogCardProps {
-  post: BlogPost;
+import { Badge } from "@/components/ui/badge";
+import { cardClass } from "@/components/ui/card";
+import { MediaImage } from "@/components/ui/media-image";
+import type { BlogCardData } from "@/lib/blog-api";
+
+// Deterministic gradient per category so cover-less posts still look intentional.
+const categoryGradients = [
+  "from-brand-electric/25 via-brand-violet/15 to-transparent",
+  "from-brand-violet/25 via-fuchsia-500/15 to-transparent",
+  "from-brand-cyan/25 via-brand-electric/15 to-transparent",
+  "from-emerald-400/25 via-teal-500/15 to-transparent",
+  "from-amber-400/25 via-orange-500/15 to-transparent",
+  "from-rose-400/25 via-brand-violet/15 to-transparent",
+];
+
+function gradientFor(category: string) {
+  let hash = 0;
+  for (let i = 0; i < category.length; i += 1) hash = (hash * 31 + category.charCodeAt(i)) >>> 0;
+  return categoryGradients[hash % categoryGradients.length];
+}
+
+type BlogCardProps = {
+  post: BlogCardData;
   featured?: boolean;
-}
-
-function getArticlePreview(post: BlogPost) {
-  const plainText = post.content
-    .replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&rsquo;|&lsquo;|&#39;/g, "'")
-    .replace(/&ldquo;|&rdquo;/g, '"')
-    .replace(/\s+/g, " ")
-    .trim();
-
-  if (!plainText) return post.description;
-
-  return `${post.description} ${plainText}`.slice(0, 520);
-}
-
-const getThemeRgb = (color: string) => {
-  const rgbMap: Record<string, string> = {
-    purple: "147, 51, 234",
-    blue: "59, 130, 246",
-    green: "34, 197, 94",
-    indigo: "79, 70, 229",
-    amber: "217, 119, 6",
-    rose: "190, 24, 93",
-    teal: "13, 148, 136",
-    orange: "234, 88, 12",
-    fuchsia: "217, 70, 239",
-  };
-  return rgbMap[color] || "34, 211, 238";
 };
 
 export function BlogCard({ post, featured = false }: BlogCardProps) {
-  const preview = featured ? getArticlePreview(post) : post.description;
-  const themeRgb = getThemeRgb(post.theme?.gradientFrom || "blue");
+  const gradient = gradientFor(post.category);
+  const coverFallback = (
+    <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${gradient}`}>
+      <span className="text-eyebrow px-6 text-center text-brand-cyan-strong opacity-80">
+        {post.category}
+      </span>
+    </div>
+  );
 
   return (
-    <article className={`group h-full ${featured ? "lg:col-span-2" : ""}`}>
-      <Link
-        href={`/blog/${post.slug}`}
-        className={`grid h-full cursor-pointer overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.12)] transition hover:-translate-y-1 hover:shadow-[0_26px_70px_rgba(14,116,144,0.14)] ${
-          featured ? "lg:grid-cols-[18rem_minmax(0,1fr)]" : ""
+    <Link
+      href={`/blog/${post.slug}`}
+      className={`group flex h-full flex-col overflow-hidden ${cardClass({ hover: true, padding: "none" })} ${
+        featured ? "sm:flex-row" : ""
+      }`}
+    >
+      {/* Cover */}
+      <div
+        className={`relative overflow-hidden ${
+          featured ? "aspect-[16/10] sm:aspect-auto sm:w-1/2" : "aspect-[16/9]"
         }`}
-        style={{
-          "--hover-border-color": `rgb(${themeRgb})`,
-        } as React.CSSProperties}
       >
-        <div
-          className={`relative overflow-hidden ${
-            featured ? "min-h-36 p-5 lg:min-h-full lg:p-6" : "p-5"
-          }`}
-          style={{
-            background: `linear-gradient(135deg, ${post.theme?.gradientFrom || '#3b82f6'}, ${post.theme?.gradientTo || '#0e7490'})`
-          }}
-        >
-          <div className="absolute right-4 top-4">
-            <span className="rounded-full border border-white/80 bg-white px-3 py-1 text-xs font-bold text-slate-950 shadow-[0_8px_22px_rgba(15,23,42,0.22)]">
-              {post.readTime}
-            </span>
-          </div>
-          <div className="flex h-full min-h-24 flex-col justify-end pr-16">
-            <span
-              className="w-fit rounded-full border px-3 py-1 text-xs font-semibold text-white"
-              style={{
-                borderColor: `rgba(255, 255, 255, 0.6)`,
-                backgroundColor: `rgba(${themeRgb}, 0.2)`,
-              }}
-            >
-              {post.category}
-            </span>
-            <h2 className={`mt-4 font-semibold leading-tight text-white ${
-              featured ? "text-2xl" : "text-lg"
-            }`}>
-              {post.title}
-            </h2>
-          </div>
-        </div>
+        {post.cover ? (
+          <MediaImage
+            media={post.cover}
+            fill
+            sizes={featured ? "(min-width:640px) 50vw, 100vw" : "(min-width:1024px) 33vw, 100vw"}
+            imgClassName="transition duration-500 group-hover:scale-[1.03]"
+            fallback={coverFallback}
+          />
+        ) : (
+          coverFallback
+        )}
+      </div>
 
-        <div className={featured ? "flex flex-1 flex-col p-5 lg:p-6" : "flex flex-1 flex-col p-5"}>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500">
-              <time dateTime={post.publishedAt}>{post.publishedAt}</time>
-              <span aria-hidden="true">|</span>
-              <span>{post.author}</span>
-            </div>
-            {featured ? (
-              <span
-                className="rounded-full px-3 py-1 text-xs font-bold border"
-                style={{
-                  backgroundColor: `rgba(${themeRgb}, 0.1)`,
-                  borderColor: `rgba(${themeRgb}, 0.3)`,
-                  color: `rgb(${themeRgb})`,
-                }}
-              >
-                Featured
-              </span>
-            ) : null}
-          </div>
-          {featured ? (
-            <h3 className="mt-3 text-xl font-bold leading-tight text-slate-950 group-hover:text-cyan-800">
-              Why this matters
-            </h3>
-          ) : null}
-          <p
-            className={`mt-3 leading-7 text-slate-600 ${
-              featured ? "text-base" : "text-sm"
-            } ${featured ? "line-clamp-10" : "line-clamp-4"}`}
-          >
-            {preview}
-          </p>
-          <div className="mt-auto flex items-center justify-between gap-4 pt-5">
-            <span
-              className="rounded-full px-3 py-1 text-xs font-semibold"
-              style={{
-                backgroundColor: `rgba(${themeRgb}, 0.1)`,
-                color: `rgb(${themeRgb})`,
-              }}
-            >
-              {post.category}
-            </span>
-            <span className="text-sm font-semibold transition" style={{ color: `rgb(${themeRgb})` }}>
-              Read article
-            </span>
-          </div>
+      {/* Body */}
+      <div className={`flex flex-1 flex-col p-5 ${featured ? "sm:p-7" : ""}`}>
+        <div className="mb-3 flex items-center gap-2">
+          <Badge variant="brand">{post.category}</Badge>
+          <span className="text-caption text-text-muted">{post.readTime} read</span>
         </div>
-      </Link>
-    </article>
+        <h3
+          className={`font-semibold text-text-primary transition group-hover:text-brand-cyan-strong ${
+            featured ? "text-heading-1" : "text-heading-2 line-clamp-2"
+          }`}
+        >
+          {post.title}
+        </h3>
+        <p className={`text-body mt-2 text-text-secondary ${featured ? "" : "line-clamp-2"}`}>
+          {post.description}
+        </p>
+        <div className="mt-auto flex items-center justify-between pt-4">
+          <span className="text-caption text-text-muted">{post.author}</span>
+          <span className="text-sm font-semibold text-brand-cyan-strong group-hover:underline">
+            Read →
+          </span>
+        </div>
+      </div>
+    </Link>
   );
 }

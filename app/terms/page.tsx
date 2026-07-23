@@ -19,14 +19,14 @@ export default function TermsPage() {
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Platform access</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           You may use the platform only in accordance with applicable laws, these
           terms, and any enterprise agreement executed with AiverseWorld.
         </p>
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">User content</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Reviews, submissions, comments, and uploads must be accurate, lawful, and
           non-infringing. We may moderate or remove content that violates policy or
           creates legal or operational risk.
@@ -34,14 +34,14 @@ export default function TermsPage() {
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Service availability</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           We aim for reliable service but do not guarantee uninterrupted access.
           Features may change as the platform evolves.
         </p>
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Limitation of liability</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           To the extent permitted by law, AiverseWorld is not liable for indirect,
           incidental, or consequential damages arising from platform use.
         </p>

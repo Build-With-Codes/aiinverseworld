@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { buildCategoryMeta, defaultOpenGraphImage, formatDisplayDate, getLatestVerifiedDate, buildUrl } from "@/lib/seo";
 import { StructuredDataScript } from "@/components/structured-data-script";
+import { getCategoryContent } from "@/lib/category-content";
 import { getCategoryWithTools } from "@/lib/tool-catalog";
 import { CategoryPageClient } from "./client";
 
@@ -47,25 +48,37 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     };
   const tools = result?.tools ?? [];
   const dateModified = getLatestVerifiedDate(tools);
+  const content = getCategoryContent(category);
 
   return (
     <>
       <StructuredDataScript
         id="category-schema"
-        data={{
-          "@context": "https://schema.org",
-          "@type": "CollectionPage",
-          name: `${category.name} tools`,
-          url: buildUrl(`/category/${slug}`),
-          description: category.description,
-          dateModified,
-          hasPart: tools.slice(0, 10).map((tool) => ({
-            "@type": "SoftwareApplication",
-            name: tool.name,
-            url: buildUrl(`/tool/${tool.slug}`),
-            dateModified: tool.lastVerified,
-          })),
-        }}
+        data={[
+          {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: `${category.name} tools`,
+            url: buildUrl(`/category/${slug}`),
+            description: category.description,
+            dateModified,
+            hasPart: tools.slice(0, 10).map((tool) => ({
+              "@type": "SoftwareApplication",
+              name: tool.name,
+              url: buildUrl(`/tool/${tool.slug}`),
+              dateModified: tool.lastVerified,
+            })),
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: content.faqs.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: { "@type": "Answer", text: faq.answer },
+            })),
+          },
+        ]}
       />
       <CategoryPageClient
         category={category}
@@ -79,6 +92,7 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
           }
         }
         lastUpdated={{ date: dateModified, label: formatDisplayDate(dateModified) }}
+        content={content}
       />
     </>
   );

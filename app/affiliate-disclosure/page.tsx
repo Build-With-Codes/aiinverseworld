@@ -20,7 +20,7 @@ export default function AffiliateDisclosurePage() {
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">How affiliate links work</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           AiverseWorld may participate in affiliate programs with software vendors or
           marketplaces. When eligible, we may receive compensation from tracked
           referrals or completed purchases.
@@ -28,7 +28,7 @@ export default function AffiliateDisclosurePage() {
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Disclosure approach</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Affiliate relationships should be disclosed clearly near relevant content or
           link destinations, especially when recommendations could influence user
           decision-making.
@@ -36,7 +36,7 @@ export default function AffiliateDisclosurePage() {
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Editorial integrity</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Compensation does not remove the need for accurate descriptions, responsible
           disclosures, and a fair presentation of alternatives.
         </p>

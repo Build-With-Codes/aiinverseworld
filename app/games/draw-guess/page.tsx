@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 export default function DrawGuessPage() {
   return (
     <div className="space-y-10 pb-10 pt-10">
-      <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+      <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
         <SectionHeading
           eyebrow="Game"
           title="AI Draw & Guess"
@@ -46,7 +46,7 @@ export default function DrawGuessPage() {
           ].map((item) => (
             <div
               key={item}
-              className="rounded-2xl border border-white/10 bg-[#081222] px-4 py-3 text-sm text-slate-200"
+              className="rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-slate-200"
             >
               {item}
             </div>

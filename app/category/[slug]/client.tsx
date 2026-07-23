@@ -4,6 +4,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ToolGridSkeleton } from "@/components/loading-skeletons";
 import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
+import { ComparisonTable } from "@/components/comparison-table";
+import { Badge } from "@/components/ui/badge";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { cardClass } from "@/components/ui/card";
+import { EditorialBlock } from "@/components/ui/editorial-block";
+import { FAQAccordion } from "@/components/ui/faq-accordion";
+import { FadeInSection } from "@/components/ui/motion";
+import type { CategoryContent } from "@/lib/category-content";
 import type { AITool, Category } from "@/lib/catalog-types";
 import type { Pagination } from "@/lib/tool-catalog";
 
@@ -15,11 +23,12 @@ type Props = {
     date: string;
     label: string;
   };
+  content: CategoryContent;
 };
 
 const allPricing = ["Free", "Freemium", "Subscription", "Usage-based", "Enterprise", "Custom"];
 
-export function CategoryPageClient({ category, tools, pagination, lastUpdated }: Props) {
+export function CategoryPageClient({ category, tools, pagination, lastUpdated, content }: Props) {
   const firstRenderRef = useRef(true);
   const [currentTools, setCurrentTools] = useState(tools);
   const [currentPagination, setCurrentPagination] = useState(pagination);
@@ -161,19 +170,35 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated }:
     return `${currentPagination.total} tool${currentPagination.total !== 1 ? "s" : ""}`;
   }, [currentPagination.total, isLoading]);
 
+  const comparisonTools = tools.slice(0, 2);
+
   return (
-    <div className="space-y-10 pb-10 pt-10">
-      <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
-        <SectionHeading
-          eyebrow="Category"
-          title={`${category.name} tools`}
-          description={category.description}
+    <div className="space-y-12 pb-10 pt-6">
+      <div className="pt-4">
+        <Breadcrumb
+          items={[
+            { label: "Home", href: "/" },
+            { label: "Categories", href: "/category" },
+            { label: category.name },
+          ]}
         />
+      </div>
+      {/* Unique introduction + category explanation */}
+      <FadeInSection className={cardClass({ padding: "lg", radius: "card-lg" })}>
+        <Badge variant="brand">Category</Badge>
+        <h1 className="text-display-2 mt-4 text-text-primary">{category.name} tools</h1>
         {lastUpdated ? (
-          <p className="mb-5 text-sm font-medium text-slate-400">
+          <p className="text-caption mt-3 text-text-muted">
             Last updated <time dateTime={lastUpdated.date}>{lastUpdated.label}</time>
           </p>
         ) : null}
+        <p className="text-body-lg mt-5 max-w-3xl text-text-secondary">{content.intro}</p>
+        <p className="text-body mt-4 max-w-3xl text-text-secondary">{content.explanation}</p>
+      </FadeInSection>
+
+      {/* Best tools — filterable grid */}
+      <div className={cardClass({ padding: "lg", radius: "card-lg" })}>
+        <SectionHeading eyebrow="Best Tools" title={`Filter ${category.name} tools`} description={category.description} />
 
         <div className="mb-4">
           <input
@@ -182,7 +207,7 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated }:
             value={query}
             onChange={(event) => updateQuery(event.target.value)}
             suppressHydrationWarning
-            className="w-full rounded-2xl border border-white/10 bg-[#071120] px-5 py-4 text-sm text-slate-300 outline-none placeholder:text-slate-500 focus:border-cyan-300/30"
+            className="w-full rounded-sm border border-border-subtle bg-surface-1 px-5 py-4 text-sm text-text-secondary outline-none placeholder:text-text-muted focus:border-border-accent"
           />
         </div>
 
@@ -193,18 +218,18 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated }:
                 setPricingDropdown((value) => !value);
                 setPlatformDropdown(false);
               }}
-              className={`rounded-2xl border px-4 py-2.5 text-sm transition ${pricing ? "border-cyan-300/40 bg-cyan-300/10 text-cyan-200" : "border-white/10 bg-[#081222] text-slate-200 hover:border-cyan-300/30"}`}
+              className={`rounded-sm border px-4 py-2.5 text-sm transition ${pricing ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong" : "border-border-subtle bg-surface-1 text-text-secondary hover:border-border-accent"}`}
             >
               {pricing || "Pricing"} v
             </button>
             {pricingDropdown ? (
-              <div className="absolute left-0 top-[calc(100%+8px)] z-50 min-w-[160px] rounded-[20px] border border-white/10 bg-[#071120] p-2 shadow-xl">
+              <div className={`absolute left-0 top-[calc(100%+8px)] z-50 min-w-[160px] p-2 shadow-card-hover ${cardClass({ padding: "none", radius: "card" })}`}>
                 <button
                   onClick={() => {
                     updatePricing("");
                     setPricingDropdown(false);
                   }}
-                  className="block w-full rounded-xl px-3 py-2 text-left text-sm text-slate-400 hover:bg-white/5"
+                  className="block w-full rounded-sm px-3 py-2 text-left text-sm text-text-muted hover:bg-surface-3"
                 >
                   All
                 </button>
@@ -215,7 +240,7 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated }:
                       updatePricing(item);
                       setPricingDropdown(false);
                     }}
-                    className={`block w-full rounded-xl px-3 py-2 text-left text-sm transition hover:bg-white/5 ${pricing === item ? "text-cyan-300" : "text-slate-200"}`}
+                    className={`block w-full rounded-sm px-3 py-2 text-left text-sm transition hover:bg-surface-3 ${pricing === item ? "text-brand-cyan-strong" : "text-text-secondary"}`}
                   >
                     {item}
                   </button>
@@ -231,18 +256,18 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated }:
                   setPlatformDropdown((value) => !value);
                   setPricingDropdown(false);
                 }}
-                className={`rounded-2xl border px-4 py-2.5 text-sm transition ${platform ? "border-cyan-300/40 bg-cyan-300/10 text-cyan-200" : "border-white/10 bg-[#081222] text-slate-200 hover:border-cyan-300/30"}`}
+                className={`rounded-sm border px-4 py-2.5 text-sm transition ${platform ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong" : "border-border-subtle bg-surface-1 text-text-secondary hover:border-border-accent"}`}
               >
                 {platform || "Platform"} v
               </button>
               {platformDropdown ? (
-                <div className="absolute left-0 top-[calc(100%+8px)] z-50 min-w-[160px] rounded-[20px] border border-white/10 bg-[#071120] p-2 shadow-xl">
+                <div className={`absolute left-0 top-[calc(100%+8px)] z-50 min-w-[160px] p-2 shadow-card-hover ${cardClass({ padding: "none", radius: "card" })}`}>
                   <button
                     onClick={() => {
                       updatePlatform("");
                       setPlatformDropdown(false);
                     }}
-                    className="block w-full rounded-xl px-3 py-2 text-left text-sm text-slate-400 hover:bg-white/5"
+                    className="block w-full rounded-sm px-3 py-2 text-left text-sm text-text-muted hover:bg-surface-3"
                   >
                     All
                   </button>
@@ -253,7 +278,7 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated }:
                         updatePlatform(item);
                         setPlatformDropdown(false);
                       }}
-                      className={`block w-full rounded-xl px-3 py-2 text-left text-sm transition hover:bg-white/5 ${platform === item ? "text-cyan-300" : "text-slate-200"}`}
+                      className={`block w-full rounded-sm px-3 py-2 text-left text-sm transition hover:bg-surface-3 ${platform === item ? "text-brand-cyan-strong" : "text-text-secondary"}`}
                     >
                       {item}
                     </button>
@@ -271,29 +296,26 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated }:
             <button
               key={label}
               onClick={toggle}
-              className={`rounded-2xl border px-4 py-2.5 text-sm transition ${active ? "border-emerald-300/40 bg-emerald-300/10 text-emerald-300" : "border-white/10 bg-[#081222] text-slate-200 hover:border-cyan-300/30"}`}
+              className={`rounded-sm border px-4 py-2.5 text-sm transition ${active ? "border-emerald-300/40 bg-emerald-300/10 text-emerald-300" : "border-border-subtle bg-surface-1 text-text-secondary hover:border-border-accent"}`}
             >
               {label}
             </button>
           ))}
 
           {hasFilters ? (
-            <button
-              onClick={clearAll}
-              className="rounded-2xl border border-white/10 px-4 py-2.5 text-sm text-slate-400 transition hover:text-white"
-            >
+            <button onClick={clearAll} className="rounded-sm border border-border-subtle px-4 py-2.5 text-sm text-text-muted transition hover:text-text-primary">
               Clear all x
             </button>
           ) : null}
 
-          <span className="ml-auto text-sm text-slate-500">{resultCountLabel}</span>
+          <span className="ml-auto text-sm text-text-muted">{resultCountLabel}</span>
         </div>
-      </section>
+      </div>
 
       {isLoading ? (
         <ToolGridSkeleton count={9} />
       ) : error ? (
-        <div className="rounded-[28px] border border-rose-300/20 bg-rose-300/8 p-10 text-center text-sm text-rose-100">
+        <div className="rounded-card-lg border border-rose-300/20 bg-rose-300/8 p-10 text-center text-sm text-rose-100">
           {error}
         </div>
       ) : currentTools.length > 0 ? (
@@ -303,7 +325,7 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated }:
               <ToolCard key={tool.id} tool={tool} />
             ))}
           </section>
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[28px] border border-white/10 bg-white/6 p-5 text-sm text-slate-300">
+          <div className={`flex flex-wrap items-center justify-between gap-3 text-sm text-text-secondary ${cardClass({ padding: "sm" })}`}>
             <span>
               Page {currentPagination.page} of {currentPagination.totalPages} | {currentPagination.total} tools
             </span>
@@ -311,7 +333,7 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated }:
               <button
                 aria-disabled={currentPagination.page <= 1}
                 disabled={currentPagination.page <= 1}
-                className={`rounded-2xl border border-white/10 px-4 py-2 ${currentPagination.page <= 1 ? "pointer-events-none opacity-40" : "hover:border-cyan-300/30 hover:text-white"}`}
+                className={`rounded-sm border border-border-subtle px-4 py-2 ${currentPagination.page <= 1 ? "pointer-events-none opacity-40" : "hover:border-border-accent hover:text-text-primary"}`}
                 onClick={() => setPage((value) => Math.max(1, value - 1))}
               >
                 Previous
@@ -319,7 +341,7 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated }:
               <button
                 aria-disabled={currentPagination.page >= currentPagination.totalPages}
                 disabled={currentPagination.page >= currentPagination.totalPages}
-                className={`rounded-2xl border border-white/10 px-4 py-2 ${currentPagination.page >= currentPagination.totalPages ? "pointer-events-none opacity-40" : "hover:border-cyan-300/30 hover:text-white"}`}
+                className={`rounded-sm border border-border-subtle px-4 py-2 ${currentPagination.page >= currentPagination.totalPages ? "pointer-events-none opacity-40" : "hover:border-border-accent hover:text-text-primary"}`}
                 onClick={() => setPage((value) => value + 1)}
               >
                 Next
@@ -328,10 +350,40 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated }:
           </div>
         </>
       ) : (
-        <div className="rounded-[28px] border border-white/10 bg-white/6 p-10 text-center text-sm text-slate-400">
+        <div className={`text-center text-sm text-text-muted ${cardClass({ padding: "lg" })}`}>
           No tools match your filters. Try adjusting or clearing them.
         </div>
       )}
+
+      {/* Comparison */}
+      {comparisonTools.length === 2 ? (
+        <div>
+          <SectionHeading
+            eyebrow="Comparison"
+            title={`${comparisonTools[0].name} vs ${comparisonTools[1].name}`}
+            description={`Two of the top ${category.name} tools, compared side by side.`}
+          />
+          <ComparisonTable tools={comparisonTools} />
+        </div>
+      ) : null}
+
+      {/* Buying guide */}
+      <EditorialBlock eyebrow="Buying Guide" title={`How to choose a ${category.name.toLowerCase()} tool`}>
+        <ul className="space-y-3">
+          {content.buyingGuide.map((tip) => (
+            <li key={tip} className="flex items-start gap-3">
+              <span className="mt-1 text-brand-cyan-strong" aria-hidden>→</span>
+              <span>{tip}</span>
+            </li>
+          ))}
+        </ul>
+      </EditorialBlock>
+
+      {/* FAQs */}
+      <div>
+        <SectionHeading eyebrow="FAQ" title={`Common questions about ${category.name.toLowerCase()} tools`} />
+        <FAQAccordion items={content.faqs} />
+      </div>
     </div>
   );
 }

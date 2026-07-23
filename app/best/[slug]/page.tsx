@@ -54,7 +54,7 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
   if (!result) {
     return (
       <div className="space-y-8 pb-10 pt-10 sm:pt-14">
-        <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+        <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
           <SectionHeading
             eyebrow="Best AI Tools"
             title="No data available"
@@ -70,7 +70,7 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
   const dateModifiedLabel = formatDisplayDate(dateModified);
 
   return (
-    <div className="space-y-12 pb-10 pt-10 sm:pt-14">
+    <div className="space-y-12 pb-10 pt-10">
       <StructuredDataScript
         id="best-list-schema"
         data={[
@@ -114,8 +114,8 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
           ]}
       />
 
-      <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
-        <div className="mb-6 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-cyan-100 uppercase">
+      <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
+        <div className="mb-6 inline-flex rounded-full border border-border-accent bg-brand-cyan/10 px-4 py-2 text-xs font-semibold tracking-[0.28em] text-cyan-100 uppercase">
           {list.eyebrow}
         </div>
         <SectionHeading
@@ -123,10 +123,10 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
           title={list.title}
           description={list.description}
         />
-        <div className="mt-4 flex flex-wrap gap-3 text-sm text-slate-400">
-          <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">{tools.length} tools listed</span>
-          <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">{pagination.total} total matches</span>
-          <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1">Sorted by popularity</span>
+        <div className="mt-4 flex flex-wrap gap-3 text-sm text-text-muted">
+          <span className="rounded-full border border-border-subtle bg-surface-2 px-3 py-1">{tools.length} tools listed</span>
+          <span className="rounded-full border border-border-subtle bg-surface-2 px-3 py-1">{pagination.total} total matches</span>
+          <span className="rounded-full border border-border-subtle bg-surface-2 px-3 py-1">Sorted by popularity</span>
           <span className="rounded-full border border-emerald-300/20 bg-emerald-300/10 px-3 py-1 text-emerald-100">
             Last updated <time dateTime={dateModified}>{dateModifiedLabel}</time>
           </span>
@@ -138,7 +138,7 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
           {tools.map((tool, i) => (
             <div key={tool.slug} className="relative">
               {i < 3 && (
-                <div className="absolute -top-3 -left-3 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-cyan-300/30 bg-cyan-300/15 text-xs font-bold text-cyan-200">
+                <div className="absolute -top-3 -left-3 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-border-accent bg-brand-cyan/10 text-xs font-bold text-brand-cyan-strong">
                   #{i + 1}
                 </div>
               )}
@@ -147,26 +147,26 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
           ))}
         </section>
       ) : (
-        <div className="rounded-[28px] border border-white/10 bg-white/6 p-10 text-center text-sm text-slate-400">
+        <div className="rounded-card border border-border-subtle bg-surface-2 p-10 text-center text-sm text-text-muted">
           No tools found for this list.
         </div>
       )}
 
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-[28px] border border-white/10 bg-white/6 p-5 text-sm text-slate-300">
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-border-subtle bg-surface-2 p-5 text-sm text-text-secondary">
         <span>
           Page {pagination.page} of {pagination.totalPages} | {pagination.total} tools
         </span>
         <div className="flex gap-2">
           <Link
             aria-disabled={pagination.page <= 1}
-            className={`rounded-2xl border border-white/10 px-4 py-2 ${pagination.page <= 1 ? "pointer-events-none opacity-40" : "hover:border-cyan-300/30 hover:text-white"}`}
+            className={`rounded-2xl border border-border-subtle px-4 py-2 ${pagination.page <= 1 ? "pointer-events-none opacity-40" : "hover:border-border-accent hover:text-white"}`}
             href={`/best/${slug}?page=${Math.max(1, pagination.page - 1)}`}
           >
             Previous
           </Link>
           <Link
             aria-disabled={pagination.page >= pagination.totalPages}
-            className={`rounded-2xl border border-white/10 px-4 py-2 ${pagination.page >= pagination.totalPages ? "pointer-events-none opacity-40" : "hover:border-cyan-300/30 hover:text-white"}`}
+            className={`rounded-2xl border border-border-subtle px-4 py-2 ${pagination.page >= pagination.totalPages ? "pointer-events-none opacity-40" : "hover:border-border-accent hover:text-white"}`}
             href={`/best/${slug}?page=${pagination.page + 1}`}
           >
             Next
@@ -174,14 +174,14 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
         </div>
       </div>
 
-      <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
-        <p className="mb-4 text-sm font-semibold text-slate-300">Explore more lists</p>
+      <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
+        <p className="mb-4 text-sm font-semibold text-text-secondary">Explore more lists</p>
         <div className="flex flex-wrap gap-3">
           {allLists.lists.filter((l) => l.slug !== slug).map((l) => (
             <Link
               key={l.slug}
               href={`/best/${l.slug}`}
-              className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-slate-300 transition hover:border-cyan-300/30 hover:text-white"
+              className="rounded-full border border-border-subtle bg-surface-2 px-4 py-2 text-sm text-text-secondary transition hover:border-border-accent hover:text-white"
             >
               {l.title}
             </Link>

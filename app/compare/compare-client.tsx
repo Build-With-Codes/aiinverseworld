@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ComparisonTable } from "@/components/comparison-table";
 import { SectionHeading } from "@/components/section-heading";
+import { Breadcrumb } from "@/components/ui/breadcrumb";
+import { EditorialBlock } from "@/components/ui/editorial-block";
 import type { AITool, Comparison } from "@/lib/catalog-types";
 
 type ToolOption = {
@@ -20,9 +22,17 @@ type CompareClientProps = {
     left: AITool;
     right: AITool;
   } | null;
+  multiTools?: AITool[];
+  recommendation?: string;
 };
 
-export function CompareClient({ comparisons, toolOptions, selectedPair }: CompareClientProps) {
+export function CompareClient({
+  comparisons,
+  toolOptions,
+  selectedPair,
+  multiTools,
+  recommendation,
+}: CompareClientProps) {
   const router = useRouter();
   const [left, setLeft] = useState(selectedPair?.left.id ?? "");
   const [right, setRight] = useState(selectedPair?.right.id ?? "");
@@ -41,8 +51,27 @@ export function CompareClient({ comparisons, toolOptions, selectedPair }: Compar
   }
 
   return (
-    <div className="space-y-10 pb-10 pt-10">
-      <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+    <div className="space-y-10 pb-10 pt-6">
+      <div className="pt-4">
+        <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Compare" }]} />
+      </div>
+      {multiTools && multiTools.length >= 2 ? (
+        <section className="space-y-6">
+          <SectionHeading
+            eyebrow="Your comparison"
+            title={multiTools.map((t) => t.name).join(" vs ")}
+            description="A side-by-side breakdown of the tools in your compare tray."
+          />
+          {recommendation ? (
+            <EditorialBlock eyebrow="Our pick" title="Which should you choose?" tone="verdict">
+              <p>{recommendation}</p>
+            </EditorialBlock>
+          ) : null}
+          <ComparisonTable tools={multiTools} highlightDifferences />
+        </section>
+      ) : null}
+
+      <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
         <SectionHeading
           eyebrow="Compare"
           title="Compare any two AI tools"
@@ -50,12 +79,12 @@ export function CompareClient({ comparisons, toolOptions, selectedPair }: Compar
         />
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
           <div className="flex-1 space-y-2">
-            <label className="text-xs font-semibold tracking-widest text-slate-400 uppercase">Tool A</label>
+            <label className="text-xs font-semibold tracking-widest text-text-muted uppercase">Tool A</label>
             <select
               value={left}
               onChange={(e) => setLeft(e.target.value)}
               suppressHydrationWarning
-              className="w-full rounded-2xl border border-white/10 bg-[#071120] px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/30"
+              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-slate-200 outline-none focus:border-border-accent"
             >
               <option value="">Select a tool...</option>
               {toolOptions.map((o) => (
@@ -66,15 +95,15 @@ export function CompareClient({ comparisons, toolOptions, selectedPair }: Compar
             </select>
           </div>
 
-          <span className="shrink-0 text-center text-slate-500 font-semibold sm:pb-3">vs</span>
+          <span className="shrink-0 text-center text-text-muted font-semibold sm:pb-3">vs</span>
 
           <div className="flex-1 space-y-2">
-            <label className="text-xs font-semibold tracking-widest text-slate-400 uppercase">Tool B</label>
+            <label className="text-xs font-semibold tracking-widest text-text-muted uppercase">Tool B</label>
             <select
               value={right}
               onChange={(e) => setRight(e.target.value)}
               suppressHydrationWarning
-              className="w-full rounded-2xl border border-white/10 bg-[#071120] px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-300/30"
+              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-slate-200 outline-none focus:border-border-accent"
             >
               <option value="">Select a tool...</option>
               {toolOptions.map((o) => (
@@ -97,18 +126,18 @@ export function CompareClient({ comparisons, toolOptions, selectedPair }: Compar
 
       {selectedPair ? (
         <section className="space-y-6">
-          <div className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+          <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
             <SectionHeading
               eyebrow="Selected comparison"
               title={`${selectedPair.left.name} vs ${selectedPair.right.name}`}
               description="This comparison was retrieved by database IDs selected from the catalog."
             />
           </div>
-          <ComparisonTable left={selectedPair.left} right={selectedPair.right} />
+          <ComparisonTable tools={[selectedPair.left, selectedPair.right]} />
         </section>
       ) : null}
 
-      <section className="rounded-[34px] border border-white/10 bg-white/6 p-8">
+      <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="font-semibold text-white">
             {comparisons.length} curated comparisons
@@ -119,7 +148,7 @@ export function CompareClient({ comparisons, toolOptions, selectedPair }: Compar
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             suppressHydrationWarning
-            className="w-full rounded-2xl border border-white/10 bg-[#071120] px-4 py-2.5 text-sm text-slate-300 outline-none placeholder:text-slate-500 focus:border-cyan-300/30 sm:w-72"
+            className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-2.5 text-sm text-text-secondary outline-none placeholder:text-text-muted focus:border-border-accent sm:w-72"
           />
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -127,15 +156,15 @@ export function CompareClient({ comparisons, toolOptions, selectedPair }: Compar
             <Link
               key={c.slug}
               href={`/compare/${c.slug}`}
-              className="rounded-[22px] border border-white/10 bg-[#081222] p-5 transition hover:border-cyan-300/30 hover:bg-[#0a1628]"
+              className="rounded-[22px] border border-border-subtle bg-surface-1 p-5 transition hover:border-border-accent hover:bg-surface-1"
             >
               <p className="font-semibold text-white">{c.title}</p>
-              <p className="mt-2 text-sm leading-6 text-slate-400 line-clamp-2">{c.summary}</p>
+              <p className="mt-2 text-sm leading-6 text-text-muted line-clamp-2">{c.summary}</p>
             </Link>
           ))}
         </div>
         {filtered.length === 0 && (
-          <p className="py-10 text-center text-sm text-slate-500">No comparisons match your search.</p>
+          <p className="py-10 text-center text-sm text-text-muted">No comparisons match your search.</p>
         )}
       </section>
     </div>

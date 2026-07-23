@@ -20,7 +20,7 @@ export default function DmcaPage() {
     >
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Submitting a notice</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Copyright owners or authorized agents may submit a notice identifying the
           protected work, the allegedly infringing material, its location on the
           platform, and sufficient contact information for review.
@@ -28,14 +28,14 @@ export default function DmcaPage() {
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Counter-notices</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           If content is removed in error, affected parties may submit a legally valid
           counter-notice where permitted by law.
         </p>
       </div>
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Contact for notices</h2>
-        <p className="text-base leading-8 text-slate-300">
+        <p className="text-base leading-8 text-text-secondary">
           Send infringement notices and related legal correspondence to
           legal@aiverseworld.com.
         </p>
