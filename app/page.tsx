@@ -28,12 +28,27 @@ import { getAllBlogPosts } from "@/lib/blog-api";
 import { blogSuggestionFAQs } from "@/lib/blog-suggestions";
 import { HeroSearch } from "@/components/hero-search";
 import { ToolMarquee } from "@/components/tool-marquee";
-import {
-  aiFinderOptions,
-  discoveryBands,
-  finderQuestions,
-  homeRecommendationQuery,
-} from "@/lib/home-content";
+import { aiFinderOptions, finderQuestions, homeRecommendationQuery } from "@/lib/home-content";
+
+const workflowIconPaths: Record<(typeof aiFinderOptions)[number]["icon"], string> = {
+  growth: "M1 18l7.5-7.5 5 5L23 6M17 6h6v6",
+  builders: "M16 6l6 6-6 6M8 18l-6-6 6-6",
+  creators: "M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z",
+};
+
+function WorkflowIcon({ name }: { name: (typeof aiFinderOptions)[number]["icon"] }) {
+  return (
+    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
+      <path
+        d={workflowIconPaths[name]}
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 export const metadata: Metadata = {
   title: "Best AI Tools Directory & Reviews 2026 | AiverseWorld",
@@ -216,23 +231,6 @@ export default async function Home() {
         </FadeInSection>
       </section>
 
-      {/* Persona shortcuts */}
-      <StaggerGrid className="grid gap-5 lg:grid-cols-3">
-        {discoveryBands.map((band) => (
-          <StaggerItem key={band.title}>
-            <HoverLift>
-              <Link
-                href={`/?recommend=${encodeURIComponent(band.query)}#ai-finder`}
-                className={`block bg-gradient-to-br ${band.accent} ${cardClass({ padding: "md" })}`}
-              >
-                <p className="font-semibold text-text-primary">{band.title}</p>
-                <p className="text-body mt-3 text-text-secondary">{band.description}</p>
-              </Link>
-            </HoverLift>
-          </StaggerItem>
-        ))}
-      </StaggerGrid>
-
       <section className="space-y-3 overflow-hidden">
         <ToolMarquee tools={liveTools.slice(0, 20)} direction="left" />
         <ToolMarquee tools={liveTools.slice(20, 40)} direction="right" />
@@ -390,7 +388,7 @@ export default async function Home() {
       </FadeInSection>
 
       {/* 5. AI Workflow Explorer */}
-      <FadeInSection id="ai-finder">
+      <FadeInSection>
         <SectionHeading
           eyebrow="Workflow Explorer"
           title="Built for every operator"
@@ -402,10 +400,22 @@ export default async function Home() {
               <HoverLift>
                 <Link
                   href={`/?recommend=${encodeURIComponent(option.query)}#ai-finder`}
-                  className={cardClass({ hover: true })}
+                  className={`group block bg-gradient-to-br ${option.accent} ${cardClass({ hover: true, padding: "lg" })}`}
                 >
-                  <h3 className="font-semibold text-text-primary">{option.title}</h3>
+                  <span
+                    className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl border ${option.iconClass}`}
+                    aria-hidden
+                  >
+                    <WorkflowIcon name={option.icon} />
+                  </span>
+                  <h3 className="mt-4 font-semibold text-text-primary">{option.title}</h3>
                   <p className="text-body mt-2 text-text-secondary">{option.description}</p>
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-cyan-strong">
+                    Explore tools
+                    <span aria-hidden className="transition group-hover:translate-x-0.5">
+                      →
+                    </span>
+                  </span>
                 </Link>
               </HoverLift>
             </StaggerItem>

@@ -3,16 +3,25 @@ export const aiFinderOptions = [
     title: "Growth teams",
     description: "Find writing, SEO, image, and analytics tools in one flow.",
     query: "Recommend AI tools for growth teams doing writing SEO images and analytics",
+    icon: "growth" as const,
+    accent: "from-cyan-400/16 via-sky-500/10 to-transparent",
+    iconClass: "border-cyan-400/30 bg-cyan-400/10 text-cyan-300",
   },
   {
     title: "Builders",
     description: "Compare copilots, agents, code search, and automation stacks.",
     query: "Recommend AI tools for builders using copilots agents code search and automation",
+    icon: "builders" as const,
+    accent: "from-violet-400/16 via-indigo-500/10 to-transparent",
+    iconClass: "border-violet-400/30 bg-violet-400/10 text-violet-300",
   },
   {
     title: "Creators",
     description: "Explore tools for visuals, video, voice, and campaign production.",
     query: "Recommend AI tools for creators making visuals video voice and campaigns",
+    icon: "creators" as const,
+    accent: "from-amber-400/16 via-rose-500/10 to-transparent",
+    iconClass: "border-amber-400/30 bg-amber-400/10 text-amber-300",
   },
 ];
 
@@ -40,27 +49,6 @@ export const finderQuestions = [
   {
     label: "Are you researching or summarizing content?",
     query: "Recommend AI tools for research summarizing PDFs documents and knowledge",
-  },
-];
-
-export const discoveryBands = [
-  {
-    title: "For marketers",
-    description: "Find content, SEO, image, and campaign tools with faster shortlist paths.",
-    accent: "from-cyan-400/16 via-sky-500/10 to-transparent",
-    query: "Recommend AI tools for marketers creating content SEO images campaigns and analytics",
-  },
-  {
-    title: "For builders",
-    description: "Compare copilots, agents, dev platforms, and workflow automation stacks.",
-    accent: "from-violet-400/16 via-indigo-500/10 to-transparent",
-    query: "Recommend AI tools for builders using copilots agents dev platforms and workflow automation",
-  },
-  {
-    title: "For teams",
-    description: "Evaluate productivity, research, support, and operations tools in one place.",
-    accent: "from-emerald-400/16 via-teal-500/10 to-transparent",
-    query: "Recommend AI tools for teams doing productivity research support operations and collaboration",
   },
 ];
 
