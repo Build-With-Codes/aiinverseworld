@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, MouseEvent, useRef, useState } from "react";
 
 type HeaderSearchProps = {
   onSubmit?: () => void;
@@ -11,6 +11,12 @@ type HeaderSearchProps = {
 export function HeaderSearch({ onSubmit, trendingQueries = [] }: HeaderSearchProps) {
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  function focusInput(event: MouseEvent) {
+    if (event.target !== event.currentTarget) return;
+    inputRef.current?.focus();
+  }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -32,7 +38,8 @@ export function HeaderSearch({ onSubmit, trendingQueries = [] }: HeaderSearchPro
         role="search"
         aria-label="Search AI tools"
         onSubmit={handleSubmit}
-        className="flex min-w-0 items-center gap-2 rounded-full border border-border-subtle bg-surface-2 px-3 py-2 text-text-secondary shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-xl focus-within:border-border-accent focus-within:bg-brand-cyan/10"
+        onClick={focusInput}
+        className="flex min-w-0 cursor-text items-center gap-2 rounded-full border border-border-subtle bg-surface-2 px-3 py-2 text-text-secondary shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-xl transition focus-within:border-brand-cyan-strong focus-within:bg-brand-cyan/10 focus-within:ring-2 focus-within:ring-brand-cyan-strong/40"
       >
         <button
           type="submit"
@@ -49,13 +56,30 @@ export function HeaderSearch({ onSubmit, trendingQueries = [] }: HeaderSearchPro
             />
           </svg>
         </button>
-        <input
-          type="search"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search tools"
-          className="min-w-0 flex-1 bg-transparent text-sm text-slate-200 outline-none placeholder:text-text-muted"
-        />
+       <input
+  ref={inputRef}
+  type="search"
+  value={query}
+  onChange={(e) => setQuery(e.target.value)}
+  placeholder="Search tools"
+  className="
+    min-w-0
+    flex-1
+    bg-transparent
+    text-sm
+    text-slate-200
+    border-0
+    outline-none
+    ring-0
+    focus:border-0
+    focus:outline-none
+    focus:ring-0
+    focus-visible:outline-none
+    focus-visible:ring-0
+    appearance-none
+    placeholder:text-text-muted
+  "
+/>
       </form>
 
       {trendingQueries.length > 0 ? (

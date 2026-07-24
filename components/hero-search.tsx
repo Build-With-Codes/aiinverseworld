@@ -135,7 +135,7 @@ export function HeroSearch() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="rounded-2xl border border-border-subtle bg-surface-1 px-5 py-4 text-sm text-text-secondary outline-none placeholder:text-text-muted focus:border-border-accent"
+          className="rounded-2xl border border-border-subtle bg-surface-1 px-5 py-4 text-sm text-text-secondary outline-none transition placeholder:text-text-muted focus:border-brand-cyan-strong focus:ring-2 focus:ring-brand-cyan-strong/40 focus-visible:outline-none"
         />
         <button
           onClick={() => recommendAi()}
