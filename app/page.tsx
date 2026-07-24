@@ -50,6 +50,11 @@ function WorkflowIcon({ name }: { name: (typeof aiFinderOptions)[number]["icon"]
   );
 }
 
+// Route-segment safety net matching REVALIDATE_SECONDS below — caps how
+// stale a cached render of this page can get even if a fetch call's own
+// revalidate value were ever out of sync.
+export const revalidate = 300;
+
 export const metadata: Metadata = {
   title: "Best AI Tools Directory & Reviews 2026 | AiverseWorld",
   description: "Explore, compare, and review the best AI tools for productivity, coding, content creation, video, marketing, and business growth. 100+ tools ranked online.",
@@ -71,10 +76,16 @@ export const metadata: Metadata = {
   },
 };
 
+// Public, non-personalized data — safe to let Next.js serve a cached page for
+// this many seconds instead of re-rendering (and hitting the backend) on
+// every single visit. Every fetch below must opt into this explicitly, since
+// a single no-store/dynamic fetch would force the whole route dynamic again.
+const REVALIDATE_SECONDS = 300;
+
 export default async function Home() {
-  const catalog = await getToolCatalog();
-  const comparisonCatalog = await getComparisons(12);
-  const bestListCatalog = await getBestLists();
+  const catalog = await getToolCatalog(200, REVALIDATE_SECONDS);
+  const comparisonCatalog = await getComparisons(12, REVALIDATE_SECONDS);
+  const bestListCatalog = await getBestLists(REVALIDATE_SECONDS);
   const liveTools = catalog.tools;
   const liveCategories = catalog.categories;
   const liveComparisons = comparisonCatalog.comparisons;
@@ -91,16 +102,16 @@ export default async function Home() {
   // Backend-dynamic engagement data (falls back to popularity when sparse).
   const [spotlights, trendingTools, mostSaved, collections, researchRecommendations, newsArticles, mostSearchedTools] =
     await Promise.all([
-      getSpotlights(),
-      getTrending("7d", 10),
-      getRankings("most-saved", 10),
-      getCollections(),
-      recommendTools(homeRecommendationQuery, 8),
-      getNewsArticles(3),
-      getRankings("most-searched", 6),
+      getSpotlights(REVALIDATE_SECONDS),
+      getTrending("7d", 10, REVALIDATE_SECONDS),
+      getRankings("most-saved", 10, REVALIDATE_SECONDS),
+      getCollections(REVALIDATE_SECONDS),
+      recommendTools(homeRecommendationQuery, 8, REVALIDATE_SECONDS),
+      getNewsArticles(3, undefined, REVALIDATE_SECONDS),
+      getRankings("most-searched", 6, REVALIDATE_SECONDS),
     ]);
   const trendingQueries = mostSearchedTools.map((tool) => tool.name);
-  const blogPosts = (await getAllBlogPosts(12)).slice(0, 6);
+  const blogPosts = (await getAllBlogPosts(12, REVALIDATE_SECONDS)).slice(0, 6);
 
   const mostRecentVerified = liveTools.reduce((max, tool) => {
     const time = new Date(tool.lastVerified).getTime();

@@ -82,8 +82,8 @@ function buildCategories(tools: AITool[]): Category[] {
   ).map(([, category]) => category);
 }
 
-export async function getToolCatalog(limit = 200) {
-  const payload = await apiGet<ToolListResponse>(`/api/tools?limit=${limit}`);
+export async function getToolCatalog(limit = 200, revalidate?: number) {
+  const payload = await apiGet<ToolListResponse>(`/api/tools?limit=${limit}`, { revalidate });
   const tools = payload?.data ?? [];
 
   return {
@@ -108,8 +108,8 @@ export async function getToolById(id: string) {
   return payload?.data ?? null;
 }
 
-export async function getCategories() {
-  const payload = await apiGet<DataListResponse<Category>>("/api/tools/categories");
+export async function getCategories(revalidate?: number) {
+  const payload = await apiGet<DataListResponse<Category>>("/api/tools/categories", { revalidate });
 
   return {
     categories: payload?.data ?? [],
@@ -131,8 +131,8 @@ export async function getCategoryWithTools(slug: string, page = 1, limit = 24) {
   };
 }
 
-export async function getBestLists() {
-  const payload = await apiGet<DataListResponse<BestList>>("/api/tools/best");
+export async function getBestLists(revalidate?: number) {
+  const payload = await apiGet<DataListResponse<BestList>>("/api/tools/best", { revalidate });
 
   return {
     lists: payload?.data ?? [],
@@ -154,8 +154,10 @@ export async function getBestListWithTools(slug: string, page = 1, limit = 24) {
   };
 }
 
-export async function getComparisons(limit = 120) {
-  const payload = await apiGet<DataListResponse<Comparison>>(`/api/tools/comparisons?limit=${limit}`);
+export async function getComparisons(limit = 120, revalidate?: number) {
+  const payload = await apiGet<DataListResponse<Comparison>>(`/api/tools/comparisons?limit=${limit}`, {
+    revalidate,
+  });
 
   return {
     comparisons: payload?.data ?? [],
@@ -238,19 +240,23 @@ export async function searchTools(options: {
 }
 
 /** Most recently verified tools — used for "New" badges in the mega menu. */
-export async function getNewestTools(limit = 6) {
-  const payload = await apiGet<ToolListResponse>(`/api/tools?limit=${limit}&sort=newest`);
+export async function getNewestTools(limit = 6, revalidate?: number) {
+  const payload = await apiGet<ToolListResponse>(`/api/tools?limit=${limit}&sort=newest`, {
+    revalidate,
+  });
   return payload?.data ?? [];
 }
 
-export async function recommendTools(query: string, limit = 8) {
+export async function recommendTools(query: string, limit = 8, revalidate?: number) {
   if (!query.trim()) {
-    const catalog = await getToolCatalog(limit);
+    const catalog = await getToolCatalog(limit, revalidate);
     return catalog.tools.slice(0, limit);
   }
 
   const params = new URLSearchParams({ q: query, limit: String(limit) });
-  const payload = await apiGet<RecommendResponse>(`/api/tools/recommend?${params.toString()}`);
+  const payload = await apiGet<RecommendResponse>(`/api/tools/recommend?${params.toString()}`, {
+    revalidate,
+  });
 
   return payload?.data ?? [];
 }

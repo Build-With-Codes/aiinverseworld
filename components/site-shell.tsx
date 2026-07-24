@@ -19,12 +19,16 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import type { ReactNode } from "react";
 
+// SiteShell renders on every page, so any no-store fetch here would force
+// every route dynamic regardless of that page's own cache settings.
+const REVALIDATE_SECONDS = 300;
+
 async function buildAiToolsMenuData(): Promise<AiToolsMenuData> {
   const [categoriesResult, spotlights, trending, fresh] = await Promise.all([
-    getCategories(),
-    getSpotlights(),
-    getTrending("7d", 3),
-    getNewestTools(3),
+    getCategories(REVALIDATE_SECONDS),
+    getSpotlights(REVALIDATE_SECONDS),
+    getTrending("7d", 3, REVALIDATE_SECONDS),
+    getNewestTools(3, REVALIDATE_SECONDS),
   ]);
 
   const seen = new Set<string>();
@@ -103,7 +107,7 @@ export async function SiteShell({ children }: SiteShellProps) {
   const [session, aiToolsMenuData, mostSearchedTools] = await Promise.all([
     getServerSession(authOptions),
     buildAiToolsMenuData(),
-    getRankings("most-searched", 6),
+    getRankings("most-searched", 6, REVALIDATE_SECONDS),
   ]);
   const trendingQueries = mostSearchedTools.map((tool) => tool.name);
 

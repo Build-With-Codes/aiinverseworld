@@ -28,7 +28,7 @@ type NewsResponse = {
   };
 };
 
-export async function getNewsArticles(limit = 6, category?: string) {
+export async function getNewsArticles(limit = 6, category?: string, revalidate?: number) {
   const searchParams = new URLSearchParams({ limit: String(limit) });
 
   if (category) {
@@ -38,9 +38,7 @@ export async function getNewsArticles(limit = 6, category?: string) {
   try {
     const response = await fetch(
       `${AIVERSE_WORLD_BASE_URL}/api/news?${searchParams.toString()}`,
-      {
-        cache: "no-store",
-      },
+      revalidate !== undefined ? { next: { revalidate } } : { cache: "no-store" },
     );
 
     if (!response.ok) {

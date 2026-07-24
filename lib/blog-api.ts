@@ -51,8 +51,8 @@ type ListResponse = {
   pagination?: { page: number; limit: number; total: number; totalPages: number };
 };
 
-export async function getAllBlogPosts(limit = 48): Promise<BlogCardData[]> {
-  const payload = await apiGet<ListResponse>(`/api/blog?limit=${limit}`);
+export async function getAllBlogPosts(limit = 48, revalidate?: number): Promise<BlogCardData[]> {
+  const payload = await apiGet<ListResponse>(`/api/blog?limit=${limit}`, { revalidate });
   return payload?.data ?? [];
 }
 

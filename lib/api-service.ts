@@ -3,6 +3,11 @@ import { AIVERSE_WORLD_BASE_URL } from "@/lib/service-urls";
 type ApiGetOptions = {
   cache?: RequestCache;
   next?: NextFetchRequestConfig;
+  /** Shortcut for `next: { revalidate }` — lets Next.js's Data Cache serve this
+   * response instantly for N seconds instead of forcing dynamic rendering (the
+   * default), then quietly re-fetch in the background once it expires. Only
+   * use this for public, non-personalized data. */
+  revalidate?: number;
   /** Max time to wait for the backend before giving up gracefully. Defaults to 8s —
    * comfortably under typical serverless function timeouts, so a slow/cold backend
    * fails inside our own try/catch instead of getting the whole request killed by
@@ -25,13 +30,17 @@ export async function apiGet<T>(path: string, options: ApiGetOptions = {}) {
   const url = `${AIVERSE_WORLD_BASE_URL}${normalizedPath}`;
   const timeoutMs = options.timeoutMs ?? 8000;
 
+  const next = options.next ?? (options.revalidate !== undefined ? { revalidate: options.revalidate } : undefined);
+
   async function attempt(): Promise<Response> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     try {
       return await fetch(url, {
-        cache: options.cache ?? "no-store",
-        next: options.next,
+        // A revalidate window opts this fetch into Next.js's Data Cache;
+        // `cache` and `next.revalidate` are mutually exclusive, so only set
+        // one or the other.
+        ...(next ? { next } : { cache: options.cache ?? "no-store" }),
         signal: controller.signal,
       });
     } finally {

@@ -11,9 +11,14 @@ import type {
 
 type DataResponse<T> = { data?: T };
 
-export async function getTrending(window: "today" | "7d" | "30d" = "7d", limit = 12) {
+export async function getTrending(
+  window: "today" | "7d" | "30d" = "7d",
+  limit = 12,
+  revalidate?: number,
+) {
   const payload = await apiGet<DataResponse<AITool[]>>(
     `/api/tools/trending?window=${window}&limit=${limit}`,
+    { revalidate },
   );
   return payload?.data ?? [];
 }
@@ -21,9 +26,11 @@ export async function getTrending(window: "today" | "7d" | "30d" = "7d", limit =
 export async function getRankings(
   metric: "most-saved" | "most-compared" | "most-searched" = "most-saved",
   limit = 12,
+  revalidate?: number,
 ) {
   const payload = await apiGet<DataResponse<AITool[]>>(
     `/api/tools/rankings?metric=${metric}&limit=${limit}`,
+    { revalidate },
   );
   return payload?.data ?? [];
 }
@@ -35,14 +42,15 @@ export async function getRelatedTools(toolId: string, limit = 6) {
   return payload?.data ?? [];
 }
 
-export async function getSpotlights() {
-  const payload = await apiGet<DataResponse<Spotlight[]>>(`/api/tools/spotlights`);
+export async function getSpotlights(revalidate?: number) {
+  const payload = await apiGet<DataResponse<Spotlight[]>>(`/api/tools/spotlights`, { revalidate });
   return payload?.data ?? [];
 }
 
-export async function getCollections() {
+export async function getCollections(revalidate?: number) {
   const payload = await apiGet<DataResponse<CollectionSummary[]>>(
     `/api/tools/collections`,
+    { revalidate },
   );
   return payload?.data ?? [];
 }
