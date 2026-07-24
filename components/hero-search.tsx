@@ -12,7 +12,7 @@ function formatMatchScore(score?: number) {
   }
 
   const normalized = score <= 1 ? score * 100 : score;
-  return `${Math.round(Math.min(Math.max(normalized, 0), 100))}% match`;
+  return `${Math.round(Math.min(Math.max(normalized, 0), 100))}% relevant`;
 }
 
 function getRecommendationErrorMessage(status: number) {
@@ -128,24 +128,107 @@ export function HeroSearch() {
       id="ai-finder"
       className="home-ai-finder rounded-[32px] border border-border-subtle bg-surface-3 p-4 shadow-[0_24px_120px_rgba(8,15,35,0.45)] backdrop-blur-2xl"
     >
-      <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
-        <input
-          aria-label="Search tools"
-          placeholder="Search AI tools by use case, price, or category"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={handleKeyDown}
-          className="rounded-2xl border border-border-subtle bg-surface-1 px-5 py-4 text-sm text-text-secondary outline-none transition placeholder:text-text-muted focus:border-brand-cyan-strong focus:ring-2 focus:ring-brand-cyan-strong/40 focus-visible:outline-none"
-        />
-        <button
-          onClick={() => recommendAi()}
-          disabled={isLoading}
-            className="rounded-4xl bg-[var(--button-primary-bg)] px-5 py-4 text-center text-sm font-semibold text-[var(--button-primary-text)] transition hover:opacity-85 disabled:opacity-60"
-           // className="rounded-2xl bg-white px-5 py-4 text-center text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 disabled:opacity-60"
+  <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+  {/* Search Input */}
+  <div className="group relative min-w-0">
+    <div
+      className="
+        relative
+        flex
+        min-h-[60px]
+        items-center
+        rounded-2xl
+        border
+        border-border-subtle
+        bg-surface-1
+        transition-all
+        duration-300
+        group-focus-within:border-brand-cyan-strong
+        group-focus-within:ring-2
+        group-focus-within:ring-brand-cyan-strong/20
+      "
+    >
+      {/* AI Icon */}
+      <span className="ml-5 shrink-0 text-xl text-cyan-300">
+        ✦
+      </span>
+
+      <input
+        aria-label="Search tools"
+        placeholder="What do you want to do with AI?"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={handleKeyDown}
+        className="
+          min-w-0
+          flex-1
+          bg-transparent
+          px-4
+          py-2
+          text-base
+          text-white
+          outline-none
+          placeholder:text-text-muted
+        "
+      />
+
+      {/* Enter shortcut */}
+      {!query && (
+        <span
+          className="
+            mr-4
+            hidden
+            shrink-0
+            rounded-lg
+            border
+            border-border-subtle
+            bg-surface-2
+            px-3
+            py-1.5
+            text-xs
+            text-text-muted
+            sm:block
+          "
         >
-          {isLoading ? "Finding..." : "Recommend AI"}
-        </button>
-      </div>
+          Enter ↵
+        </span>
+      )}
+    </div>
+  </div>
+
+  {/* Recommend Button */}
+  <button
+    onClick={() => recommendAi()}
+    disabled={isLoading}
+    className="
+      group
+      relative
+      min-h-[60px]
+      overflow-hidden
+      rounded-full
+      bg-gradient-to-r
+      from-cyan-400
+      via-indigo-500
+      to-fuchsia-500
+      px-6
+      py-3
+      text-sm
+      font-semibold
+      text-white
+      shadow-[0_0_24px_rgba(99,102,241,0.25)]
+      transition-all
+      duration-300
+      hover:scale-[1.03]
+      hover:shadow-[0_0_32px_rgba(168,85,247,0.4)]
+      disabled:opacity-60
+    "
+  >
+    <span className="relative flex items-center justify-center gap-2">
+      <span>✦</span>
+      {isLoading ? "Finding..." : "Recommend AI"}
+    </span>
+  </button>
+</div>
       <div className="mt-4 flex flex-wrap gap-2">
         {quickTags.map((tag) => (
           <button
@@ -154,7 +237,7 @@ export function HeroSearch() {
             disabled={isLoading}
             className="rounded-full border border-border-subtle bg-surface-2 px-3 py-2 text-xs text-text-secondary transition hover:border-border-accent hover:text-white disabled:opacity-60"
           >
-            {tag}
+           ✦  {tag}
           </button>
         ))}
       </div>
@@ -162,7 +245,7 @@ export function HeroSearch() {
         <div className="home-ai-finder__results mt-4 overflow-hidden rounded-card border border-border-accent bg-surface-1/80 p-4">
           <div className="home-ai-finder__result-header flex flex-col gap-3 rounded-sm border border-border-subtle bg-surface-2 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-xs font-semibold tracking-[0.2em] text-brand-cyan-strong uppercase">Recommended AI</p>
+              <p className="text-xs font-semibold tracking-[0.2em] text-brand-cyan-strong uppercase">Recommended for you</p>
               <p className="mt-1 text-sm text-text-muted">Personalized shortlist from the live catalog</p>
             </div>
             <div className="home-ai-finder__status inline-flex w-fit items-center gap-2 rounded-full border border-border-accent bg-brand-cyan/10 px-3 py-2 text-xs font-semibold text-cyan-100">
