@@ -33,7 +33,7 @@
   --surface-1: #05060f;
   --surface-2: rgba(255, 255, 255, 0.05);
   --surface-3: rgba(255, 255, 255, 0.09);
-  --surface-glass: rgba(13, 17, 32, 0.65);
+  --surface-glass: rgba(8, 10, 20, 0.92);
 
   /* borders */
   --border-subtle: rgba(255, 255, 255, 0.08);
@@ -80,7 +80,7 @@
   --surface-1: #f6f8ff;
   --surface-2: rgba(255, 255, 255, 0.78);
   --surface-3: rgba(255, 255, 255, 0.94);
-  --surface-glass: rgba(255, 255, 255, 0.82);
+  --surface-glass: rgba(255, 255, 255, 0.95);
 
   --border-subtle: rgba(15, 23, 42, 0.08);
   --border-strong: rgba(15, 23, 42, 0.16);
