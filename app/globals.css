@@ -7,51 +7,46 @@
    ============================================================ */
 
 :root,
+:root,
 :root[data-theme="dark"] {
-  /* legacy aliases kept for existing components */
-  --background: #05060f;
+  --background: #02050b;
   --foreground: #f5f7fb;
-  --surface: rgba(255, 255, 255, 0.06);
-  --surface-strong: rgba(255, 255, 255, 0.12);
-  --border: rgba(255, 255, 255, 0.1);
 
-  /* brand */
-  --brand-electric: #3b82f6;
-  --brand-violet: #8b5cf6;
-  --brand-cyan: #22d3ee;
-  --brand-electric-strong: #60a5fa;
-  --brand-violet-strong: #a78bfa;
-  --brand-cyan-strong: #67e8f9;
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-strong: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.08);
 
-  /* Hero ambient glow — a soft blob reads fine on a near-black ground but
-     needs to be much subtler on light backgrounds, so it's a token, not a
-     shared opacity utility. */
-  --hero-orb-electric: color-mix(in srgb, var(--brand-electric) 25%, transparent);
-  --hero-orb-violet: color-mix(in srgb, var(--brand-violet) 20%, transparent);
+  --surface-1: #010307;
+  --surface-2: rgba(255, 255, 255, 0.04);
+  --surface-3: rgba(255, 255, 255, 0.07);
+  --surface-glass: rgba(5, 12, 24, 0.88);
 
-  /* surfaces (elevation scale) */
-  --surface-1: #05060f;
-  --surface-2: rgba(255, 255, 255, 0.05);
-  --surface-3: rgba(255, 255, 255, 0.09);
-  --surface-glass: rgba(8, 10, 20, 0.92);
+  --hero-orb-electric: color-mix(
+    in srgb,
+    var(--brand-electric) 32%,
+    transparent
+  );
 
-  /* borders */
+  --hero-orb-violet: color-mix(
+    in srgb,
+    var(--brand-violet) 18%,
+    transparent
+  );
+
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-strong: rgba(255, 255, 255, 0.16);
   --border-accent: rgba(103, 232, 249, 0.35);
 
-  /* text */
   --text-primary: #f5f7fb;
   --text-secondary: #cbd5e1;
   --text-muted: #8b96ab;
 
-  /* shadows + glow */
-  --shadow-card: 0 20px 60px rgba(2, 6, 20, 0.4);
-  --shadow-card-hover: 0 28px 80px rgba(2, 6, 20, 0.5);
+  --shadow-card: 0 20px 60px rgba(0, 5, 20, 0.55);
+  --shadow-card-hover: 0 28px 80px rgba(0, 8, 30, 0.7);
+
   --glow-cyan: 0 0 48px rgba(34, 211, 238, 0.22);
   --glow-violet: 0 0 48px rgba(139, 92, 246, 0.2);
 
-  /* radii */
   --radius-card: 28px;
   --radius-card-lg: 34px;
   --radius-pill: 999px;
@@ -319,9 +314,22 @@ body {
 
 .app-shell {
   background:
-    radial-gradient(circle at top left, color-mix(in srgb, var(--brand-electric) 32%, transparent), transparent 28%),
-    radial-gradient(circle at top right, color-mix(in srgb, var(--brand-violet) 22%, transparent), transparent 32%),
-    linear-gradient(180deg, #081120 0%, #050914 46%, #03060d 100%);
+    radial-gradient(
+      circle at top left,
+      color-mix(in srgb, var(--brand-electric) 18%, transparent),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at top right,
+      color-mix(in srgb, var(--brand-violet) 12%, transparent),
+      transparent 32%
+    ),
+    linear-gradient(
+      180deg,
+      #030305 0%,
+      #010102 50%,
+      #000000 100%
+    );
 }
 
 html[data-theme="light"] .app-shell {
