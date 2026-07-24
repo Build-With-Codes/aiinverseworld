@@ -140,7 +140,8 @@ export function HeroSearch() {
         <button
           onClick={() => recommendAi()}
           disabled={isLoading}
-          className="rounded-2xl bg-white px-5 py-4 text-center text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 disabled:opacity-60"
+            className="rounded-4xl bg-[var(--button-primary-bg)] px-5 py-4 text-center text-sm font-semibold text-[var(--button-primary-text)] transition hover:opacity-85 disabled:opacity-60"
+           // className="rounded-2xl bg-white px-5 py-4 text-center text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 disabled:opacity-60"
         >
           {isLoading ? "Finding..." : "Recommend AI"}
         </button>

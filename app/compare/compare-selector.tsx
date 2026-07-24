@@ -65,9 +65,9 @@ export function CompareSelector({
       <button
         onClick={handleCompare}
         disabled={!left || !right || left === right}
-        className="shrink-0 rounded-2xl bg-white px-6 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-40"
-      >
-        Compare →
+        className="shrink-0 rounded-4xl bg-[var(--button-primary-bg)] px-6 py-3 text-sm font-semibold text-[var(--button-primary-text)] transition hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40 sm:mb-0"
+ >
+        Compare
       </button>
     </div>
   );

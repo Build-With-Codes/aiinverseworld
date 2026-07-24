@@ -1105,6 +1105,19 @@ html[data-theme="light"] .skeleton-shimmer {
   background-size: 220% 100%, 100% 100%;
 }
 
+/* Dark theme */
+:root,
+:root[data-theme="dark"] {
+  --button-primary-bg: #ffffff;
+  --button-primary-text: #020617;
+}
+
+/* Light theme */
+:root[data-theme="light"] {
+  --button-primary-bg: #020617;
+  --button-primary-text: #ffffff;
+}
+
 @keyframes skeleton-shimmer {
   from {
     background-position: 120% 0, 0 0;
