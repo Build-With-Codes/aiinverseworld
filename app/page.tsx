@@ -88,6 +88,7 @@ export default async function Home() {
   const bestListCatalog = await getBestLists(REVALIDATE_SECONDS);
   const liveTools = catalog.tools;
   const liveCategories = catalog.categories;
+  const topCategories = [...liveCategories].sort((a, b) => b.count - a.count).slice(0, 4);
   const liveComparisons = comparisonCatalog.comparisons;
   const liveBestLists = bestListCatalog.lists;
 
@@ -329,9 +330,14 @@ export default async function Home() {
             eyebrow="Explore"
             title="Browse by category"
             description="Move from broad discovery to a focused shortlist with categories optimized for real use cases."
+            action={
+              <Button href="/category" variant="outline">
+                All categories →
+              </Button>
+            }
           />
           <div className="grid gap-4 sm:grid-cols-2">
-            {liveCategories.map((category) => (
+            {topCategories.map((category) => (
               <CategoryCard key={category.slug} category={category} />
             ))}
           </div>
@@ -344,7 +350,7 @@ export default async function Home() {
               description="Jump into high-intent comparisons people use before purchase and rollout decisions."
             />
             <div className="space-y-4">
-              {liveComparisons.slice(0, 12).map((comparison) => (
+              {liveComparisons.slice(0, 3).map((comparison) => (
                 <Link
                   key={comparison.slug}
                   href={`/compare/${comparison.slug}`}
@@ -507,7 +513,7 @@ export default async function Home() {
           description="Hand-picked lists by use case, category, and audience — built from real catalog data."
         />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {liveBestLists.map((list) => (
+          {liveBestLists.slice(0, 4).map((list) => (
             <Link key={list.slug} href={`/best/${list.slug}`} className={cardClass({ hover: true })}>
               <span className="text-caption text-brand-cyan-strong">{list.eyebrow}</span>
               <p className="mt-2 font-semibold text-text-primary">{list.title}</p>
