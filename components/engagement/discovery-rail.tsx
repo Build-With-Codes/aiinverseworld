@@ -25,7 +25,7 @@ export function DiscoveryRail({
   description,
   tools,
   viewAllHref,
-  viewAllLabel = "View all →",
+  viewAllLabel = "View all",
 }: DiscoveryRailProps) {
   if (tools.length === 0) return null;
 

@@ -81,7 +81,7 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
         <div className="mt-auto flex items-center justify-between pt-4">
           <span className="text-caption text-text-muted">{post.author}</span>
           <span className="text-sm font-semibold text-brand-cyan-strong group-hover:underline">
-            Read →
+            Read
           </span>
         </div>
       </div>

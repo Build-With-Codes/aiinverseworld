@@ -243,7 +243,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                         {item.description}
                       </p>
                       <span className="text-caption mt-4 inline-block text-brand-cyan-strong">
-                        {item.readTime} read →
+                        {item.readTime} read
                       </span>
                     </Link>
                   ))}

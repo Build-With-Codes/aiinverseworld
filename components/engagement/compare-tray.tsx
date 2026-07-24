@@ -139,7 +139,7 @@ export function CompareBar() {
               href={compareHref}
               className="rounded-pill bg-gradient-to-r from-brand-electric to-brand-violet px-5 py-2 text-sm font-semibold text-white shadow-glow-cyan transition hover:brightness-110"
             >
-              Compare →
+              Compare
             </Link>
           ) : (
             <span className="text-caption text-text-muted">Add one more</span>

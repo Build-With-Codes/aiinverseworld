@@ -32,7 +32,7 @@ export default function AdminDashboardLayout({ children }: { children: ReactNode
           </div>
           <div className="flex items-center gap-3">
             <Link href="/" className="text-sm text-text-muted transition hover:text-text-primary">
-              View site →
+              View site
             </Link>
             <AdminLogoutButton />
           </div>

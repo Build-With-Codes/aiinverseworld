@@ -52,7 +52,7 @@ export function SpotlightCard({ spotlight }: { spotlight: Spotlight }) {
       <div className="mt-auto flex items-center justify-between pt-5">
         <Badge variant="brand">{priceLabel}</Badge>
         <span className="text-sm font-semibold text-brand-cyan-strong group-hover:underline">
-          Explore →
+          Explore
         </span>
       </div>
     </Link>

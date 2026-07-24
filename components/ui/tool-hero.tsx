@@ -42,7 +42,7 @@ export function ToolHero({ tool, priceLabel, lastVerifiedLabel }: ToolHeroProps)
           <p className="text-body-lg mt-3 max-w-3xl text-text-secondary">{tool.shortDescription}</p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Button href={tool.website} variant="primary" size="lg">
-              Visit {tool.name} →
+              Visit {tool.name}
             </Button>
             <SaveButton
               toolId={tool.id}

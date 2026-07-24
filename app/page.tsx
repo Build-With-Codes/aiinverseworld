@@ -347,7 +347,7 @@ export default async function Home() {
                 href="/compare"
                 className="block rounded-sm border border-border-accent bg-brand-cyan/8 p-4 text-center text-sm font-semibold text-brand-cyan-strong transition hover:bg-brand-cyan/12"
               >
-                View all {liveComparisons.length} comparisons →
+                View all {liveComparisons.length} comparisons
               </Link>
             </div>
           </FadeInSection>

@@ -450,7 +450,7 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
             description="A side-by-side look at the closest alternative in this category."
             action={
               <Button href={`/compare?leftId=${encodeURIComponent(tool.id)}&rightId=${encodeURIComponent(topAlternative.id)}`} variant="outline">
-                Full comparison →
+                Full comparison
               </Button>
             }
           />

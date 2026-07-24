@@ -36,7 +36,6 @@ export function ToolActionBar({ tool }: { tool: AITool }) {
             className="inline-flex items-center gap-1.5 rounded-pill bg-gradient-to-r from-brand-electric to-brand-violet px-4 py-2 text-sm font-semibold text-white shadow-glow-cyan transition hover:brightness-110"
           >
             Visit
-            <span aria-hidden>→</span>
           </a>
         </div>
       </div>
