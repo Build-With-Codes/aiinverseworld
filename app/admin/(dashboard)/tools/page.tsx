@@ -14,8 +14,16 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminToolsPage() {
-  const { tools, pagination } = await getToolCatalog(50);
+const PAGE_SIZE = 25;
+
+type AdminToolsPageProps = {
+  searchParams?: Promise<{ page?: string }>;
+};
+
+export default async function AdminToolsPage({ searchParams }: AdminToolsPageProps) {
+  const { page: pageParam } = (await searchParams) ?? {};
+  const page = Math.max(1, Number(pageParam) || 1);
+  const { tools, pagination } = await getToolCatalog(PAGE_SIZE, undefined, page);
 
   return (
     <div className="space-y-6">
@@ -39,7 +47,9 @@ export default async function AdminToolsPage() {
 
       <div className={cardClass({ padding: "lg", radius: "card-lg" })}>
         <p className="text-eyebrow text-brand-cyan-strong">Catalog</p>
-        <p className="text-body mt-1 mb-4 text-text-secondary">Most recently ranked tools.</p>
+        <p className="text-body mt-1 mb-4 text-text-secondary">
+          Page {pagination.page} of {pagination.totalPages} — ranked by popularity.
+        </p>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead>
@@ -71,6 +81,38 @@ export default async function AdminToolsPage() {
             <p className="py-6 text-center text-text-muted">No tools yet — import a CSV or add one above.</p>
           ) : null}
         </div>
+
+        {pagination.totalPages > 1 ? (
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-text-secondary">
+            <span>
+              {pagination.total} tools total — showing {tools.length} on this page
+            </span>
+            <div className="flex gap-2">
+              <Link
+                aria-disabled={pagination.page <= 1}
+                href={`/admin/tools?page=${pagination.page - 1}`}
+                className={`rounded-pill border border-border-subtle px-4 py-2 font-medium ${
+                  pagination.page <= 1
+                    ? "pointer-events-none opacity-40"
+                    : "hover:border-border-accent hover:text-text-primary"
+                }`}
+              >
+                Previous
+              </Link>
+              <Link
+                aria-disabled={pagination.page >= pagination.totalPages}
+                href={`/admin/tools?page=${pagination.page + 1}`}
+                className={`rounded-pill border border-border-subtle px-4 py-2 font-medium ${
+                  pagination.page >= pagination.totalPages
+                    ? "pointer-events-none opacity-40"
+                    : "hover:border-border-accent hover:text-text-primary"
+                }`}
+              >
+                Next
+              </Link>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

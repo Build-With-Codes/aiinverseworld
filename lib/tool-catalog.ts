@@ -82,15 +82,15 @@ function buildCategories(tools: AITool[]): Category[] {
   ).map(([, category]) => category);
 }
 
-export async function getToolCatalog(limit = 200, revalidate?: number) {
-  const payload = await apiGet<ToolListResponse>(`/api/tools?limit=${limit}`, { revalidate });
+export async function getToolCatalog(limit = 200, revalidate?: number, page = 1) {
+  const payload = await apiGet<ToolListResponse>(`/api/tools?limit=${limit}&page=${page}`, { revalidate });
   const tools = payload?.data ?? [];
 
   return {
     tools,
     categories: buildCategories(tools),
     pagination: payload?.pagination ?? {
-      page: 1,
+      page,
       limit,
       total: tools.length,
       totalPages: 1,
