@@ -70,6 +70,12 @@ function buildFeatureNotes(tool: AITool) {
   }));
 }
 
+/** Raw `features` entries not already called out by a rich feature-note card, so imported data isn't silently dropped. */
+function buildRemainingFeatureTags(tool: AITool, featureNotes: { feature: string }[]) {
+  const covered = new Set(featureNotes.map((note) => note.feature.trim().toLowerCase()));
+  return tool.features.filter((feature) => !covered.has(feature.trim().toLowerCase()));
+}
+
 function buildPros(tool: AITool) {
   if (tool.pros && tool.pros.length > 0) return tool.pros;
 
@@ -221,6 +227,7 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
         : `$${tool.startingPriceUsd}/mo`;
 
   const featureNotes = buildFeatureNotes(tool);
+  const remainingFeatureTags = buildRemainingFeatureTags(tool, featureNotes);
   const pros = buildPros(tool);
   const cons = buildCons(tool);
   const faqs = buildFaqs(tool);
@@ -317,6 +324,15 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
             <p>{tool.shortDescription}</p>
           )}
         </div>
+        {tool.tags.length > 0 ? (
+          <div className="mt-5 flex flex-wrap gap-2">
+            {tool.tags.map((tag) => (
+              <Badge key={tag} variant="neutral">
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        ) : null}
         <Link
           href={`/category/${slugify(tool.category)}`}
           className="text-sm mt-5 inline-flex font-semibold text-brand-cyan-strong transition hover:text-brand-cyan"
@@ -345,6 +361,15 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
             </StaggerItem>
           ))}
         </StaggerGrid>
+        {remainingFeatureTags.length > 0 ? (
+          <div className="mt-6 flex flex-wrap gap-2">
+            {remainingFeatureTags.map((feature) => (
+              <Badge key={feature} variant="neutral">
+                {feature}
+              </Badge>
+            ))}
+          </div>
+        ) : null}
       </div>
 
       {/* 5. Best use cases + 6. Who should use it */}
@@ -458,38 +483,86 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
         </div>
       ) : null}
 
-      {/* Technical details + Reviews */}
+      {/* Technical details + Security/Privacy + Reviews */}
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className={cardClass({ padding: "lg", radius: "card-lg" })}>
-          <SectionHeading
-            eyebrow="Details"
-            title="Technical & deployment info"
-            description="Key facts about model providers, integrations, and team support."
-          />
-          <div className="space-y-3">
-            {tool.modelProvider.length > 0 ? (
-              <div className={cardClass({ padding: "sm" })}>
-                <p className="text-caption text-text-muted">Model Provider</p>
-                <p className="text-sm mt-1 text-text-primary">{tool.modelProvider.join(", ")}</p>
-              </div>
-            ) : null}
-            {tool.integrations && tool.integrations.length > 0 ? (
-              <div className={cardClass({ padding: "sm" })}>
-                <p className="text-caption text-text-muted">Integrations</p>
-                <p className="text-sm mt-1 text-text-primary">{tool.integrations.join(", ")}</p>
-              </div>
-            ) : null}
-            <div className="grid grid-cols-2 gap-3">
-              <div className={cardClass({ padding: "sm" })}>
-                <p className="text-caption text-text-muted">Team Collaboration</p>
-                <p className="text-sm mt-1 font-semibold text-text-primary">{tool.teamCollaboration ? "Yes" : "No"}</p>
-              </div>
-              <div className={cardClass({ padding: "sm" })}>
-                <p className="text-caption text-text-muted">Launch Year</p>
-                <p className="text-sm mt-1 font-semibold text-text-primary">{tool.launchYear ?? "—"}</p>
+        <div className="space-y-6">
+          <div className={cardClass({ padding: "lg", radius: "card-lg" })}>
+            <SectionHeading
+              eyebrow="Details"
+              title="Technical & deployment info"
+              description="Key facts about model providers, platforms, and team support."
+            />
+            <div className="space-y-3">
+              {tool.modelProvider.length > 0 ? (
+                <div className={cardClass({ padding: "sm" })}>
+                  <p className="text-caption text-text-muted">Model Provider</p>
+                  <p className="text-sm mt-1 text-text-primary">{tool.modelProvider.join(", ")}</p>
+                </div>
+              ) : null}
+              {tool.modelNames && tool.modelNames.length > 0 ? (
+                <div className={cardClass({ padding: "sm" })}>
+                  <p className="text-caption text-text-muted">Models</p>
+                  <p className="text-sm mt-1 text-text-primary">{tool.modelNames.join(", ")}</p>
+                </div>
+              ) : null}
+              {tool.platforms.length > 0 ? (
+                <div className={cardClass({ padding: "sm" })}>
+                  <p className="text-caption text-text-muted">Platforms</p>
+                  <p className="text-sm mt-1 text-text-primary">{tool.platforms.join(", ")}</p>
+                </div>
+              ) : null}
+              {tool.deploymentType.length > 0 ? (
+                <div className={cardClass({ padding: "sm" })}>
+                  <p className="text-caption text-text-muted">Deployment</p>
+                  <p className="text-sm mt-1 text-text-primary">{tool.deploymentType.join(", ")}</p>
+                </div>
+              ) : null}
+              {tool.integrations && tool.integrations.length > 0 ? (
+                <div className={cardClass({ padding: "sm" })}>
+                  <p className="text-caption text-text-muted">Integrations</p>
+                  <p className="text-sm mt-1 text-text-primary">{tool.integrations.join(", ")}</p>
+                </div>
+              ) : null}
+              <div className="grid grid-cols-2 gap-3">
+                <div className={cardClass({ padding: "sm" })}>
+                  <p className="text-caption text-text-muted">Team Collaboration</p>
+                  <p className="text-sm mt-1 font-semibold text-text-primary">{tool.teamCollaboration ? "Yes" : "No"}</p>
+                </div>
+                <div className={cardClass({ padding: "sm" })}>
+                  <p className="text-caption text-text-muted">Launch Year</p>
+                  <p className="text-sm mt-1 font-semibold text-text-primary">{tool.launchYear ?? "—"}</p>
+                </div>
               </div>
             </div>
           </div>
+
+          {(tool.security && tool.security.length > 0) || tool.privacyNotes ? (
+            <div className={cardClass({ padding: "lg", radius: "card-lg" })}>
+              <SectionHeading
+                eyebrow="Trust"
+                title="Security & privacy"
+                description="Compliance signals and data-handling notes as reported by the vendor."
+              />
+              <div className="space-y-3">
+                {tool.security && tool.security.length > 0 ? (
+                  tool.security.every((item) => item.length <= 40) ? (
+                    <div className="flex flex-wrap gap-2">
+                      {tool.security.map((item) => (
+                        <Badge key={item} variant="success">
+                          {item}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-text-secondary">{tool.security.join(" ")}</p>
+                  )
+                ) : null}
+                {tool.privacyNotes ? (
+                  <p className="text-sm text-text-secondary">{tool.privacyNotes}</p>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
         </div>
 
         <div className={cardClass({ padding: "lg", radius: "card-lg" })}>

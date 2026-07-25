@@ -1,19 +1,14 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ComparisonTable } from "@/components/comparison-table";
+import { FaviconBadge } from "@/components/favicon-badge";
 import { SectionHeading } from "@/components/section-heading";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { EditorialBlock } from "@/components/ui/editorial-block";
 import type { AITool, Comparison } from "@/lib/catalog-types";
-
-type ToolOption = {
-  value: string;
-  slug: string;
-  label: string;
-};
+import { CompareSelector, type ToolOption } from "./compare-selector";
 
 type CompareClientProps = {
   comparisons: Comparison[];
@@ -33,9 +28,6 @@ export function CompareClient({
   multiTools,
   recommendation,
 }: CompareClientProps) {
-  const router = useRouter();
-  const [left, setLeft] = useState(selectedPair?.left.id ?? "");
-  const [right, setRight] = useState(selectedPair?.right.id ?? "");
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
@@ -43,12 +35,6 @@ export function CompareClient({
     const q = query.toLowerCase();
     return comparisons.filter((c) => c.title.toLowerCase().includes(q));
   }, [comparisons, query]);
-
-  function handleCompare() {
-    if (left && right && left !== right) {
-      router.push(`/compare?leftId=${encodeURIComponent(left)}&rightId=${encodeURIComponent(right)}`);
-    }
-  }
 
   return (
     <div className="space-y-10 pb-10 pt-6">
@@ -77,51 +63,11 @@ export function CompareClient({
           title="Compare any two AI tools"
           description="Pick any two tools from the catalog and get a side-by-side breakdown."
         />
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-          <div className="flex-1 space-y-2">
-            <label className="text-xs font-semibold tracking-widest text-text-muted uppercase">Tool A</label>
-            <select
-              value={left}
-              onChange={(e) => setLeft(e.target.value)}
-              suppressHydrationWarning
-              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-slate-200 outline-none focus:border-border-accent"
-            >
-              <option value="">Select a tool...</option>
-              {toolOptions.map((o) => (
-                <option key={o.value} value={o.value} disabled={o.value === right}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <span className="shrink-0 text-center text-text-muted font-semibold sm:pb-3">vs</span>
-
-          <div className="flex-1 space-y-2">
-            <label className="text-xs font-semibold tracking-widest text-text-muted uppercase">Tool B</label>
-            <select
-              value={right}
-              onChange={(e) => setRight(e.target.value)}
-              suppressHydrationWarning
-              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-slate-200 outline-none focus:border-border-accent"
-            >
-              <option value="">Select a tool...</option>
-              {toolOptions.map((o) => (
-                <option key={o.value} value={o.value} disabled={o.value === left}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button
-            onClick={handleCompare}
-            disabled={!left || !right || left === right}
-            className="shrink-0 rounded-4xl bg-[var(--button-primary-bg)] px-6 py-3 text-sm font-semibold text-[var(--button-primary-text)] transition hover:opacity-85 disabled:cursor-not-allowed disabled:opacity-40 sm:mb-0"
-  >
-            Compare
-          </button>
-        </div>
+        <CompareSelector
+          currentLeft={selectedPair?.left.id ?? ""}
+          currentRight={selectedPair?.right.id ?? ""}
+          toolOptions={toolOptions}
+        />
       </section>
 
       {selectedPair ? (
@@ -156,10 +102,36 @@ export function CompareClient({
             <Link
               key={c.slug}
               href={`/compare/${c.slug}`}
-              className="rounded-[22px] border border-border-subtle bg-surface-1 p-5 transition hover:border-border-accent hover:bg-surface-1"
+              className="group flex flex-col gap-4 rounded-[22px] border border-border-subtle bg-surface-1 p-5 transition hover:-translate-y-0.5 hover:border-border-accent hover:shadow-card-hover"
             >
-              <p className="font-semibold text-white">{c.title}</p>
-              <p className="mt-2 text-sm leading-6 text-text-muted line-clamp-2">{c.summary}</p>
+              <div className="flex items-center gap-3">
+                <FaviconBadge
+                  name={c.left.name}
+                  faviconUrl={c.left.favicon}
+                  className="h-11 w-11 shrink-0 rounded-xl"
+                  imgClassName="p-1.5"
+                  labelClassName="text-xs"
+                />
+                <span
+                  aria-hidden
+                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-border-accent bg-surface-3 text-[10px] font-bold text-brand-cyan-strong"
+                >
+                  VS
+                </span>
+                <FaviconBadge
+                  name={c.right.name}
+                  faviconUrl={c.right.favicon}
+                  className="h-11 w-11 shrink-0 rounded-xl"
+                  imgClassName="p-1.5"
+                  labelClassName="text-xs"
+                />
+              </div>
+              <div>
+                <p className="font-semibold text-text-primary transition group-hover:text-brand-cyan-strong">
+                  {c.title}
+                </p>
+                <p className="mt-1.5 text-sm leading-6 text-text-muted line-clamp-2">{c.summary}</p>
+              </div>
             </Link>
           ))}
         </div>

@@ -3,7 +3,6 @@
 import Link from "next/link";
 
 import { useSavedTools } from "@/components/engagement/saved-tools";
-import { SaveButton } from "@/components/engagement/save-button";
 import { ToolCard } from "@/components/tool-card";
 import { StaggerGrid, StaggerItem } from "@/components/ui/motion";
 import type { AITool } from "@/lib/catalog-types";
@@ -21,7 +20,7 @@ export function SavedToolsGrid({ initialTools }: { initialTools: AITool[] }) {
       <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-10 text-center">
         <p className="text-heading-2 text-text-primary">No saved tools yet</p>
         <p className="text-body mt-2 text-text-secondary">
-          Tap the star on any tool to save it here for later.
+          Tap the bookmark on any tool to save it here for later.
         </p>
         <Link
           href="/search"
@@ -36,10 +35,7 @@ export function SavedToolsGrid({ initialTools }: { initialTools: AITool[] }) {
   return (
     <StaggerGrid className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {tools.map((tool) => (
-        <StaggerItem key={tool.slug} className="space-y-2">
-          <div className="flex justify-end">
-            <SaveButton toolId={tool.id} toolName={tool.name} callbackUrl="/saved" />
-          </div>
+        <StaggerItem key={tool.slug}>
           <ToolCard tool={tool} />
         </StaggerItem>
       ))}

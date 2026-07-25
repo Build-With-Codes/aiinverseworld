@@ -13,6 +13,7 @@ import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { FadeInSection } from "@/components/ui/motion";
 import type { CategoryContent } from "@/lib/category-content";
 import type { AITool, Category } from "@/lib/catalog-types";
+import { CategoryIcon, getCategoryTone } from "@/lib/category-visuals";
 import type { Pagination } from "@/lib/tool-catalog";
 
 type Props = {
@@ -27,6 +28,19 @@ type Props = {
 };
 
 const allPricing = ["Free", "Freemium", "Subscription", "Usage-based", "Enterprise", "Custom"];
+
+function ChevronIcon({ open }: { open: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className={`h-3.5 w-3.5 transition-transform ${open ? "rotate-180" : ""}`}
+      fill="none"
+      aria-hidden
+    >
+      <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 export function CategoryPageClient({ category, tools, pagination, lastUpdated, content }: Props) {
   const firstRenderRef = useRef(true);
@@ -171,6 +185,7 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated, c
   }, [currentPagination.total, isLoading]);
 
   const comparisonTools = tools.slice(0, 2);
+  const tone = getCategoryTone(category.slug);
 
   return (
     <div className="space-y-12 pb-10 pt-6">
@@ -184,16 +199,31 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated, c
         />
       </div>
       {/* Unique introduction + category explanation */}
-      <FadeInSection className={cardClass({ padding: "lg", radius: "card-lg" })}>
-        <Badge variant="brand">Category</Badge>
-        <h1 className="text-display-2 mt-4 text-text-primary">{category.name} tools</h1>
-        {lastUpdated ? (
-          <p className="text-caption mt-3 text-text-muted">
-            Last updated <time dateTime={lastUpdated.date}>{lastUpdated.label}</time>
-          </p>
-        ) : null}
-        <p className="text-body-lg mt-5 max-w-3xl text-text-secondary">{content.intro}</p>
-        <p className="text-body mt-4 max-w-3xl text-text-secondary">{content.explanation}</p>
+      <FadeInSection className={`overflow-hidden ${cardClass({ padding: "none", radius: "card-lg" })}`}>
+        <div className="premium-gradient h-1 w-full" aria-hidden />
+        <div className="p-8">
+          <div className="flex flex-wrap items-start gap-5">
+            <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border ${tone.badge} ${tone.icon}`}>
+              <CategoryIcon name={category.name} className="h-6 w-6" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="brand">Category</Badge>
+                <span className={`text-caption font-semibold ${tone.text}`}>
+                  {category.count} tool{category.count === 1 ? "" : "s"} listed
+                </span>
+              </div>
+              <h1 className="text-display-2 mt-3 text-text-primary">{category.name} tools</h1>
+              {lastUpdated ? (
+                <p className="text-caption mt-3 text-text-muted">
+                  Last updated <time dateTime={lastUpdated.date}>{lastUpdated.label}</time>
+                </p>
+              ) : null}
+            </div>
+          </div>
+          <p className="text-body-lg mt-5 max-w-3xl text-text-secondary">{content.intro}</p>
+          <p className="text-body mt-4 max-w-3xl text-text-secondary">{content.explanation}</p>
+        </div>
       </FadeInSection>
 
       {/* Best tools — filterable grid */}
@@ -207,7 +237,7 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated, c
             value={query}
             onChange={(event) => updateQuery(event.target.value)}
             suppressHydrationWarning
-            className="w-full rounded-sm border border-border-subtle bg-surface-1 px-5 py-4 text-sm text-text-secondary outline-none placeholder:text-text-muted focus:border-border-accent"
+            className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-5 py-4 text-sm text-text-secondary outline-none placeholder:text-text-muted focus:border-border-accent"
           />
         </div>
 
@@ -218,18 +248,19 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated, c
                 setPricingDropdown((value) => !value);
                 setPlatformDropdown(false);
               }}
-              className={`rounded-sm border px-4 py-2.5 text-sm transition ${pricing ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong" : "border-border-subtle bg-surface-1 text-text-secondary hover:border-border-accent"}`}
+              className={`inline-flex items-center gap-1.5 rounded-pill border px-4 py-2.5 text-sm font-medium transition ${pricing ? "border-brand-cyan-strong/40 bg-brand-cyan/10 text-brand-cyan-strong" : "border-border-subtle bg-surface-1 text-text-secondary hover:border-border-accent"}`}
             >
-              {pricing || "Pricing"} v
+              {pricing || "Pricing"}
+              <ChevronIcon open={pricingDropdown} />
             </button>
             {pricingDropdown ? (
-              <div className={`absolute left-0 top-[calc(100%+8px)] z-50 min-w-[160px] p-2 shadow-card-hover ${cardClass({ padding: "none", radius: "card" })}`}>
+              <div className={`absolute left-0 top-[calc(100%+8px)] z-50 min-w-[170px] p-1.5 shadow-card-hover ${cardClass({ padding: "none", radius: "card" })}`}>
                 <button
                   onClick={() => {
                     updatePricing("");
                     setPricingDropdown(false);
                   }}
-                  className="block w-full rounded-sm px-3 py-2 text-left text-sm text-text-muted hover:bg-surface-3"
+                  className="block w-full rounded-xl px-3 py-2 text-left text-sm text-text-muted hover:bg-surface-3"
                 >
                   All
                 </button>
@@ -240,7 +271,7 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated, c
                       updatePricing(item);
                       setPricingDropdown(false);
                     }}
-                    className={`block w-full rounded-sm px-3 py-2 text-left text-sm transition hover:bg-surface-3 ${pricing === item ? "text-brand-cyan-strong" : "text-text-secondary"}`}
+                    className={`block w-full rounded-xl px-3 py-2 text-left text-sm transition hover:bg-surface-3 ${pricing === item ? "font-semibold text-brand-cyan-strong" : "text-text-secondary"}`}
                   >
                     {item}
                   </button>
@@ -256,18 +287,19 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated, c
                   setPlatformDropdown((value) => !value);
                   setPricingDropdown(false);
                 }}
-                className={`rounded-sm border px-4 py-2.5 text-sm transition ${platform ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong" : "border-border-subtle bg-surface-1 text-text-secondary hover:border-border-accent"}`}
+                className={`inline-flex items-center gap-1.5 rounded-pill border px-4 py-2.5 text-sm font-medium transition ${platform ? "border-brand-cyan-strong/40 bg-brand-cyan/10 text-brand-cyan-strong" : "border-border-subtle bg-surface-1 text-text-secondary hover:border-border-accent"}`}
               >
-                {platform || "Platform"} v
+                {platform || "Platform"}
+                <ChevronIcon open={platformDropdown} />
               </button>
               {platformDropdown ? (
-                <div className={`absolute left-0 top-[calc(100%+8px)] z-50 min-w-[160px] p-2 shadow-card-hover ${cardClass({ padding: "none", radius: "card" })}`}>
+                <div className={`absolute left-0 top-[calc(100%+8px)] z-50 min-w-[170px] p-1.5 shadow-card-hover ${cardClass({ padding: "none", radius: "card" })}`}>
                   <button
                     onClick={() => {
                       updatePlatform("");
                       setPlatformDropdown(false);
                     }}
-                    className="block w-full rounded-sm px-3 py-2 text-left text-sm text-text-muted hover:bg-surface-3"
+                    className="block w-full rounded-xl px-3 py-2 text-left text-sm text-text-muted hover:bg-surface-3"
                   >
                     All
                   </button>
@@ -278,7 +310,7 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated, c
                         updatePlatform(item);
                         setPlatformDropdown(false);
                       }}
-                      className={`block w-full rounded-sm px-3 py-2 text-left text-sm transition hover:bg-surface-3 ${platform === item ? "text-brand-cyan-strong" : "text-text-secondary"}`}
+                      className={`block w-full rounded-xl px-3 py-2 text-left text-sm transition hover:bg-surface-3 ${platform === item ? "font-semibold text-brand-cyan-strong" : "text-text-secondary"}`}
                     >
                       {item}
                     </button>
@@ -296,15 +328,23 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated, c
             <button
               key={label}
               onClick={toggle}
-              className={`rounded-sm border px-4 py-2.5 text-sm transition ${active ? "border-emerald-300/40 bg-emerald-300/10 text-emerald-300" : "border-border-subtle bg-surface-1 text-text-secondary hover:border-border-accent"}`}
+              className={`inline-flex items-center gap-1.5 rounded-pill border px-4 py-2.5 text-sm font-medium transition ${active ? "border-emerald-400/40 bg-emerald-400/10 text-emerald-300" : "border-border-subtle bg-surface-1 text-text-secondary hover:border-border-accent"}`}
             >
+              {active ? (
+                <span aria-hidden className="text-emerald-300">
+                  ✓
+                </span>
+              ) : null}
               {label}
             </button>
           ))}
 
           {hasFilters ? (
-            <button onClick={clearAll} className="rounded-sm border border-border-subtle px-4 py-2.5 text-sm text-text-muted transition hover:text-text-primary">
-              Clear all x
+            <button
+              onClick={clearAll}
+              className="inline-flex items-center gap-1 rounded-pill border border-border-subtle px-4 py-2.5 text-sm text-text-muted transition hover:text-text-primary"
+            >
+              Clear all ✕
             </button>
           ) : null}
 
@@ -333,7 +373,7 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated, c
               <button
                 aria-disabled={currentPagination.page <= 1}
                 disabled={currentPagination.page <= 1}
-                className={`rounded-sm border border-border-subtle px-4 py-2 ${currentPagination.page <= 1 ? "pointer-events-none opacity-40" : "hover:border-border-accent hover:text-text-primary"}`}
+                className={`rounded-pill border border-border-subtle px-4 py-2 font-medium ${currentPagination.page <= 1 ? "pointer-events-none opacity-40" : "hover:border-border-accent hover:text-text-primary"}`}
                 onClick={() => setPage((value) => Math.max(1, value - 1))}
               >
                 Previous
@@ -341,7 +381,7 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated, c
               <button
                 aria-disabled={currentPagination.page >= currentPagination.totalPages}
                 disabled={currentPagination.page >= currentPagination.totalPages}
-                className={`rounded-sm border border-border-subtle px-4 py-2 ${currentPagination.page >= currentPagination.totalPages ? "pointer-events-none opacity-40" : "hover:border-border-accent hover:text-text-primary"}`}
+                className={`rounded-pill border border-border-subtle px-4 py-2 font-medium ${currentPagination.page >= currentPagination.totalPages ? "pointer-events-none opacity-40" : "hover:border-border-accent hover:text-text-primary"}`}
                 onClick={() => setPage((value) => value + 1)}
               >
                 Next

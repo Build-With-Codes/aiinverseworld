@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { SaveButton } from "@/components/engagement/save-button";
 import { Badge } from "@/components/ui/badge";
 import { cardClass } from "@/components/ui/card";
 import { FaviconBadge } from "@/components/favicon-badge";
@@ -18,7 +19,13 @@ export function ToolCard({ tool }: ToolCardProps) {
         : `From $${tool.startingPriceUsd}/mo`;
 
   return (
-    <Link href={`/tool/${tool.slug}?id=${encodeURIComponent(tool.id)}`} className={`group flex h-full flex-col ${cardClass({ hover: true })}`}>
+    <Link
+      href={`/tool/${tool.slug}?id=${encodeURIComponent(tool.id)}`}
+      className={`group relative flex h-full flex-col ${cardClass({ hover: true })}`}
+    >
+      <div className="absolute right-4 top-4 z-10">
+        <SaveButton toolId={tool.id} toolName={tool.name} callbackUrl={`/tool/${tool.slug}`} />
+      </div>
       <div className="mb-4 flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
           <FaviconBadge
@@ -35,7 +42,7 @@ export function ToolCard({ tool }: ToolCardProps) {
             </p>
           </div>
         </div>
-        <div className="flex flex-col items-end gap-1.5">
+        <div className="flex flex-col items-end gap-1.5 pr-11">
           <Badge variant="brand">{tool.category}</Badge>
           {tool.status !== "Active" ? <Badge variant="warning">{tool.status}</Badge> : null}
         </div>

@@ -5,10 +5,19 @@ export type Category = {
   description: string;
 };
 
+export type ComparisonSide = {
+  slug: string;
+  name: string;
+  favicon: string;
+  category: string;
+};
+
 export type Comparison = {
   slug: string;
   title: string;
   summary: string;
+  left: ComparisonSide;
+  right: ComparisonSide;
 };
 
 export type BestList = {

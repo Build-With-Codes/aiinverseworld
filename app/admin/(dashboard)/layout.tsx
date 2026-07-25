@@ -5,6 +5,7 @@ import { AdminLogoutButton } from "./admin-logout-button";
 
 const navItems = [
   { href: "/admin", label: "Overview" },
+  { href: "/admin/tools", label: "Tools" },
   { href: "/admin/blog", label: "Blog" },
   { href: "/admin/reviews", label: "Reviews" },
 ];

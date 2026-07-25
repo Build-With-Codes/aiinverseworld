@@ -27,27 +27,40 @@ export function CategoriesClient({ categories }: CategoriesClientProps) {
     return [...matched, ...extras];
   }, [categories, query]);
 
+  const totalTools = categories.reduce((sum, c) => sum + c.count, 0);
+
   return (
     <div className="space-y-10 pb-10 pt-10">
-      <section className={cardClass({ padding: "lg", radius: "card-lg" })}>
-        <SectionHeading
-          eyebrow="Browse"
-          title="All AI tool categories"
-          description="Explore every category in the catalog - from assistants and coding tools to video, audio, and enterprise platforms."
-        />
-        <input
-          aria-label="Filter categories"
-          placeholder="Search categories..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          suppressHydrationWarning
-          className="w-full rounded-sm border border-border-subtle bg-surface-1 px-5 py-4 text-sm text-text-secondary outline-none placeholder:text-text-muted focus:border-border-accent"
-        />
-        {query && (
-          <p className="text-sm mt-3 text-text-muted">
-            {filtered.length} categor{filtered.length !== 1 ? "ies" : "y"} found
-          </p>
-        )}
+      <section className={`overflow-hidden ${cardClass({ padding: "none", radius: "card-lg" })}`}>
+        <div className="premium-gradient h-1 w-full" aria-hidden />
+        <div className="p-8">
+          <SectionHeading
+            eyebrow="Browse"
+            title="All AI tool categories"
+            description="Explore every category in the catalog - from assistants and coding tools to video, audio, and enterprise platforms."
+          />
+          <div className="mb-6 flex flex-wrap gap-6 text-sm text-text-secondary">
+            <span>
+              <strong className="text-text-primary">{categories.length}</strong> categories
+            </span>
+            <span>
+              <strong className="text-text-primary">{totalTools.toLocaleString()}</strong> tools total
+            </span>
+          </div>
+          <input
+            aria-label="Filter categories"
+            placeholder="Search categories..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            suppressHydrationWarning
+            className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-5 py-4 text-sm text-text-secondary outline-none placeholder:text-text-muted focus:border-border-accent"
+          />
+          {query && (
+            <p className="text-sm mt-3 text-text-muted">
+              {filtered.length} categor{filtered.length !== 1 ? "ies" : "y"} found
+            </p>
+          )}
+        </div>
       </section>
 
       {filtered.length > 0 ? (

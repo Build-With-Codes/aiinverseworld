@@ -349,15 +349,36 @@ export default async function Home() {
               title="Popular AI tool matchups"
               description="Jump into high-intent comparisons people use before purchase and rollout decisions."
             />
-            <div className="space-y-4">
+            <div className="space-y-3">
               {liveComparisons.slice(0, 3).map((comparison) => (
                 <Link
                   key={comparison.slug}
                   href={`/compare/${comparison.slug}`}
-                  className="flex flex-col gap-2 rounded-sm border border-border-subtle bg-surface-1 p-5 transition hover:border-border-accent hover:bg-surface-3"
+                  className="group flex items-center gap-3 rounded-2xl border border-border-subtle bg-surface-1 p-4 transition hover:-translate-y-0.5 hover:border-border-accent hover:shadow-card-hover"
                 >
-                  <span className="font-semibold text-text-primary">{comparison.title}</span>
-                  <span className="text-body text-text-secondary">{comparison.summary}</span>
+                  <FaviconBadge
+                    name={comparison.left.name}
+                    faviconUrl={comparison.left.favicon}
+                    className="h-9 w-9 shrink-0 rounded-xl"
+                    imgClassName="p-1"
+                    labelClassName="text-xs"
+                  />
+                  <span
+                    aria-hidden
+                    className="shrink-0 text-[10px] font-bold tracking-wide text-text-muted"
+                  >
+                    VS
+                  </span>
+                  <FaviconBadge
+                    name={comparison.right.name}
+                    faviconUrl={comparison.right.favicon}
+                    className="h-9 w-9 shrink-0 rounded-xl"
+                    imgClassName="p-1"
+                    labelClassName="text-xs"
+                  />
+                  <span className="min-w-0 flex-1 truncate font-semibold text-text-primary transition group-hover:text-brand-cyan-strong">
+                    {comparison.title}
+                  </span>
                 </Link>
               ))}
               <Link

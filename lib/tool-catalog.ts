@@ -200,6 +200,8 @@ export async function getToolOptions() {
     value: tool.id,
     slug: tool.slug,
     label: tool.name,
+    favicon: tool.favicon,
+    category: tool.category,
   }));
 }
 

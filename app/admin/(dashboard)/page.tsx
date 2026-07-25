@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 import { cardClass } from "@/components/ui/card";
 import { backendAdminFetch, getAdminKeyFromCookies } from "@/lib/admin-proxy";
+import { getToolCatalog } from "@/lib/tool-catalog";
 
 import { RecomputeStatsButton } from "./recompute-stats-button";
 
@@ -15,9 +16,10 @@ export const dynamic = "force-dynamic";
 
 async function getCounts() {
   const adminKey = await getAdminKeyFromCookies();
-  if (!adminKey) return { posts: 0, reviews: 0 };
+  if (!adminKey) return { tools: 0, posts: 0, reviews: 0 };
 
-  const [blogRes, reviewsRes] = await Promise.all([
+  const [toolsCatalog, blogRes, reviewsRes] = await Promise.all([
+    getToolCatalog(1),
     backendAdminFetch("blog", { adminKey, query: { limit: "1" } }),
     backendAdminFetch("reviews", { adminKey, query: { limit: "1" } }),
   ]);
@@ -27,6 +29,7 @@ async function getCounts() {
     : undefined;
 
   return {
+    tools: toolsCatalog.pagination.total,
     posts: blog?.pagination?.total ?? 0,
     reviews: reviews?.pagination?.total ?? 0,
   };
@@ -40,11 +43,16 @@ export default async function AdminHomePage() {
       <div>
         <h1 className="text-heading-1 text-text-primary">Overview</h1>
         <p className="text-body mt-1 text-text-secondary">
-          Manage blog content and moderate reviews. Premium billing is not yet part of this panel.
+          Manage tools, blog content, and reviews. Premium billing is not yet part of this panel.
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Link href="/admin/tools" className={cardClass({ hover: true, padding: "lg", radius: "card-lg" })}>
+          <p className="text-eyebrow text-brand-cyan-strong">Tools</p>
+          <p className="text-heading-2 mt-2 text-text-primary">{counts.tools} tools</p>
+          <p className="text-body mt-1 text-text-secondary">Import CSVs, browse the catalog.</p>
+        </Link>
         <Link href="/admin/blog" className={cardClass({ hover: true, padding: "lg", radius: "card-lg" })}>
           <p className="text-eyebrow text-brand-cyan-strong">Blog</p>
           <p className="text-heading-2 mt-2 text-text-primary">{counts.posts} posts</p>
