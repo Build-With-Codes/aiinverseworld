@@ -85,6 +85,7 @@ const footerGroups = [
       { href: "/news", label: "AI News" },
       { href: "/search", label: "Search" },
       { href: "/about", label: "About Us" },
+      { href: "/faq", label: "FAQ" },
       { href: "/contact", label: "Contact" },
     ],
   },

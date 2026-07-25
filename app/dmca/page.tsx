@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { ContentPage } from "@/components/content-page";
+import { RelatedPolicies } from "@/components/related-policies";
 import { buildUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -34,12 +36,41 @@ export default function DmcaPage() {
         </p>
       </div>
       <div className="space-y-4">
+        <h2 className="text-2xl font-semibold text-white">Review process</h2>
+        <p className="text-base leading-8 text-text-secondary">
+          Upon receiving a valid notice, we review the claim and may remove or disable
+          access to the material identified while the matter is resolved. We aim to
+          acknowledge valid notices promptly and act in good faith throughout the
+          process.
+        </p>
+      </div>
+      <div className="space-y-4">
+        <h2 className="text-2xl font-semibold text-white">Repeat infringers</h2>
+        <p className="text-base leading-8 text-text-secondary">
+          Accounts responsible for repeated, substantiated infringement may have
+          submission privileges restricted or removed, consistent with our{" "}
+          <Link href="/terms" className="text-brand-cyan-strong hover:underline">
+            Terms of Service
+          </Link>
+          .
+        </p>
+      </div>
+      <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Contact for notices</h2>
         <p className="text-base leading-8 text-text-secondary">
           Send infringement notices and related legal correspondence to
-          legal@aiverseworld.com.
+          legal@aiverseworld.com, or use our{" "}
+          <Link href="/contact" className="text-brand-cyan-strong hover:underline">
+            Contact page
+          </Link>
+          . For general ownership questions, see our{" "}
+          <Link href="/copyright" className="text-brand-cyan-strong hover:underline">
+            Copyright Policy
+          </Link>
+          .
         </p>
       </div>
+      <RelatedPolicies exclude="/dmca" />
     </ContentPage>
   );
 }

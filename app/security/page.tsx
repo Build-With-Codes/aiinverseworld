@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { ContentPage } from "@/components/content-page";
+import { RelatedPolicies } from "@/components/related-policies";
 import { buildUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -33,13 +35,37 @@ export default function SecurityPage() {
         </p>
       </div>
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold text-white">Responsible disclosure</h2>
+        <h2 className="text-2xl font-semibold text-white">Account security</h2>
         <p className="text-base leading-8 text-text-secondary">
-          Security researchers can report suspected vulnerabilities through our
-          contact channel. We review submissions promptly and coordinate fixes when
-          issues are confirmed.
+          Authentication is handled through vetted identity providers rather than
+          storing passwords directly. Sessions are scoped and time-bound, and account
+          data is only accessible to authorized services needed to operate the
+          platform.
         </p>
       </div>
+      <div className="space-y-4">
+        <h2 className="text-2xl font-semibold text-white">Responsible disclosure</h2>
+        <p className="text-base leading-8 text-text-secondary">
+          Security researchers can report suspected vulnerabilities through our{" "}
+          <Link href="/contact" className="text-brand-cyan-strong hover:underline">
+            contact channel
+          </Link>
+          . We review submissions promptly and coordinate fixes when issues are
+          confirmed. Please report issues privately and allow reasonable time for a
+          fix before public disclosure.
+        </p>
+      </div>
+      <div className="space-y-4">
+        <h2 className="text-2xl font-semibold text-white">Data handling</h2>
+        <p className="text-base leading-8 text-text-secondary">
+          For details on what data we collect and how it is used, see our{" "}
+          <Link href="/privacy" className="text-brand-cyan-strong hover:underline">
+            Privacy Policy
+          </Link>
+          .
+        </p>
+      </div>
+      <RelatedPolicies exclude="/security" />
     </ContentPage>
   );
 }

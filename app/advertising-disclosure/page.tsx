@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { ContentPage } from "@/components/content-page";
+import { RelatedPolicies } from "@/components/related-policies";
 import { buildUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -35,13 +37,34 @@ export default function AdvertisingDisclosurePage() {
         </p>
       </div>
       <div className="space-y-4">
+        <h2 className="text-2xl font-semibold text-white">Programmatic advertising</h2>
+        <p className="text-base leading-8 text-text-secondary">
+          AiverseWorld may display programmatic ads served through networks such as
+          Google AdSense. These ads are selected automatically and are separate from
+          our editorial rankings and tool comparisons, which are never for sale.
+        </p>
+      </div>
+      <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Measurement and policy compliance</h2>
         <p className="text-base leading-8 text-text-secondary">
           Advertising may use analytics, click measurement, or conversion tracking in
-          line with our privacy and cookie policies, applicable laws, and platform
-          advertising standards.
+          line with our{" "}
+          <Link href="/privacy" className="text-brand-cyan-strong hover:underline">
+            Privacy
+          </Link>{" "}
+          and{" "}
+          <Link href="/cookie-policy" className="text-brand-cyan-strong hover:underline">
+            Cookie
+          </Link>{" "}
+          policies, applicable laws, and platform advertising standards. Referral and
+          commission-based placements are covered separately in our{" "}
+          <Link href="/affiliate-disclosure" className="text-brand-cyan-strong hover:underline">
+            Affiliate Disclosure
+          </Link>
+          .
         </p>
       </div>
+      <RelatedPolicies exclude="/advertising-disclosure" />
     </ContentPage>
   );
 }

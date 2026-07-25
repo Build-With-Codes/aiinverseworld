@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { ContentPage } from "@/components/content-page";
+import { RelatedPolicies } from "@/components/related-policies";
 import { SocialLink } from "@/components/social-link";
 import { buildUrl } from "@/lib/seo";
 import { socialLinks } from "@/lib/social-links";
@@ -59,6 +60,7 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
+      <RelatedPolicies exclude="/contact" />
     </ContentPage>
   );
 }

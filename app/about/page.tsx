@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ContentPage } from "@/components/content-page";
 import { StructuredDataScript } from "@/components/structured-data-script";
 import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
@@ -94,6 +95,25 @@ export default function AboutPage() {
           <h2 className="text-2xl font-bold text-cyan-100">Our Vision</h2>
           <p className="text-base leading-8 text-text-secondary">
             We believe artificial intelligence will reshape how people work, learn, create, and innovate. AiverseWorld aims to become a trusted destination where individuals and organizations can discover reliable information, evaluate AI solutions, and stay ahead in an AI-powered world.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <h2 className="text-2xl font-bold text-cyan-100">Start Exploring</h2>
+          <p className="text-base leading-8 text-text-secondary">
+            Browse the{" "}
+            <Link href="/category" className="text-brand-cyan-strong hover:underline">
+              full category directory
+            </Link>
+            , read the latest{" "}
+            <Link href="/blog" className="text-brand-cyan-strong hover:underline">
+              AI Blog
+            </Link>
+            , or check the{" "}
+            <Link href="/faq" className="text-brand-cyan-strong hover:underline">
+              FAQ
+            </Link>{" "}
+            for answers to common questions about the platform.
           </p>
         </div>
       </ContentPage>
