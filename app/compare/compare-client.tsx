@@ -104,28 +104,30 @@ export function CompareClient({
               href={`/compare/${c.slug}`}
               className="group flex flex-col gap-4 rounded-[22px] border border-border-subtle bg-surface-1 p-5 transition hover:-translate-y-0.5 hover:border-border-accent hover:shadow-card-hover"
             >
-              <div className="flex items-center gap-3">
-                <FaviconBadge
-                  name={c.left.name}
-                  faviconUrl={c.left.favicon}
-                  className="h-11 w-11 shrink-0 rounded-xl"
-                  imgClassName="p-1.5"
-                  labelClassName="text-xs"
-                />
-                <span
-                  aria-hidden
-                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-border-accent bg-surface-3 text-[10px] font-bold text-brand-cyan-strong"
-                >
-                  VS
-                </span>
-                <FaviconBadge
-                  name={c.right.name}
-                  faviconUrl={c.right.favicon}
-                  className="h-11 w-11 shrink-0 rounded-xl"
-                  imgClassName="p-1.5"
-                  labelClassName="text-xs"
-                />
-              </div>
+              {c.left && c.right ? (
+                <div className="flex items-center gap-3">
+                  <FaviconBadge
+                    name={c.left.name}
+                    faviconUrl={c.left.favicon}
+                    className="h-11 w-11 shrink-0 rounded-xl"
+                    imgClassName="p-1.5"
+                    labelClassName="text-xs"
+                  />
+                  <span
+                    aria-hidden
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-border-accent bg-surface-3 text-[10px] font-bold text-brand-cyan-strong"
+                  >
+                    VS
+                  </span>
+                  <FaviconBadge
+                    name={c.right.name}
+                    faviconUrl={c.right.favicon}
+                    className="h-11 w-11 shrink-0 rounded-xl"
+                    imgClassName="p-1.5"
+                    labelClassName="text-xs"
+                  />
+                </div>
+              ) : null}
               <div>
                 <p className="font-semibold text-text-primary transition group-hover:text-brand-cyan-strong">
                   {c.title}

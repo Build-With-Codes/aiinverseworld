@@ -356,26 +356,30 @@ export default async function Home() {
                   href={`/compare/${comparison.slug}`}
                   className="group flex items-center gap-3 rounded-2xl border border-border-subtle bg-surface-1 p-4 transition hover:-translate-y-0.5 hover:border-border-accent hover:shadow-card-hover"
                 >
-                  <FaviconBadge
-                    name={comparison.left.name}
-                    faviconUrl={comparison.left.favicon}
-                    className="h-9 w-9 shrink-0 rounded-xl"
-                    imgClassName="p-1"
-                    labelClassName="text-xs"
-                  />
-                  <span
-                    aria-hidden
-                    className="shrink-0 text-[10px] font-bold tracking-wide text-text-muted"
-                  >
-                    VS
-                  </span>
-                  <FaviconBadge
-                    name={comparison.right.name}
-                    faviconUrl={comparison.right.favicon}
-                    className="h-9 w-9 shrink-0 rounded-xl"
-                    imgClassName="p-1"
-                    labelClassName="text-xs"
-                  />
+                  {comparison.left && comparison.right ? (
+                    <>
+                      <FaviconBadge
+                        name={comparison.left.name}
+                        faviconUrl={comparison.left.favicon}
+                        className="h-9 w-9 shrink-0 rounded-xl"
+                        imgClassName="p-1"
+                        labelClassName="text-xs"
+                      />
+                      <span
+                        aria-hidden
+                        className="shrink-0 text-[10px] font-bold tracking-wide text-text-muted"
+                      >
+                        VS
+                      </span>
+                      <FaviconBadge
+                        name={comparison.right.name}
+                        faviconUrl={comparison.right.favicon}
+                        className="h-9 w-9 shrink-0 rounded-xl"
+                        imgClassName="p-1"
+                        labelClassName="text-xs"
+                      />
+                    </>
+                  ) : null}
                   <span className="min-w-0 flex-1 truncate font-semibold text-text-primary transition group-hover:text-brand-cyan-strong">
                     {comparison.title}
                   </span>

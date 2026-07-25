@@ -16,8 +16,11 @@ export type Comparison = {
   slug: string;
   title: string;
   summary: string;
-  left: ComparisonSide;
-  right: ComparisonSide;
+  // Optional: older cached responses (pre-migration) or a backend that
+  // hasn't been redeployed yet may not include these — render must degrade
+  // gracefully rather than crash.
+  left?: ComparisonSide;
+  right?: ComparisonSide;
 };
 
 export type BestList = {
