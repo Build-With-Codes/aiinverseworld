@@ -114,30 +114,8 @@ export default async function Home() {
   const trendingQueries = mostSearchedTools.map((tool) => tool.name);
   const blogPosts = (await getAllBlogPosts(12, REVALIDATE_SECONDS)).slice(0, 6);
 
-  const mostRecentVerified = liveTools.reduce((max, tool) => {
-    const time = new Date(tool.lastVerified).getTime();
-    return Number.isFinite(time) && time > max ? time : max;
-  }, 0);
   // Request-time freshness label — intentionally impure (this is a Server
   // Component computed per request, not memoized render output).
-  /* eslint-disable react-hooks/purity */
-  const daysSinceVerified = mostRecentVerified
-    ? Math.max(0, Math.floor((Date.now() - mostRecentVerified) / 86_400_000))
-    : null;
-  /* eslint-enable react-hooks/purity */
-  const freshnessLabel =
-    daysSinceVerified === null
-      ? "Weekly"
-      : daysSinceVerified === 0
-        ? "Today"
-        : `${daysSinceVerified}d ago`;
-
-  const proofPoints = [
-    { value: `${liveTools.length}+`, label: "AI tools, independently verified" },
-    { value: freshnessLabel, label: "Last catalog verification" },
-    { value: `${liveCategories.length}`, label: "Categories, each with a buying guide" },
-  ];
-
   return (
     <div className="space-y-12 pb-10 pt-10">
       {/* Hero */}
@@ -201,23 +179,6 @@ export default async function Home() {
             </FadeInSection>
           ) : null}
 
-          <StaggerGrid className="grid gap-4 sm:grid-cols-3">
-            {proofPoints.map((point) => (
-              <StaggerItem key={point.label} className={cardClass()}>
-                <p className="flex items-center gap-1.5 text-display-2 text-text-primary [font-variant-numeric:tabular-nums]">
-                  <span aria-hidden className="text-base text-brand-cyan-strong">
-                    ✓
-                  </span>
-                  {point.value}
-                </p>
-                <p className="text-caption mt-2 text-text-muted">{point.label}</p>
-              </StaggerItem>
-            ))}
-          </StaggerGrid>
-          <p className="text-caption text-text-muted">
-            No pay-to-rank. No sponsored placements in rankings. Every tool links its official
-            source so you can verify.
-          </p>
         </div>
 
         <FadeInSection delay={0.15} className="relative grid gap-4">

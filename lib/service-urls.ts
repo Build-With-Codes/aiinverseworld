@@ -12,6 +12,11 @@ export const AIVERSE_AUTH_BASE_URL =
   process.env.NEXT_PUBLIC_AIVERSE_AUTH_BASE_URL ??
   "http://localhost:3002";
 
+export const AIVERSE_JOBS_BASE_URL =
+  process.env.AIVERSE_JOBS_BASE_URL ??
+  process.env.NEXT_PUBLIC_AIVERSE_JOBS_BASE_URL ??
+  "http://localhost:3002";
+
 // Server-only shared secret for per-user engagement endpoints on the backend.
 // Never exposed to the client (no NEXT_PUBLIC_ fallback).
 export const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY ?? "";

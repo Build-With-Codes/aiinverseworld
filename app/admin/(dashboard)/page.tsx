@@ -6,6 +6,7 @@ import { backendAdminFetch, getAdminKeyFromCookies } from "@/lib/admin-proxy";
 import { getToolCatalog } from "@/lib/tool-catalog";
 
 import { RecomputeStatsButton } from "./recompute-stats-button";
+import { ResetCacheButton } from "./reset-cache-button";
 
 export const metadata: Metadata = {
   title: "Admin | AiverseWorld",
@@ -71,7 +72,10 @@ export default async function AdminHomePage() {
           Recompute trending/most-saved rankings from accumulated engagement events. This also runs
           automatically every 60 minutes.
         </p>
-        <RecomputeStatsButton />
+        <div className="flex flex-wrap gap-3">
+          <RecomputeStatsButton />
+          <ResetCacheButton />
+        </div>
       </div>
     </div>
   );
