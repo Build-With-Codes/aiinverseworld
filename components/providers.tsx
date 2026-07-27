@@ -5,6 +5,7 @@ import type { Session } from "next-auth";
 import type { ReactNode } from "react";
 
 import { CompareTrayProvider } from "@/components/engagement/compare-tray";
+import { SavedPromptsProvider } from "@/components/engagement/saved-prompts";
 import { SavedToolsProvider } from "@/components/engagement/saved-tools";
 
 export function Providers({
@@ -17,7 +18,9 @@ export function Providers({
   return (
     <SessionProvider session={session}>
       <SavedToolsProvider>
-        <CompareTrayProvider>{children}</CompareTrayProvider>
+        <SavedPromptsProvider>
+          <CompareTrayProvider>{children}</CompareTrayProvider>
+        </SavedPromptsProvider>
       </SavedToolsProvider>
     </SessionProvider>
   );
