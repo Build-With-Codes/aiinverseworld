@@ -1,9 +1,9 @@
 import Link from "next/link";
 
 import { SaveButton } from "@/components/engagement/save-button";
+import { FaviconBadge } from "@/components/favicon-badge";
 import { Badge } from "@/components/ui/badge";
 import { cardClass } from "@/components/ui/card";
-import { FaviconBadge } from "@/components/favicon-badge";
 import type { AITool } from "@/lib/catalog-types";
 
 type ToolCardProps = {
@@ -26,26 +26,27 @@ export function ToolCard({ tool }: ToolCardProps) {
       <div className="absolute right-4 top-4 z-10">
         <SaveButton toolId={tool.id} toolName={tool.name} callbackUrl={`/tool/${tool.slug}`} />
       </div>
-      <div className="mb-4 flex items-start justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <FaviconBadge
-            name={tool.name}
-            faviconUrl={tool.favicon}
-            className="h-12 w-12 rounded-2xl shadow-glow-cyan"
-            imgClassName="p-2"
-            labelClassName="text-sm"
-          />
-          <div>
-            <p className="font-semibold text-text-primary">{tool.name}</p>
-            <p className="text-caption text-text-muted">
-              {tool.company} · {tool.subcategory}
-            </p>
-          </div>
+
+      <div className="mb-3 flex items-start gap-3 pr-11">
+        <FaviconBadge
+          name={tool.name}
+          faviconUrl={tool.favicon}
+          className="h-12 w-12 shrink-0 rounded-2xl shadow-glow-cyan"
+          imgClassName="p-2"
+          labelClassName="text-sm"
+        />
+
+        <div className="min-w-0 flex-1">
+          <p className="line-clamp-2 font-semibold leading-snug text-text-primary">{tool.name}</p>
+          <p className="text-caption mt-1 line-clamp-1 text-text-muted">
+            {tool.company} / {tool.subcategory}
+          </p>
         </div>
-        <div className="flex flex-col items-end gap-1.5 pr-11">
-          <Badge variant="brand">{tool.category}</Badge>
-          {tool.status !== "Active" ? <Badge variant="warning">{tool.status}</Badge> : null}
-        </div>
+      </div>
+
+      <div className="mb-3 flex flex-wrap gap-2">
+        <Badge variant="brand">{tool.category}</Badge>
+        {tool.status !== "Active" ? <Badge variant="warning">{tool.status}</Badge> : null}
       </div>
 
       <p className="text-body mb-4 text-text-secondary">{tool.shortDescription}</p>
@@ -62,14 +63,14 @@ export function ToolCard({ tool }: ToolCardProps) {
       </div>
 
       <div className="mb-4 flex flex-wrap gap-1.5">
-        {tool.platforms.slice(0, 3).map((p) => (
-          <span key={p} className="rounded-sm bg-surface-3 px-2 py-0.5 text-[11px] text-text-muted">
-            {p}
+        {tool.platforms.slice(0, 3).map((platform) => (
+          <span key={platform} className="rounded-sm bg-surface-3 px-2 py-0.5 text-[11px] text-text-muted">
+            {platform}
           </span>
         ))}
-        {tool.modalities.slice(0, 3).map((m) => (
-          <span key={m} className="rounded-sm bg-brand-violet/8 px-2 py-0.5 text-[11px] text-brand-violet-strong">
-            {m}
+        {tool.modalities.slice(0, 3).map((modality) => (
+          <span key={modality} className="rounded-sm bg-brand-violet/8 px-2 py-0.5 text-[11px] text-brand-violet-strong">
+            {modality}
           </span>
         ))}
       </div>
@@ -81,15 +82,15 @@ export function ToolCard({ tool }: ToolCardProps) {
           {tool.teamCollaboration ? <Badge variant="neutral">Teams</Badge> : null}
           {tool.freePlan === "Yes" ? <Badge variant="success">Free plan</Badge> : null}
         </div>
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-text-muted">{tool.pricingModel}</span>
-          <span className="font-medium text-text-primary">{priceLabel}</span>
+        <div className="flex items-center justify-between gap-3 text-sm">
+          <span className="min-w-0 text-text-muted">{tool.pricingModel}</span>
+          <span className="shrink-0 font-medium text-text-primary">{priceLabel}</span>
         </div>
         {tool.rating ? (
           <div className="flex items-center gap-1.5 text-xs text-text-muted">
             <span className="text-amber-300">★</span>
             <span>{tool.rating.toFixed(1)}</span>
-            {tool.reviewCount ? <span>· {tool.reviewCount} reviews</span> : null}
+            {tool.reviewCount ? <span>/ {tool.reviewCount} reviews</span> : null}
           </div>
         ) : null}
       </div>

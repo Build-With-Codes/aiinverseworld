@@ -59,13 +59,8 @@ export function AuthDialog({
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -157,11 +152,11 @@ export function AuthDialog({
   }
 
   const dialog =
-    open && mounted ? (
+    open ? (
       <div
         ref={containerRef}
         data-auth-dialog="true"
-        className="fixed inset-0 z-[70] flex items-start justify-center overflow-y-auto bg-slate-950/55 p-3 backdrop-blur-md sm:items-center sm:p-4"
+        className="fixed inset-0 z-[110] flex items-start justify-center overflow-y-auto bg-slate-950/55 p-3 backdrop-blur-md sm:items-center sm:p-4"
       >
         <div
           ref={panelRef}
@@ -335,7 +330,7 @@ export function AuthDialog({
         {triggerLabel}
       </button>
 
-      {mounted ? createPortal(dialog, document.body) : null}
+      {typeof document !== "undefined" ? createPortal(dialog, document.body) : null}
     </>
   );
 }

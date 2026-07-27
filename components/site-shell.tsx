@@ -151,7 +151,9 @@ export async function SiteShell({ children }: SiteShellProps) {
               <div className="hidden w-[min(24vw,18rem)] md:block">
                 <HeaderSearch trendingQueries={trendingQueries} />
               </div>
-              <ThemeToggle />
+              <div className="hidden md:block">
+                <ThemeToggle />
+              </div>
 
               <div className="hidden md:block">
                 {session?.user ? (

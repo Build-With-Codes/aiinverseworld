@@ -349,8 +349,12 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
 
       {/* Sticky action bar — stays reachable through the long read */}
       {/* 2. Overview */}
-      <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start">
-      <FadeInSection className={cardClass({ padding: "lg", radius: "card-lg" })}>
+      <section
+        className={`grid gap-6 lg:items-start ${
+          books.length > 0 ? "lg:grid-cols-[minmax(0,1fr)_19rem]" : "lg:grid-cols-1"
+        }`}
+      >
+        <FadeInSection className={cardClass({ padding: "lg", radius: "card-lg" })}>
         <h2 className="text-heading-1 text-text-primary">What is {tool.name}?</h2>
         <div className="text-body-lg mt-4 space-y-4 text-text-secondary">
           {summaryParagraphs.length > 0 ? (
@@ -374,8 +378,8 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
         >
           Explore more {tool.category} tools →
         </Link>
-      </FadeInSection>
-        <BookRecommendations books={books} title="Books for this tool" variant="sidebar" />
+        </FadeInSection>
+        {books.length > 0 ? <BookRecommendations books={books} title="Books for this tool" variant="sidebar" /> : null}
       </section>
 
       {/* 3. How it works */}

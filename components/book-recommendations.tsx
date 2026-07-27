@@ -1,6 +1,6 @@
-import Image from "next/image";
 import Link from "next/link";
 
+import { BookCoverImage } from "@/components/book-cover-image";
 import type { RecommendedBook } from "@/lib/books";
 
 type BookRecommendationsProps = {
@@ -51,19 +51,14 @@ export function BookRecommendations({
                 className="group grid grid-cols-[4.25rem_minmax(0,1fr)] gap-3 rounded-md p-1.5 transition hover:bg-surface-2"
               >
                 <div className="relative aspect-[2/3] overflow-hidden rounded-sm border border-border-subtle bg-surface-3 shadow-soft">
-                  {coverUrl ? (
-                    <Image
-                      src={coverUrl}
-                      alt={`${book.title} book cover`}
-                      fill
-                      sizes="80px"
-                      className="object-cover transition duration-300 group-hover:scale-[1.04]"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center bg-gradient-to-br from-brand-cyan/15 via-surface-2 to-brand-violet/20 px-2 text-center">
-                      <span className="line-clamp-4 text-[10px] font-semibold text-text-secondary">{book.title}</span>
-                    </div>
-                  )}
+                  <BookCoverImage
+                    src={coverUrl}
+                    title={book.title}
+                    alt={`${book.title} book cover`}
+                    sizes="80px"
+                    className="object-cover transition duration-300 group-hover:scale-[1.04]"
+                    fallbackClassName="text-[10px]"
+                  />
                 </div>
                 <div className="min-w-0 py-0.5">
                   <h4 className="line-clamp-2 text-sm font-semibold leading-snug text-text-primary group-hover:text-brand-violet-strong">
@@ -109,19 +104,13 @@ export function BookRecommendations({
               className="group rounded-card border border-border-subtle bg-surface-2/70 p-2.5 shadow-soft transition duration-200 hover:-translate-y-1 hover:border-brand-violet/45 hover:shadow-card"
             >
               <div className="relative aspect-[3/4] overflow-hidden rounded-md border border-border-subtle bg-surface-3">
-                {coverUrl ? (
-                  <Image
-                    src={coverUrl}
-                    alt={`${book.title} book cover`}
-                    fill
-                    sizes="(min-width: 1024px) 18vw, (min-width: 640px) 42vw, 90vw"
-                    className="object-cover transition duration-300 group-hover:scale-[1.03]"
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center bg-gradient-to-br from-brand-cyan/15 via-surface-2 to-brand-violet/20 px-4 text-center">
-                    <span className="line-clamp-4 text-base font-semibold text-text-secondary">{book.title}</span>
-                  </div>
-                )}
+                <BookCoverImage
+                  src={coverUrl}
+                  title={book.title}
+                  alt={`${book.title} book cover`}
+                  sizes="(min-width: 1024px) 18vw, (min-width: 640px) 42vw, 90vw"
+                  className="object-cover transition duration-300 group-hover:scale-[1.03]"
+                />
                 <div className="absolute right-2 top-2 rounded-md border border-white/30 bg-black/35 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white backdrop-blur">
                   {year ?? book.merchant}
                 </div>
