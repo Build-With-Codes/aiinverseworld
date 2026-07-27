@@ -1,4 +1,3 @@
-import { FaviconBadge } from "@/components/favicon-badge";
 import { StructuredDataScript } from "@/components/structured-data-script";
 import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
@@ -6,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cardClass } from "@/components/ui/card";
 import { ComparisonTable } from "@/components/comparison-table";
+import { BookRecommendations } from "@/components/book-recommendations";
 import { EditorialBlock } from "@/components/ui/editorial-block";
 import { FAQAccordion, type FAQItem } from "@/components/ui/faq-accordion";
 import { FeatureCard } from "@/components/ui/feature-card";
@@ -13,15 +13,17 @@ import { FadeInSection, StaggerGrid, StaggerItem } from "@/components/ui/motion"
 import { ReviewSection } from "@/components/ui/review-section";
 import { ToolHero } from "@/components/ui/tool-hero";
 import { RecentlyViewedRail } from "@/components/engagement/recently-viewed-rail";
-import { ToolActionBar } from "@/components/engagement/tool-action-bar";
 import { ViewTracker } from "@/components/engagement/view-tracker";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { getRelatedTools } from "@/lib/engagement";
 import { getReviews } from "@/lib/reviews-api";
 import { buildUrl, buildToolMeta } from "@/lib/seo";
+import { getBookRecommendations } from "@/lib/books";
 import { getToolById, getToolBySlug, searchTools } from "@/lib/tool-catalog";
+import { getToolYoutubeVideos } from "@/lib/youtube";
 import type { AITool } from "@/lib/catalog-types";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 type ToolDetailPageProps = {
@@ -151,6 +153,38 @@ function buildVerdict(tool: AITool) {
   return `${tool.name} is a solid choice for ${audience} looking for ${tool.category.toLowerCase()} software, backed by ${priceNote}. It earns a place on the shortlist when ${formatList(tool.bestFor.slice(0, 2)).toLowerCase() || "its core use case"} matches your workflow — verify current pricing and platform support directly with ${tool.company} before committing.`;
 }
 
+function formatVideoDate(value?: string | null) {
+  if (!value) return null;
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
+
+function formatVideoDuration(seconds?: number | null) {
+  if (!seconds) return null;
+
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes}:${String(remainingSeconds).padStart(2, "0")}`;
+}
+
+function formatViewCount(value?: string | null) {
+  if (!value) return null;
+
+  const count = Number(value);
+  if (!Number.isFinite(count)) return null;
+  if (count >= 1_000_000) return `${(count / 1_000_000).toFixed(count >= 10_000_000 ? 0 : 1)}M views`;
+  if (count >= 1_000) return `${Math.round(count / 1_000)}K views`;
+
+  return `${count} views`;
+}
+
 export async function generateMetadata({ params }: ToolDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
   const tool = await getToolBySlug(slug);
@@ -200,10 +234,12 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
     );
   }
 
-  const [related, alternativesResult, reviewsResult] = await Promise.all([
+  const [related, alternativesResult, reviewsResult, youtubeVideos, books] = await Promise.all([
     getRelatedTools(tool.id, 8),
     searchTools({ category: tool.category, limit: 24 }),
     getReviews(tool.id, 1, 10),
+    getToolYoutubeVideos(tool.id, 3),
+    getBookRecommendations({ type: "tool", key: tool.id, limit: 4 }),
   ]);
   // Prefer semantic/overlap-ranked related tools; fall back to same-category.
   const alternatives = (related.length > 0
@@ -312,9 +348,8 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
       </FadeInSection>
 
       {/* Sticky action bar — stays reachable through the long read */}
-      <ToolActionBar tool={tool} />
-
       {/* 2. Overview */}
+      <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start">
       <FadeInSection className={cardClass({ padding: "lg", radius: "card-lg" })}>
         <h2 className="text-heading-1 text-text-primary">What is {tool.name}?</h2>
         <div className="text-body-lg mt-4 space-y-4 text-text-secondary">
@@ -340,12 +375,74 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
           Explore more {tool.category} tools →
         </Link>
       </FadeInSection>
+        <BookRecommendations books={books} title="Books for this tool" variant="sidebar" />
+      </section>
 
       {/* 3. How it works */}
       <FadeInSection className={cardClass({ padding: "lg", radius: "card-lg" })}>
         <h2 className="text-heading-1 text-text-primary">How {tool.name} works</h2>
         <p className="text-body-lg mt-4 text-text-secondary">{howItWorks}</p>
       </FadeInSection>
+
+      {youtubeVideos.length > 0 ? (
+        <div>
+          <SectionHeading
+            eyebrow="Video Guides"
+            title={`Watch ${tool.name} in action`}
+            description="Recent YouTube videos cached from the backend so this page stays fast and fresh."
+          />
+          <StaggerGrid className="grid gap-5 md:grid-cols-3">
+            {youtubeVideos.map((video) => {
+              const publishedLabel = formatVideoDate(video.publishedAt);
+              const durationLabel = formatVideoDuration(video.durationSec);
+              const viewsLabel = formatViewCount(video.viewCount);
+
+              return (
+                <StaggerItem key={video.id}>
+                  <a
+                    href={video.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="group block overflow-hidden rounded-sm border border-border-subtle bg-surface-2 transition hover:-translate-y-0.5 hover:border-brand-cyan/50 hover:shadow-card"
+                  >
+                    {video.thumbnailUrl ? (
+                      <div className="relative aspect-video overflow-hidden bg-surface-3">
+                        <Image
+                          src={video.thumbnailUrl}
+                          alt={video.title}
+                          fill
+                          sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 100vw"
+                          className="object-cover transition duration-300 group-hover:scale-105"
+                        />
+                        <span className="absolute bottom-3 left-3 rounded-sm bg-surface-0/90 px-2 py-1 text-xs font-semibold text-text-primary">
+                          YouTube
+                        </span>
+                        {durationLabel ? (
+                          <span className="absolute bottom-3 right-3 rounded-sm bg-surface-0/90 px-2 py-1 text-xs font-semibold text-text-primary">
+                            {durationLabel}
+                          </span>
+                        ) : null}
+                      </div>
+                    ) : null}
+                    <div className="space-y-2 p-4">
+                      <h3 className="line-clamp-2 text-sm font-semibold text-text-primary transition group-hover:text-brand-cyan-strong">
+                        {video.title}
+                      </h3>
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-text-muted">
+                        {video.channelTitle ? <span>{video.channelTitle}</span> : null}
+                        {video.channelTitle && (viewsLabel || publishedLabel) ? <span aria-hidden>·</span> : null}
+                        {viewsLabel ? <span>{viewsLabel}</span> : null}
+                        {viewsLabel && publishedLabel ? <span aria-hidden>·</span> : null}
+                        {publishedLabel ? <time dateTime={video.publishedAt ?? undefined}>{publishedLabel}</time> : null}
+                      </div>
+                    </div>
+                  </a>
+                </StaggerItem>
+              );
+            })}
+          </StaggerGrid>
+            </div>
+      ) : null}
 
       {/* 4. Key features */}
       <div>

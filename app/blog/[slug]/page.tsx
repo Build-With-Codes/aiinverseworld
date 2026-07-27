@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ArticleToc } from "@/components/blog/article-toc";
+import { BookRecommendations } from "@/components/book-recommendations";
 import { BlockRenderer } from "@/components/blog/block-renderer";
 import { ReadingProgress } from "@/components/blog/reading-progress";
 import { StructuredDataScript } from "@/components/structured-data-script";
@@ -14,6 +15,7 @@ import { NewsletterSignup } from "@/components/newsletter-signup";
 import { getBlogPost, getRelatedPosts } from "@/lib/blog-api";
 import { getBlogSuggestions } from "@/lib/blog-suggestions";
 import { injectHeadingIds, tocFromBlocks } from "@/lib/blog-toc";
+import { getBookRecommendations } from "@/lib/books";
 import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 interface BlogPostPageProps {
@@ -77,7 +79,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const post = await getBlogPost(slug);
   if (!post) notFound();
 
-  const related = await getRelatedPosts(slug, 3);
+  const [related, books] = await Promise.all([
+    getRelatedPosts(slug, 3),
+    getBookRecommendations({ type: "blog", key: slug, limit: 4 }),
+  ]);
   // Blocks are the source of truth; fall back to HTML for any pre-block post.
   const hasBlocks = Array.isArray(post.blocks) && post.blocks.length > 0;
   const blockData = hasBlocks ? tocFromBlocks(post.blocks!) : null;
@@ -183,7 +188,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </header>
 
         {/* Body */}
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_15rem] lg:items-start">
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_19rem] lg:items-start xl:grid-cols-[15rem_minmax(0,1fr)_19rem]">
+          <aside className="hidden xl:sticky xl:top-24 xl:block xl:self-start">
+            <ArticleToc items={toc} />
+          </aside>
+
           <div className="min-w-0 space-y-12">
             <article className="blog-article-content max-w-none">
               {blockData ? (
@@ -192,6 +201,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <div dangerouslySetInnerHTML={{ __html: htmlData!.html }} />
               )}
             </article>
+
+            <div className="lg:hidden">
+              <BookRecommendations books={books} title="Books for deeper reading" variant="sidebar" />
+            </div>
 
             {/* People Also Ask */}
             {blogSuggestions.length > 0 ? (
@@ -254,8 +267,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
           {/* Sticky rail */}
           <aside className="hidden lg:sticky lg:top-24 lg:block lg:self-start">
-            <div className="space-y-8">
-              <ArticleToc items={toc} />
+            <div className="space-y-6">
+              <BookRecommendations books={books} title="Books for this article" variant="sidebar" />
               <div className={cardClass({ padding: "md" })}>
                 <p className="text-eyebrow text-brand-cyan-strong">Weekly digest</p>
                 <p className="text-body mt-2 text-text-secondary">
