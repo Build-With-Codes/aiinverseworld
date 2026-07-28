@@ -240,7 +240,7 @@ export async function SiteShell({ children }: SiteShellProps) {
               </div>
             ))}
           </div>
-          <div className="text-caption mt-8 rounded-sm border border-border-subtle bg-surface-1 p-4 leading-6 text-text-muted">
+          <div className="mt-8 rounded-sm border border-border-strong bg-surface-2 p-4 text-sm leading-6 text-text-primary">
             AiverseWorld uses cookies and similar technologies for essential site
             functions, analytics, and advertising. Third-party partners, including
             Google AdSense where enabled, may use cookies or tracking scripts to

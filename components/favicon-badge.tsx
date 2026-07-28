@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 
 type FaviconBadgeProps = {
@@ -26,13 +25,16 @@ export function FaviconBadge({
       className={`relative flex items-center justify-center overflow-hidden bg-white/10 ${className}`}
     >
       {!failed ? (
-        <Image
+        // Third-party favicons are tiny and often block image proxying; render
+        // them directly so one bad favicon does not create a Next image 502.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
           src={faviconUrl}
           alt={`${name} favicon`}
-          fill
-          sizes="48px"
           className={`h-full w-full object-contain ${imgClassName}`}
           onError={() => setFailed(true)}
+          loading="lazy"
+          decoding="async"
         />
       ) : (
         <span className={`font-semibold text-white ${labelClassName}`}>
