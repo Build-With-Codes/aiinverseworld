@@ -70,6 +70,7 @@ export function SaveButton({
           callbackUrl={callbackUrl}
           enabled={googleAuthEnabled}
           triggerClassName={buttonClass(variant, false)}
+          triggerAriaLabel={`Sign in to save ${toolName}`}
           triggerLabel={
             <>
               <BookmarkIcon filled={false} />

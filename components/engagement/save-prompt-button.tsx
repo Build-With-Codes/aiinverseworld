@@ -56,6 +56,7 @@ export function SavePromptButton({
           callbackUrl={callbackUrl}
           enabled={googleAuthEnabled}
           triggerClassName={className}
+          triggerAriaLabel={`Sign in to save ${promptTitle}`}
           triggerLabel={children ?? (
             <>
               <BookmarkIcon filled={false} />

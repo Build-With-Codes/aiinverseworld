@@ -11,6 +11,7 @@ type AuthDialogProps = {
   enabled?: boolean;
   triggerClassName?: string;
   triggerLabel?: ReactNode;
+  triggerAriaLabel?: string;
   title?: string;
   description?: string;
 };
@@ -49,6 +50,7 @@ export function AuthDialog({
   enabled = true,
   triggerClassName,
   triggerLabel = "Login / Sign Up",
+  triggerAriaLabel,
   title = "Join AiverseWorld",
   description = "Create your account or log in with email and password, or continue with Google.",
 }: AuthDialogProps) {
@@ -325,6 +327,7 @@ export function AuthDialog({
       <button
         type="button"
         onClick={() => setOpen(true)}
+        aria-label={triggerAriaLabel}
         className={triggerClassName}
       >
         {triggerLabel}

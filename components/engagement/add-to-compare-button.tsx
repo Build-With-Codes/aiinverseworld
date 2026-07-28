@@ -18,6 +18,13 @@ export function AddToCompareButton({ entry, variant = "full" }: AddToCompareButt
       onClick={() => toggle(entry)}
       disabled={full}
       aria-pressed={inTray}
+      aria-label={
+        variant === "icon"
+          ? inTray
+            ? `Remove ${entry.name} from compare`
+            : `Add ${entry.name} to compare`
+          : undefined
+      }
       title={
         full
           ? `Compare tray is full (max ${max})`
