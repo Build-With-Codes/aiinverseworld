@@ -1,33 +1,14 @@
 import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import { NewsCard } from "@/components/news-card";
 import { SectionHeading } from "@/components/section-heading";
 import { StructuredDataScript } from "@/components/structured-data-script";
 import { getNewsArticles } from "@/lib/news";
 import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "AI News | AiverseWorld",
-  description:
-    "Enterprise AI news with short summaries, source attribution, and links back to original publishers.",
-  alternates: {
-    canonical: buildUrl("/news"),
-  },
-  openGraph: {
-    title: "AI News | AiverseWorld",
-    description:
-      "Enterprise AI news with short summaries, source attribution, and links back to original publishers.",
-    url: buildUrl("/news"),
-    type: "website",
-    images: [defaultOpenGraphImage],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "AI News | AiverseWorld",
-    description:
-      "Enterprise AI news with short summaries, source attribution, and links back to original publishers.",
-    images: [defaultOpenGraphImage.url],
-  },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/news"));
 
 export default async function NewsPage() {
   const articles = await getNewsArticles(9);

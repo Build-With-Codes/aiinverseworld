@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
+
+import { buildNoIndexMetadata } from "@/lib/seo/metadata";
 import { cardClass } from "@/components/ui/card";
 import { backendAdminFetch, getAdminKeyFromCookies } from "@/lib/admin-proxy";
 import { getToolCatalog } from "@/lib/tool-catalog";
@@ -8,10 +10,7 @@ import { getToolCatalog } from "@/lib/tool-catalog";
 import { RecomputeStatsButton } from "./recompute-stats-button";
 import { ResetCacheButton } from "./reset-cache-button";
 
-export const metadata: Metadata = {
-  title: "Admin | AiverseWorld",
-  robots: { index: false, follow: false },
-};
+export const metadata: Metadata = buildNoIndexMetadata("Admin dashboard | AiverseWorld");
 
 export const dynamic = "force-dynamic";
 

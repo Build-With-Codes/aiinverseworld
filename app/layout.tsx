@@ -11,8 +11,10 @@ import { CompareBar } from "@/components/engagement/compare-tray";
 import { Providers } from "@/components/providers";
 import { SiteShell } from "@/components/site-shell";
 import { googleAuthEnabled } from "@/lib/auth-config";
-import { buildUrl, defaultOpenGraphImage, siteUrl } from "@/lib/seo";
+import { siteUrl } from "@/lib/seo";
+import { buildMetadata } from "@/lib/seo/metadata";
 import { buildGlobalStructuredData, jsonLd } from "@/lib/structured-data";
+import { getRouteSeo } from "@/services/seo.service";
 import { headers } from "next/headers";
 import { getServerSession } from "next-auth";
 
@@ -30,34 +32,25 @@ const displayFont = Sora({
   display: "swap",
 });
 
+const rootMetadata = buildMetadata(getRouteSeo("/"));
+
 export const metadata: Metadata = {
+  ...rootMetadata,
   metadataBase: new URL(siteUrl),
   title: {
-    default: "AiverseWorld | Discover the Perfect AI Tool",
+    default: String(rootMetadata.title ?? "AiverseWorld"),
     template: "%s",
   },
-  description:
-    "Discover, compare, and shortlist AI tools across writing, coding, video, research, and productivity.",
-  alternates: {
-    canonical: buildUrl("/"),
-  },
-  openGraph: {
-    title: "AiverseWorld",
-    description:
-      "Enterprise-grade AI tool discovery with search, comparisons, ratings, and curated categories.",
-    url: siteUrl,
-    siteName: "AiverseWorld",
-    type: "website",
-    images: [
-      defaultOpenGraphImage,
-    ],
-  },
+  openGraph: rootMetadata.openGraph
+    ? {
+        ...rootMetadata.openGraph,
+        siteName: "AiverseWorld",
+        type: "website",
+      }
+    : undefined,
   twitter: {
+    ...rootMetadata.twitter,
     card: "summary_large_image",
-    title: "AiverseWorld",
-    description:
-      "Search and compare AI tools with an enterprise-grade discovery experience.",
-    images: ["/logo.webp"],
   },
   // FIXED: Moved verification tag into Next.js metadata and fixed the property key
   verification: {

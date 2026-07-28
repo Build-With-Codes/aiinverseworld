@@ -45,7 +45,16 @@ export function buildToolMeta(tool: {
   reviewCount?: number;
   startingPriceUsd: number | null;
   pricingModel: string;
+  seo?: {
+    title: string;
+    description: string;
+    canonical: string;
+  };
 }) {
+  if (tool.seo?.title && tool.seo.description && tool.seo.canonical) {
+    return { title: tool.seo.title, description: tool.seo.description, url: tool.seo.canonical };
+  }
+
   const title = `${tool.name} Review & Pricing ${new Date().getFullYear()} | ${siteName}`;
   const description = tool.summary
     ? tool.summary.slice(0, 155)

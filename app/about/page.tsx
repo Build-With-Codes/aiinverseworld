@@ -2,27 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ContentPage } from "@/components/content-page";
 import { StructuredDataScript } from "@/components/structured-data-script";
-import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 
-export const metadata: Metadata = {
-  title: "About AiverseWorld - AI Research Platform",
-  description: "Learn about AiverseWorld - a platform dedicated to helping people and organizations discover, compare, understand, and adopt artificial intelligence technologies.",
-  keywords: "AI tools, AI discovery, AI comparison, artificial intelligence platform, AI adoption, AI solutions, machine learning tools",
-  alternates: { canonical: buildUrl("/about") },
-  openGraph: {
-    title: "AiverseWorld Company Profile",
-    description: "AiverseWorld is a trusted platform for discovering, comparing, and understanding AI technologies. Learn about our mission and vision.",
-    type: "website",
-    url: "https://aiverseworld.com/about",
-    images: [defaultOpenGraphImage],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "About the AiverseWorld Platform",
-    description: "Discover how AiverseWorld helps individuals and organizations navigate the AI landscape with clarity and confidence.",
-    images: [defaultOpenGraphImage.url],
-  },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/about"));
 
 export default function AboutPage() {
   const structuredData = {

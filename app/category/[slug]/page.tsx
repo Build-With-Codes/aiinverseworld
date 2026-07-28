@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
-import { buildCategoryMeta, defaultOpenGraphImage, formatDisplayDate, getLatestVerifiedDate, buildUrl } from "@/lib/seo";
+import { formatDisplayDate, getLatestVerifiedDate, buildUrl } from "@/lib/seo";
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getCategorySeo } from "@/services/seo.service";
 import { StructuredDataScript } from "@/components/structured-data-script";
 import { getCategoryContent } from "@/lib/category-content";
 import { getCategoryWithTools } from "@/lib/tool-catalog";
@@ -13,22 +15,8 @@ type CategoryPageProps = {
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const result = await getCategoryWithTools(slug);
-  const category = result?.category;
-
-  const { title, description, url } = buildCategoryMeta(
-    category?.name ?? "Category",
-    slug,
-    category?.description ?? "Explore AI tools grouped by category on AiverseWorld.",
-  );
-
-  return {
-    title,
-    description,
-    alternates: category ? { canonical: url } : undefined,
-    openGraph: { title, description, url, type: "website", images: [defaultOpenGraphImage] },
-    twitter: { card: "summary_large_image", title, description, images: [defaultOpenGraphImage.url] },
-  };
+  const seo = await getCategorySeo(slug);
+  return seo ? buildMetadata(seo) : { title: "Category not found | AiverseWorld" };
 }
 
 export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {

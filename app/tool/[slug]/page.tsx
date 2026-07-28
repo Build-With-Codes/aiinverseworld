@@ -17,10 +17,12 @@ import { ViewTracker } from "@/components/engagement/view-tracker";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { getRelatedTools } from "@/lib/engagement";
 import { getReviews } from "@/lib/reviews-api";
-import { buildUrl, buildToolMeta } from "@/lib/seo";
+import { buildUrl } from "@/lib/seo";
 import { getBookRecommendations } from "@/lib/books";
 import { getToolById, getToolBySlug, searchTools } from "@/lib/tool-catalog";
 import { getToolYoutubeVideos } from "@/lib/youtube";
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getToolSeo } from "@/services/seo.service";
 import type { AITool } from "@/lib/catalog-types";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -187,29 +189,10 @@ function formatViewCount(value?: string | null) {
 
 export async function generateMetadata({ params }: ToolDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const tool = await getToolBySlug(slug);
+  const seo = await getToolSeo(slug);
 
-  if (!tool) return { title: "Tool not found | AiverseWorld" };
-
-  const { title, description, url } = buildToolMeta(tool);
-
-  return {
-    title,
-    description,
-    alternates: { canonical: url },
-    openGraph: {
-      title,
-      description,
-      url,
-      type: "article",
-      images: [{ url: tool.favicon, alt: tool.name }],
-    },
-    twitter: {
-      card: "summary",
-      title,
-      description,
-    },
-  };
+  if (!seo) return { title: "Tool not found | AiverseWorld" };
+  return buildMetadata(seo);
 }
 
 export default async function ToolDetailPage({ params, searchParams }: ToolDetailPageProps) {

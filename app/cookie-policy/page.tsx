@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import Link from "next/link";
 
 import { ContentPage } from "@/components/content-page";
 import { RelatedPolicies } from "@/components/related-policies";
 import { buildUrl } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Cookie Policy | AiverseWorld",
-  description:
-    "Learn how AiverseWorld uses cookies, analytics, advertising scripts, Google AdSense, tracking technologies, and consent controls.",
-  alternates: { canonical: buildUrl("/cookie-policy") },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/cookie-policy"));
 
 export default function CookiePolicyPage() {
   return (

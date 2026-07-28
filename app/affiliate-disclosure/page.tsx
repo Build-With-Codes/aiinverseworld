@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import Link from "next/link";
 
 import { ContentPage } from "@/components/content-page";
 import { RelatedPolicies } from "@/components/related-policies";
 import { buildUrl } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Affiliate Disclosure | AiverseWorld",
-  description:
-    "Review how affiliate links may be used on AiverseWorld and how those relationships are disclosed.",
-  alternates: { canonical: buildUrl("/affiliate-disclosure") },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/affiliate-disclosure"));
 
 export default function AffiliateDisclosurePage() {
   return (

@@ -1,14 +1,13 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+
+import { buildNoIndexMetadata } from "@/lib/seo/metadata";
 import { backendAdminFetch, getAdminKeyFromCookies } from "@/lib/admin-proxy";
 
 import { BlogPostForm, type InitialBlogValues } from "../../blog-post-form";
 
-export const metadata: Metadata = {
-  title: "Edit blog post | AiverseWorld Admin",
-  robots: { index: false, follow: false },
-};
+export const metadata: Metadata = buildNoIndexMetadata("Edit blog post | AiverseWorld Admin");
 
 export const dynamic = "force-dynamic";
 

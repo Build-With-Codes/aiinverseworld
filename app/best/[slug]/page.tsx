@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getBestListSeo } from "@/services/seo.service";
 import Link from "next/link";
 
 import { ToolCard } from "@/components/tool-card";
@@ -16,30 +19,8 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: BestPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const result = await getBestListWithTools(slug);
-  const list = result?.list;
-
-  if (!list) return { title: "Not Found | AiverseWorld" };
-  const dateModified = getLatestVerifiedDate(result?.tools ?? []);
-
-  return {
-    title: `${list.title} ${new Date().getFullYear()} — Ranked & Reviewed | AiverseWorld`,
-    description: list.description,
-    alternates: { canonical: buildUrl(`/best/${slug}`) },
-    openGraph: {
-      title: `${list.title} ${new Date().getFullYear()} | AiverseWorld`,
-      description: list.description,
-      url: buildUrl(`/best/${slug}`),
-      type: "website",
-      images: [defaultOpenGraphImage],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${list.title} ${new Date().getFullYear()} | AiverseWorld`,
-      description: list.description,
-      images: [defaultOpenGraphImage.url],
-    },
-  };
+  const seo = await getBestListSeo(slug);
+  return seo ? buildMetadata(seo) : { title: "Not Found | AiverseWorld" };
 }
 
 export default async function BestPage({ params, searchParams }: BestPageProps) {

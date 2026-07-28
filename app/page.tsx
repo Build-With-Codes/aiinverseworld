@@ -16,7 +16,8 @@ import { DiscoveryRail } from "@/components/engagement/discovery-rail";
 import { RecentlyViewedRail } from "@/components/engagement/recently-viewed-rail";
 import { SpotlightCard } from "@/components/engagement/spotlight-card";
 import { getNewsArticles } from "@/lib/news";
-import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import { getBestLists, getComparisons, getToolCatalog, recommendTools } from "@/lib/tool-catalog";
 import {
   getCollections,
@@ -55,26 +56,7 @@ function WorkflowIcon({ name }: { name: (typeof aiFinderOptions)[number]["icon"]
 // revalidate value were ever out of sync.
 export const revalidate = 300;
 
-export const metadata: Metadata = {
-  title: "Best AI Tools Directory & Reviews 2026 | AiverseWorld",
-  description: "Explore, compare, and review the best AI tools for productivity, coding, content creation, video, marketing, and business growth. 100+ tools ranked online.",
-  alternates: {
-    canonical: buildUrl("/"),
-  },
-  openGraph: {
-    title: "AI Tools Directory & Reviews 2026 | AiverseWorld",
-    description: "Discover the best AI tools for productivity, coding, writing, video, and marketing. Compare 100+ tools with real pricing and reviews.",
-    url: buildUrl("/"),
-    type: "website",
-    images: [defaultOpenGraphImage],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "AI Tools Directory & Reviews 2026 | AiverseWorld",
-    description: "Discover the best AI tools for productivity, coding, writing, video, and marketing.",
-    images: [defaultOpenGraphImage.url],
-  },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/"));
 
 // Public, non-personalized data — safe to let Next.js serve a cached page for
 // this many seconds instead of re-rendering (and hitting the backend) on

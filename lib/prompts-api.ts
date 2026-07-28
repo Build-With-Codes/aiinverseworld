@@ -41,6 +41,13 @@ export type AiPrompt = {
   categories: PromptTaxonomy[];
   tags: PromptTaxonomy[];
   stats?: PromptStats | null;
+  seo?: {
+    title: string;
+    description: string;
+    keywords: string[];
+    canonical: string;
+    ogImage: string;
+  };
 };
 
 export type PromptsSearchResult = {

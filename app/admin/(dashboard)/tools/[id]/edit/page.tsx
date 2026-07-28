@@ -1,15 +1,14 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+
+import { buildNoIndexMetadata } from "@/lib/seo/metadata";
 import { toolToFormValues } from "@/lib/admin-tools-client";
 import { getToolById } from "@/lib/tool-catalog";
 
 import { ToolForm } from "../../tool-form";
 
-export const metadata: Metadata = {
-  title: "Edit tool | AiverseWorld Admin",
-  robots: { index: false, follow: false },
-};
+export const metadata: Metadata = buildNoIndexMetadata("Edit tool | AiverseWorld Admin");
 
 export const dynamic = "force-dynamic";
 

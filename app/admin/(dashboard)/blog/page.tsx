@@ -1,15 +1,14 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
+
+import { buildNoIndexMetadata } from "@/lib/seo/metadata";
 import { backendAdminFetch, getAdminKeyFromCookies } from "@/lib/admin-proxy";
 import { cardClass } from "@/components/ui/card";
 
 import { BlogRowActions } from "./blog-row-actions";
 
-export const metadata: Metadata = {
-  title: "Blog admin | AiverseWorld",
-  robots: { index: false, follow: false },
-};
+export const metadata: Metadata = buildNoIndexMetadata("Admin blog | AiverseWorld");
 
 export const dynamic = "force-dynamic";
 

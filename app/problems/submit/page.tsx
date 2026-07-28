@@ -1,33 +1,14 @@
 import type { Metadata } from "next";
 
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import { submitProblemAction } from "@/app/actions/problems";
 import { SubmitProblemButton } from "@/components/problems/submit-button";
 import { SectionHeading } from "@/components/section-heading";
 import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Submit Problem | AiverseWorld",
-  description:
-    "Submit a real problem for the community to vote on whether AI can solve it.",
-  alternates: {
-    canonical: buildUrl("/problems/submit"),
-  },
-  openGraph: {
-    title: "Submit Problem | AiverseWorld",
-    description:
-      "Submit a real problem for the community to vote on whether AI can solve it.",
-    url: buildUrl("/problems/submit"),
-    type: "website",
-    images: [defaultOpenGraphImage],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Submit Problem | AiverseWorld",
-    description:
-      "Submit a real problem for the community to vote on whether AI can solve it.",
-    images: [defaultOpenGraphImage.url],
-  },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/problems/submit"));
 
 const frequencyOptions = [
   "Several times a day",

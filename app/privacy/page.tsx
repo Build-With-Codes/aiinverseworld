@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import Link from "next/link";
 
 import { ContentPage } from "@/components/content-page";
 import { RelatedPolicies } from "@/components/related-policies";
 import { buildUrl } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "AiverseWorld Privacy & Data Protection Policy",
-  description:
-    "Review how AiverseWorld collects, uses, stores, protects, and manages personal data across accounts, analytics, reviews, support, and platform services.",
-  alternates: { canonical: buildUrl("/privacy") },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/privacy"));
 
 export default function PrivacyPage() {
   return (

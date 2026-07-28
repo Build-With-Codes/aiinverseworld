@@ -8,31 +8,11 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { cardClass } from "@/components/ui/card";
 import { FadeInSection } from "@/components/ui/motion";
 import { getAllBlogPosts, getBlogCategories } from "@/lib/blog-api";
-import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
+import { buildUrl } from "@/lib/seo";
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 
-export const metadata: Metadata = {
-  title: "AI Blog | Latest AI Tools, Trends & Guides 2026",
-  description:
-    "Explore the latest AI trends, practical guides, tool reviews, tutorials, and industry insights to help you learn and leverage artificial intelligence.",
-  keywords:
-    "AI blog, artificial intelligence, AI tools, AI trends, machine learning, ChatGPT, Claude, AI guides, AI tutorials",
-  alternates: { canonical: buildUrl("/blog") },
-  openGraph: {
-    title: "AI Blog | Latest AI Tools, Trends & Guides 2026",
-    description:
-      "Discover the best AI tools, trends, and practical guides for 2026. Read expert insights on ChatGPT, Claude, image generation, and more.",
-    type: "website",
-    url: buildUrl("/blog"),
-    images: [defaultOpenGraphImage],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "AI Blog | Latest AI Tools, Trends & Guides 2026",
-    description:
-      "Explore the latest AI trends, practical guides, tool reviews, tutorials, and industry insights.",
-    images: [defaultOpenGraphImage.url],
-  },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/blog"));
 
 type BlogPageProps = {
   searchParams?: Promise<{ topic?: string }>;

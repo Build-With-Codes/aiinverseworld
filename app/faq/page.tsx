@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import Link from "next/link";
 
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -9,25 +12,7 @@ import { cardClass } from "@/components/ui/card";
 import { RelatedPolicies } from "@/components/related-policies";
 import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "FAQ | AiverseWorld",
-  description:
-    "Answers to common questions about browsing, comparing, saving, and reviewing AI tools on AiverseWorld, plus how the catalog is ranked and monetized.",
-  alternates: { canonical: buildUrl("/faq") },
-  openGraph: {
-    title: "AiverseWorld FAQ",
-    description: "Common questions about how AiverseWorld works, answered.",
-    url: buildUrl("/faq"),
-    type: "website",
-    images: [defaultOpenGraphImage],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "AiverseWorld FAQ",
-    description: "Common questions about how AiverseWorld works, answered.",
-    images: [defaultOpenGraphImage.url],
-  },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/faq"));
 
 const faqs: FAQItem[] = [
   {

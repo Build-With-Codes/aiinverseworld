@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import Link from "next/link";
 
 import { ContentPage } from "@/components/content-page";
 import { RelatedPolicies } from "@/components/related-policies";
 import { buildUrl } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Terms of Service | AiverseWorld",
-  description: "Review the terms that govern access to and use of AiverseWorld.",
-  alternates: { canonical: buildUrl("/terms") },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/terms"));
 
 export default function TermsPage() {
   return (

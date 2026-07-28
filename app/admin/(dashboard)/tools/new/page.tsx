@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 
+
+import { buildNoIndexMetadata } from "@/lib/seo/metadata";
 import { ToolForm } from "../tool-form";
 
-export const metadata: Metadata = {
-  title: "New tool | AiverseWorld Admin",
-  robots: { index: false, follow: false },
-};
+export const metadata: Metadata = buildNoIndexMetadata("New tool | AiverseWorld Admin");
 
 export default function NewToolPage() {
   return (

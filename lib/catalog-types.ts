@@ -79,6 +79,13 @@ export type AITool = {
   alternativesNote?: string;
   faqs?: { question: string; answer: string }[];
   featureNotes?: { feature: string; benefit: string }[];
+  seo?: {
+    title: string;
+    description: string;
+    keywords: string[];
+    canonical: string;
+    ogImage: string;
+  };
 };
 
 export type Spotlight = {

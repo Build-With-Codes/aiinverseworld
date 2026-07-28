@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 
+
+import { buildNoIndexMetadata } from "@/lib/seo/metadata";
 import { BlogPostForm } from "../blog-post-form";
 
-export const metadata: Metadata = {
-  title: "New blog post | AiverseWorld Admin",
-  robots: { index: false, follow: false },
-};
+export const metadata: Metadata = buildNoIndexMetadata("New blog post | AiverseWorld Admin");
 
 export default function NewBlogPostPage() {
   return (

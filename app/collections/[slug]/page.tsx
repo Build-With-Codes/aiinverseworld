@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getCollectionSeo } from "@/services/seo.service";
 import { notFound } from "next/navigation";
 
 import { SectionHeading } from "@/components/section-heading";
@@ -20,28 +23,8 @@ type CollectionPageProps = {
 
 export async function generateMetadata({ params }: CollectionPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const collection = await getCollection(slug);
-
-  if (!collection) return { title: "Collection not found | AiverseWorld" };
-
-  const url = buildUrl(`/collections/${slug}`);
-  return {
-    title: collection.seoTitle,
-    description: collection.seoDescription,
-    alternates: { canonical: url },
-    openGraph: {
-      title: collection.seoTitle,
-      description: collection.seoDescription,
-      url,
-      type: "website",
-      images: [defaultOpenGraphImage],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: collection.seoTitle,
-      description: collection.seoDescription,
-    },
-  };
+  const seo = await getCollectionSeo(slug);
+  return seo ? buildMetadata(seo) : { title: "Collection not found | AiverseWorld" };
 }
 
 export default async function CollectionPage({ params }: CollectionPageProps) {

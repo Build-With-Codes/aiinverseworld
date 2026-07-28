@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { FAQAccordion } from "@/components/ui/faq-accordion";
 import { FeatureCard } from "@/components/ui/feature-card";
@@ -11,20 +14,7 @@ import { EditorialBlock } from "@/components/ui/editorial-block";
 import { FadeInSection, StaggerGrid, StaggerItem } from "@/components/ui/motion";
 import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "AiverseWorld Premium — Discover AI without limits",
-  description:
-    "Go ad-free, compare and save without limits, get saved-search alerts, members-only deep dives, and a personalized weekly AI digest. Upgrade to AiverseWorld Premium.",
-  alternates: { canonical: buildUrl("/premium") },
-  openGraph: {
-    title: "AiverseWorld Premium",
-    description:
-      "Ad-free discovery, unlimited compare & saves, saved-search alerts, Pro collections, and a weekly personalized digest.",
-    url: buildUrl("/premium"),
-    type: "website",
-    images: [defaultOpenGraphImage],
-  },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/premium"));
 
 const benefits = [
   {

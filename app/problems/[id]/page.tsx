@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getProblemSeo } from "@/services/seo.service";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -12,38 +15,10 @@ type ProblemDetailsPageProps = {
   }>;
 };
 
-export async function generateMetadata({
-  params,
-}: ProblemDetailsPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: ProblemDetailsPageProps): Promise<Metadata> {
   const { id } = await params;
-  const problem = await getProblemById(id);
-
-  if (!problem) {
-    return {
-      title: "Problem Not Found | AiverseWorld",
-    };
-  }
-
-  return {
-    title: `${problem.title} | AiverseWorld Problems`,
-    description: problem.description.slice(0, 160),
-    alternates: {
-      canonical: buildUrl(`/problems/${problem.id}`),
-    },
-    openGraph: {
-      title: `${problem.title} | AiverseWorld Problems`,
-      description: problem.description.slice(0, 160),
-      url: buildUrl(`/problems/${problem.id}`),
-      type: "article",
-      images: [defaultOpenGraphImage],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${problem.title} | AiverseWorld Problems`,
-      description: problem.description.slice(0, 160),
-      images: [defaultOpenGraphImage.url],
-    },
-  };
+  const seo = await getProblemSeo(id);
+  return seo ? buildMetadata(seo) : { title: "Problem Not Found | AiverseWorld" };
 }
 
 export default async function ProblemDetailsPage({

@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import Link from "next/link";
 
 import { ContentPage } from "@/components/content-page";
 import { RelatedPolicies } from "@/components/related-policies";
 import { buildUrl } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Copyright Policy | AiverseWorld",
-  description:
-    "Review AiverseWorld's copyright ownership, usage rules, and infringement reporting process.",
-  alternates: { canonical: buildUrl("/copyright") },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/copyright"));
 
 export default function CopyrightPage() {
   return (

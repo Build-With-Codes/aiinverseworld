@@ -1,12 +1,11 @@
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import { buildUrl } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Best AI Coding Tools & Assistants 2026 | AiverseWorld",
-  description: "Top AI coding assistants for developers in 2026. Compare Cursor, Codeium, Lovable, and more. Find the best AI tool for your development workflow.",
-  alternates: { canonical: buildUrl("/best/best-ai-coding-assistants") },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/ai-coding-tools"));
 
 export default function AICodingToolsPage() {
   redirect("/best/best-ai-coding-assistants");

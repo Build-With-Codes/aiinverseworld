@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import Link from "next/link";
 
 import { ContentPage } from "@/components/content-page";
 import { RelatedPolicies } from "@/components/related-policies";
 import { buildUrl } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Security | AiverseWorld",
-  description:
-    "Learn about the security principles and controls used by AiverseWorld.",
-  alternates: { canonical: buildUrl("/security") },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/security"));
 
 export default function SecurityPage() {
   return (

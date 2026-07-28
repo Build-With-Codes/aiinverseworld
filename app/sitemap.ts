@@ -1,7 +1,44 @@
 import { MetadataRoute } from 'next';
-import { getAllBlogPosts } from '@/lib/blog-api';
 import { siteUrl } from '@/lib/seo';
-import { getCategories } from '@/lib/tool-catalog';
+import { AIVERSE_JOBS_BASE_URL } from '@/lib/service-urls';
+import { apiGet } from '@/lib/api-service';
+
+type BackendSitemapEntry = {
+  url: string;
+  lastModified: string;
+  changeFrequency?: MetadataRoute.Sitemap[number]['changeFrequency'];
+  priority?: number;
+};
+
+async function getWorldSitemap(section: string) {
+  const payload = await apiGet<{ data?: BackendSitemapEntry[] }>(
+    `/api/seo/sitemap/${section}`,
+    { revalidate: 21_600, timeoutMs: 5000 },
+  );
+  return payload?.data ?? [];
+}
+
+async function getJobsSitemap(section: string) {
+  try {
+    const response = await fetch(`${AIVERSE_JOBS_BASE_URL}/seo/sitemap/${section}`, {
+      next: { revalidate: 21_600 },
+    });
+    if (!response.ok) return [];
+    const payload = (await response.json()) as { data?: BackendSitemapEntry[] };
+    return payload.data ?? [];
+  } catch {
+    return [];
+  }
+}
+
+function toNextSitemap(entries: BackendSitemapEntry[]): MetadataRoute.Sitemap {
+  return entries.map((entry) => ({
+    url: entry.url,
+    lastModified: new Date(entry.lastModified),
+    changeFrequency: entry.changeFrequency ?? 'weekly',
+    priority: entry.priority ?? 0.6,
+  }));
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = siteUrl.replace(/\/$/, '');
@@ -100,22 +137,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Blog posts
-  const blogPosts = (await getAllBlogPosts()).map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: new Date(post.publishedAt),
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  }));
+  const [tools, blogPosts, categories, managedWorldPages, prompts, jobs, managedJobPages] =
+    await Promise.all([
+      getWorldSitemap('tools'),
+      getWorldSitemap('blog'),
+      getWorldSitemap('categories'),
+      getWorldSitemap('seo-pages'),
+      getJobsSitemap('prompts'),
+      getJobsSitemap('jobs'),
+      getJobsSitemap('seo-pages'),
+    ]);
 
-  // Categories
-  const categoryResult = await getCategories();
-  const categoryPages: MetadataRoute.Sitemap = categoryResult.categories.map((category) => ({
-    url: `${baseUrl}/category/${category.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
-
-  return [...staticPages, ...blogPosts, ...categoryPages];
+  return [
+    ...staticPages,
+    ...toNextSitemap(tools),
+    ...toNextSitemap(blogPosts),
+    ...toNextSitemap(categories),
+    ...toNextSitemap(managedWorldPages),
+    ...toNextSitemap(prompts),
+    ...toNextSitemap(jobs),
+    ...toNextSitemap(managedJobPages),
+  ];
 }

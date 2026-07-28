@@ -1,17 +1,15 @@
 import type { Metadata } from "next";
 
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import { ContentPage } from "@/components/content-page";
 import { RelatedPolicies } from "@/components/related-policies";
 import { SocialLink } from "@/components/social-link";
 import { buildUrl } from "@/lib/seo";
 import { socialLinks } from "@/lib/social-links";
 
-export const metadata: Metadata = {
-  title: "Contact | AiverseWorld",
-  description:
-    "Get in touch with AiverseWorld for enterprise partnerships, support, and legal requests.",
-  alternates: { canonical: buildUrl("/contact") },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/contact"));
 
 export default function ContactPage() {
   return (

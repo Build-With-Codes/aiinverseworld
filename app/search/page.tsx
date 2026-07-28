@@ -1,9 +1,16 @@
 import { searchTools } from "@/lib/tool-catalog";
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getSearchSeo } from "@/services/seo.service";
 import { SearchClient } from "./search-client";
 
 type SearchPageProps = {
   searchParams: Promise<{ q?: string; page?: string }>;
 };
+
+export async function generateMetadata({ searchParams }: SearchPageProps) {
+  const { q } = await searchParams;
+  return buildMetadata(await getSearchSeo(q?.trim()));
+}
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { q, page: pageParam } = await searchParams;

@@ -5,6 +5,8 @@ import { PromptCopyButton } from "@/components/prompts/prompt-copy-button";
 import { PromptShareButton } from "@/components/prompts/prompt-share-button";
 import { PromptViewTracker } from "@/components/prompts/prompt-view-tracker";
 import { getPromptBySlug } from "@/lib/prompts-api";
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getPromptSeo } from "@/services/seo.service";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -36,14 +38,10 @@ function isUsefulDetailValue(value: unknown) {
 
 export async function generateMetadata({ params }: PromptDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const prompt = await getPromptBySlug(slug, { revalidate: 300, timeoutMs: 5000 });
-  if (!prompt) return { title: "Prompt Not Found | AiverseWorld" };
+  const seo = await getPromptSeo(slug);
 
-  return {
-    title: `${prompt.title} Prompt | AiverseWorld`,
-    description: prompt.description,
-    alternates: { canonical: `/prompts/${prompt.slug}` },
-  };
+  if (!seo) return { title: "Prompt Not Found | AiverseWorld" };
+  return buildMetadata(seo);
 }
 
 export default async function PromptDetailPage({ params }: PromptDetailPageProps) {

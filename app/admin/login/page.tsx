@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
+
+import { buildNoIndexMetadata } from "@/lib/seo/metadata";
 import { Suspense } from "react";
 
 import { AdminLoginForm } from "./login-form";
 
-export const metadata: Metadata = {
-  title: "Admin sign in | AiverseWorld",
-  robots: { index: false, follow: false },
-};
+export const metadata: Metadata = buildNoIndexMetadata("Admin sign in | AiverseWorld");
 
 export default function AdminLoginPage() {
   return (

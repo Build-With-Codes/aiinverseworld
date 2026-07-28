@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 
 import { ComparisonTable } from "@/components/comparison-table";
 import { SectionHeading } from "@/components/section-heading";
-import { buildUrl, defaultOpenGraphImage, formatDisplayDate, getLatestVerifiedDate } from "@/lib/seo";
+import { buildUrl, formatDisplayDate, getLatestVerifiedDate } from "@/lib/seo";
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getCompareSeo } from "@/services/seo.service";
 import { getComparisonWithTools, getToolOptions } from "@/lib/tool-catalog";
 import { StructuredDataScript } from "@/components/structured-data-script";
 import { CompareSelector } from "../compare-selector";
@@ -13,30 +15,8 @@ type ComparePageProps = {
 
 export async function generateMetadata({ params }: ComparePageProps): Promise<Metadata> {
   const { comparison } = await params;
-  const pair = await getComparisonWithTools(comparison);
-
-  if (!pair) return { title: "Comparison not found | AiverseWorld" };
-  const dateModified = getLatestVerifiedDate([pair.left, pair.right]);
-
-  return {
-    title: `${pair.left.name} vs ${pair.right.name} | AiverseWorld`,
-    description: `Compare ${pair.left.name} and ${pair.right.name} across category, pricing, platforms, and use cases.`,
-    alternates: { canonical: buildUrl(`/compare/${comparison}`) },
-    openGraph: {
-      title: `${pair.left.name} vs ${pair.right.name} | AiverseWorld`,
-      description: `Compare ${pair.left.name} and ${pair.right.name} across category, pricing, platforms, and use cases.`,
-      url: buildUrl(`/compare/${comparison}`),
-      type: "article",
-      modifiedTime: dateModified,
-      images: [defaultOpenGraphImage],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${pair.left.name} vs ${pair.right.name} | AiverseWorld`,
-      description: `Compare ${pair.left.name} and ${pair.right.name} across category, pricing, platforms, and use cases.`,
-      images: [defaultOpenGraphImage.url],
-    },
-  };
+  const seo = await getCompareSeo(comparison);
+  return seo ? buildMetadata(seo) : { title: "Comparison not found | AiverseWorld" };
 }
 
 export default async function ComparePage({ params }: ComparePageProps) {

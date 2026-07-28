@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 
+
+import { buildNoIndexMetadata } from "@/lib/seo/metadata";
 import { authOptions } from "@/auth";
 import { AuthDialog } from "@/components/auth-dialog";
 import { SectionHeading } from "@/components/section-heading";
@@ -13,10 +15,7 @@ import { getServerSession } from "next-auth";
 import { SavedPromptsGrid } from "./saved-prompts-grid";
 import { SavedToolsGrid } from "./saved-tools-grid";
 
-export const metadata: Metadata = {
-  title: "Saved library | AiverseWorld",
-  robots: { index: false, follow: false },
-};
+export const metadata: Metadata = buildNoIndexMetadata("Saved library | AiverseWorld");
 
 export const dynamic = "force-dynamic";
 

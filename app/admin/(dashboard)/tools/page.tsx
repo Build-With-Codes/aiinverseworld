@@ -1,16 +1,15 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
+
+import { buildNoIndexMetadata } from "@/lib/seo/metadata";
 import { cardClass } from "@/components/ui/card";
 import { getToolCatalog } from "@/lib/tool-catalog";
 
 import { ToolRowActions } from "./tool-row-actions";
 import { ToolsCsvImportForm } from "./tools-csv-import-form";
 
-export const metadata: Metadata = {
-  title: "Tools | AiverseWorld Admin",
-  robots: { index: false, follow: false },
-};
+export const metadata: Metadata = buildNoIndexMetadata("Admin tools | AiverseWorld");
 
 export const dynamic = "force-dynamic";
 

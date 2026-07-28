@@ -1,32 +1,13 @@
 import type { Metadata } from "next";
 
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import { HandDetectGameClient } from "@/components/games/hand-detect/game-client";
 import { SectionHeading } from "@/components/section-heading";
 import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Motion Truck Drive | AiverseWorld",
-  description:
-    "Drive a motion-controlled truck game with browser-only two-hand steering. Camera frames stay on your device.",
-  alternates: {
-    canonical: buildUrl("/games/hand-detect"),
-  },
-  openGraph: {
-    title: "Motion Truck Drive | AiverseWorld",
-    description:
-      "Steer a 3D-style truck road game with two-hand browser motion tracking.",
-    url: buildUrl("/games/hand-detect"),
-    type: "website",
-    images: [defaultOpenGraphImage],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Motion Truck Drive | AiverseWorld",
-    description:
-      "Steer a 3D-style truck road game with two-hand browser motion tracking.",
-    images: [defaultOpenGraphImage.url],
-  },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/games/hand-detect"));
 
 export default function HandDetectGamePage() {
   return (

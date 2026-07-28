@@ -16,7 +16,9 @@ import { getBlogPost, getRelatedPosts } from "@/lib/blog-api";
 import { getBlogSuggestions } from "@/lib/blog-suggestions";
 import { injectHeadingIds, tocFromBlocks } from "@/lib/blog-toc";
 import { getBookRecommendations } from "@/lib/books";
-import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
+import { buildUrl } from "@/lib/seo";
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getBlogPostSeo } from "@/services/seo.service";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -47,31 +49,8 @@ function formatDate(value: string) {
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getBlogPost(slug);
-  if (!post) return {};
-
-  return {
-    title: post.seoTitle || post.title,
-    description: post.metaDescription || post.description,
-    keywords: `${post.category}, AI tools, artificial intelligence, ${post.title}`,
-    alternates: { canonical: buildUrl(`/blog/${slug}`) },
-    openGraph: {
-      title: post.title,
-      description: post.description,
-      type: "article",
-      url: buildUrl(`/blog/${slug}`),
-      publishedTime: post.publishedAt,
-      modifiedTime: post.updatedAt || post.publishedAt,
-      authors: [post.author],
-      images: post.cover?.url ? [post.cover.url] : [defaultOpenGraphImage],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: post.title,
-      description: post.description,
-      images: post.cover?.url ? [post.cover.url] : [defaultOpenGraphImage.url],
-    },
-  };
+  const seo = await getBlogPostSeo(slug);
+  return seo ? buildMetadata(seo) : {};
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {

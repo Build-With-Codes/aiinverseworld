@@ -6,22 +6,10 @@ import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { cardClass } from "@/components/ui/card";
 import { FadeInSection } from "@/components/ui/motion";
 import { getCollections } from "@/lib/engagement";
-import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 
-export const metadata: Metadata = {
-  title: "AI Tool Collections — Expert-Curated Roundups | AiverseWorld",
-  description:
-    "Browse expert-curated collections of the best AI tools by goal and audience — best of 2026, top free tools, ChatGPT alternatives, image generators, and more.",
-  alternates: { canonical: buildUrl("/collections") },
-  openGraph: {
-    title: "AI Tool Collections | AiverseWorld",
-    description:
-      "Expert-curated collections of the best AI tools by goal and audience.",
-    url: buildUrl("/collections"),
-    type: "website",
-    images: [defaultOpenGraphImage],
-  },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/collections"));
 
 export default async function CollectionsPage() {
   const collections = await getCollections();

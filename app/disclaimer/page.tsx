@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import Link from "next/link";
 
 import { ContentPage } from "@/components/content-page";
 import { RelatedPolicies } from "@/components/related-policies";
 import { buildUrl } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Disclaimer | AiverseWorld",
-  description:
-    "Read important disclaimers regarding accuracy, availability, and third-party software information on AiverseWorld.",
-  alternates: { canonical: buildUrl("/disclaimer") },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/disclaimer"));
 
 export default function DisclaimerPage() {
   return (

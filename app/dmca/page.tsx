@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
+
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getRouteSeo } from "@/services/seo.service";
 import Link from "next/link";
 
 import { ContentPage } from "@/components/content-page";
 import { RelatedPolicies } from "@/components/related-policies";
 import { buildUrl } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "DMCA Policy | AiverseWorld",
-  description:
-    "Learn how to submit copyright infringement notices and counter-notices to AiverseWorld.",
-  alternates: { canonical: buildUrl("/dmca") },
-};
+export const metadata: Metadata = buildMetadata(getRouteSeo("/dmca"));
 
 export default function DmcaPage() {
   return (
