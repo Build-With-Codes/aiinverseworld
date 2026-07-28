@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import type { AITool } from "@/lib/catalog-types";
 
@@ -46,18 +47,13 @@ function ToolMarqueeIcon({ tool }: { tool: AITool }) {
   }
 
   return (
-    // Favicons are already tiny; avoid Next's optimizer for fragile third-party
-    // favicon endpoints that can produce /_next/image 502s in Lighthouse.
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src={tool.favicon}
       alt={`${tool.name} logo`}
-      width="16"
-      height="16"
-      className="h-4 w-4 rounded-sm"
+      width={16}
+      height={16}
+      className="rounded-sm"
       onError={() => setFailed(true)}
-      loading="lazy"
-      decoding="async"
     />
   );
 }
