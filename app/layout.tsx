@@ -17,6 +17,7 @@ import { buildGlobalStructuredData, jsonLd } from "@/lib/structured-data";
 import { getRouteSeo } from "@/services/seo.service";
 import { headers } from "next/headers";
 import { getServerSession } from "next-auth";
+import Script from "next/script";
 
 import "./globals.css";
 
@@ -33,6 +34,7 @@ const displayFont = Sora({
 });
 
 const rootMetadata = buildMetadata(getRouteSeo("/"));
+const ezoicEnabled = process.env.NEXT_PUBLIC_EZOIC_ENABLED === "true";
 
 export const metadata: Metadata = {
   ...rootMetadata,
@@ -51,10 +53,6 @@ export const metadata: Metadata = {
   twitter: {
     ...rootMetadata.twitter,
     card: "summary_large_image",
-  },
-  // FIXED: Moved verification tag into Next.js metadata and fixed the property key
-  verification: {
-    google: "ca-pub-1921034562411070", 
   },
 };
 
@@ -76,6 +74,43 @@ export default async function RootLayout({
       data-scroll-behavior="smooth"
     >
       <head>
+        {!isAdminSection && ezoicEnabled ? (
+          <>
+            <Script
+              id="ezoic-cmp"
+              data-cfasync="false"
+              src="https://cmp.gatekeeperconsent.com/min.js"
+              strategy="beforeInteractive"
+            />
+            <Script
+              id="ezoic-gatekeeper-cmp"
+              data-cfasync="false"
+              src="https://the.gatekeeperconsent.com/cmp.min.js"
+              strategy="beforeInteractive"
+            />
+            <Script
+              id="ezoic-header"
+              async
+              src="https://www.ezojs.com/ezoic/sa.min.js"
+              strategy="beforeInteractive"
+            />
+            <Script
+              id="ezoic-standalone-init"
+              strategy="beforeInteractive"
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.ezstandalone = window.ezstandalone || {};
+                  window.ezstandalone.cmd = window.ezstandalone.cmd || [];
+                `,
+              }}
+            />
+            <Script
+              id="ezoic-analytics"
+              src="https://ezoicanalytics.com/analytics.js"
+              strategy="beforeInteractive"
+            />
+          </>
+        ) : null}
         <script
           id="theme-init"
           nonce={nonce}
@@ -106,14 +141,6 @@ export default async function RootLayout({
           <Providers session={session}>{children}</Providers>
         ) : (
           <>
-            <ConsentedScript
-              async
-              id="google-adsense"
-              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1921034562411070"
-              crossOrigin="anonymous"
-              nonce={nonce}
-            />
-
             <Providers session={session}>
               <SiteShell>{children}</SiteShell>
               <CompareBar />

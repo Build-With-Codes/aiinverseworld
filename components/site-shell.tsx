@@ -2,6 +2,7 @@ import { authOptions } from "@/auth";
 import { AccountMenu } from "@/components/account-menu";
 import { AiToolsMenu, type AiToolsMenuData } from "@/components/ai-tools-menu";
 import { AuthDialog } from "@/components/auth-dialog";
+import { EzoicAdPlacement } from "@/components/ezoic-ad-placement";
 import { HeaderScrollShell } from "@/components/header-scroll-shell";
 import { HeaderSearch } from "@/components/header-search";
 import { MobileMenu } from "@/components/mobile-menu";
@@ -192,6 +193,8 @@ export async function SiteShell({ children }: SiteShellProps) {
           {children}
         </main>
 
+        <EzoicAdPlacement id="site-before-footer" className="ad-slot mt-12" />
+
         <footer className={`app-glass mt-16 px-6 py-10 sm:px-8 ${cardClass({ radius: "card-lg", padding: "none" })}`}>
           <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
             <div className="space-y-4">
@@ -243,7 +246,7 @@ export async function SiteShell({ children }: SiteShellProps) {
           <div className="mt-8 rounded-sm border border-border-strong bg-surface-2 p-4 text-sm leading-6 text-text-primary">
             AiverseWorld uses cookies and similar technologies for essential site
             functions, analytics, and advertising. Third-party partners, including
-            Google AdSense where enabled, may use cookies or tracking scripts to
+            Ezoic where enabled, may use cookies or tracking scripts to
             measure ads, prevent fraud, and personalize advertising with your
             consent. Review our{" "}
             <Link href="/cookie-policy" className="font-semibold text-brand-cyan-strong hover:text-brand-cyan">

@@ -6,7 +6,6 @@ import Link from "next/link";
 
 import { ContentPage } from "@/components/content-page";
 import { RelatedPolicies } from "@/components/related-policies";
-import { buildUrl } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata(getRouteSeo("/advertising-disclosure"));
 
@@ -37,8 +36,8 @@ export default function AdvertisingDisclosurePage() {
       <div className="space-y-4">
         <h2 className="text-2xl font-semibold text-white">Programmatic advertising</h2>
         <p className="text-base leading-8 text-text-secondary">
-          AiverseWorld may display programmatic ads served through networks such as
-          Google AdSense. These ads are selected automatically and are separate from
+          AiverseWorld may display programmatic ads served through partners such as
+          Ezoic. These ads are selected automatically and are separate from
           our editorial rankings and tool comparisons, which are never for sale.
         </p>
       </div>

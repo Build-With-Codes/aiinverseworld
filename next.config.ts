@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: "/ads.txt",
+        destination: "https://srv.adstxtmanager.com/19390/aiverseworld.com",
+        permanent: true,
+      },
+      {
         source: "/terms-and-conditions",
         destination: "/terms",
         permanent: true,
