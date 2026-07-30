@@ -18,6 +18,9 @@ const modelPrices = {
 
 const ratios = ["16:9", "1:1", "4:5", "9:16", "3:2"];
 
+const toolInputClass = "platform-input rounded-card px-4 py-3 text-sm";
+const toolTextareaClass = "platform-textarea resize-none rounded-card px-4 py-3 text-sm";
+
 function estimateTokens(text: string) {
   const trimmed = text.trim();
   if (!trimmed) return 0;
@@ -183,14 +186,24 @@ export function ToolActions({ slug, actionLabel }: ToolActionsProps) {
   const showOutput = slug === "prompt-formatter" || isTemplate;
 
   return (
-    <section id="tool-workspace" className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
-      <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-5 shadow-card sm:p-6">
+    <section
+      id="tool-workspace"
+      aria-labelledby="tool-workspace-title"
+      className="grid scroll-mt-28 gap-6 rounded-card-lg bg-surface-1 p-4 sm:p-6 lg:grid-cols-[0.9fr_1.1fr]"
+    >
+      <div>
+        <div className="mb-5">
+          <p className="text-eyebrow text-brand-electric-strong">Tool workspace</p>
+          <h2 id="tool-workspace-title" className="text-heading-1 mt-2 text-text-primary">
+            Tune the inputs
+          </h2>
+        </div>
         <div className="grid gap-4">
           {isCost ? (
             <>
               <label className="grid gap-2 text-sm font-semibold text-text-primary">
                 Model
-                <select value={model} onChange={(event) => setModel(event.target.value as keyof typeof modelPrices)} className="rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-text-primary outline-none focus:border-border-accent">
+                <select value={model} onChange={(event) => setModel(event.target.value as keyof typeof modelPrices)} className={toolInputClass}>
                   {Object.keys(modelPrices).map((name) => (
                     <option key={name}>{name}</option>
                   ))}
@@ -209,7 +222,7 @@ export function ToolActions({ slug, actionLabel }: ToolActionsProps) {
                 value={text}
                 onChange={(event) => setText(event.target.value)}
                 rows={7}
-                className="resize-none rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm leading-6 text-text-primary outline-none focus:border-border-accent"
+                className={`${toolTextareaClass} leading-6`}
               />
             </label>
           )}
@@ -224,28 +237,28 @@ export function ToolActions({ slug, actionLabel }: ToolActionsProps) {
           {showRole ? (
             <label className="grid gap-2 text-sm font-semibold text-text-primary">
               Role
-              <input value={role} onChange={(event) => setRole(event.target.value)} className="rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-text-primary outline-none focus:border-border-accent" />
+              <input value={role} onChange={(event) => setRole(event.target.value)} className={toolInputClass} />
             </label>
           ) : null}
 
           {showOutput ? (
             <label className="grid gap-2 text-sm font-semibold text-text-primary">
               Output format or audience
-              <input value={output} onChange={(event) => setOutput(event.target.value)} className="rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-text-primary outline-none focus:border-border-accent" />
+              <input value={output} onChange={(event) => setOutput(event.target.value)} className={toolInputClass} />
             </label>
           ) : null}
 
           {isTemplate ? (
             <label className="grid gap-2 text-sm font-semibold text-text-primary">
               Variables
-              <input value={variables} onChange={(event) => setVariables(event.target.value)} className="rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-text-primary outline-none focus:border-border-accent" />
+              <input value={variables} onChange={(event) => setVariables(event.target.value)} className={toolInputClass} />
             </label>
           ) : null}
 
           {isSystem ? (
             <label className="grid gap-2 text-sm font-semibold text-text-primary">
               Boundaries
-              <textarea value={boundaries} onChange={(event) => setBoundaries(event.target.value)} rows={3} className="resize-none rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-text-primary outline-none focus:border-border-accent" />
+              <textarea value={boundaries} onChange={(event) => setBoundaries(event.target.value)} rows={3} className={toolTextareaClass} />
             </label>
           ) : null}
 
@@ -253,11 +266,11 @@ export function ToolActions({ slug, actionLabel }: ToolActionsProps) {
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="grid gap-2 text-sm font-semibold text-text-primary">
                 Style
-                <input value={style} onChange={(event) => setStyle(event.target.value)} className="rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-text-primary outline-none focus:border-border-accent" />
+                <input value={style} onChange={(event) => setStyle(event.target.value)} className={toolInputClass} />
               </label>
               <label className="grid gap-2 text-sm font-semibold text-text-primary">
                 Aspect ratio
-                <select value={ratio} onChange={(event) => setRatio(event.target.value)} className="rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-text-primary outline-none focus:border-border-accent">
+                <select value={ratio} onChange={(event) => setRatio(event.target.value)} className={toolInputClass}>
                   {ratios.map((item) => (
                     <option key={item}>{item}</option>
                   ))}
@@ -265,7 +278,7 @@ export function ToolActions({ slug, actionLabel }: ToolActionsProps) {
               </label>
               <label className="grid gap-2 text-sm font-semibold text-text-primary sm:col-span-2">
                 Composition
-                <input value={composition} onChange={(event) => setComposition(event.target.value)} className="rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-text-primary outline-none focus:border-border-accent" />
+                <input value={composition} onChange={(event) => setComposition(event.target.value)} className={toolInputClass} />
               </label>
             </div>
           ) : null}
@@ -276,17 +289,17 @@ export function ToolActions({ slug, actionLabel }: ToolActionsProps) {
         </div>
       </div>
 
-      <div className="flex min-h-[30rem] flex-col rounded-card-lg border border-border-accent bg-surface-2 p-5 shadow-card sm:p-6">
+      <div className="flex min-h-[30rem] flex-col rounded-card-lg bg-surface-2 p-5 shadow-card sm:p-6">
         <div className="mb-4 flex items-center justify-between gap-4">
           <div>
-            <p className="text-eyebrow text-brand-cyan-strong">Result</p>
+            <p className="text-eyebrow text-brand-electric-strong">Live preview/result</p>
             <h2 className="text-heading-1 mt-2 text-text-primary">Ready to copy</h2>
           </div>
           <span className="rounded-pill border border-border-subtle bg-surface-1 px-3 py-1 text-xs font-semibold text-text-muted">
             Local
           </span>
         </div>
-        <pre className="flex-1 overflow-auto whitespace-pre-wrap rounded-3xl border border-border-subtle bg-surface-1 p-5 font-mono text-sm leading-7 text-text-secondary">
+        <pre className="flex-1 overflow-auto whitespace-pre-wrap rounded-card bg-surface-1 p-5 font-mono text-sm leading-7 text-text-secondary">
           {result}
         </pre>
       </div>
@@ -303,7 +316,7 @@ function NumberField({ label, value, onChange }: { label: string; value: number;
         min={0}
         value={value}
         onChange={(event) => onChange(Number(event.target.value))}
-        className="rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-text-primary outline-none focus:border-border-accent"
+        className={toolInputClass}
       />
     </label>
   );

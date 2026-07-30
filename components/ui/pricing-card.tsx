@@ -24,11 +24,11 @@ export function PricingCard({
 }: PricingCardProps) {
   return (
     <div
-      className={`${cardClass({ hover: true, glow: highlighted ? "cyan" : "none", padding: "lg" })} ${
-        highlighted ? "border-border-accent" : ""
+      className={`${cardClass({ hover: true, glow: highlighted ? "violet" : "none", padding: "lg" })} ${
+        highlighted ? "border-brand-electric/35" : ""
       }`}
     >
-      <p className="text-eyebrow text-brand-cyan-strong">{planName}</p>
+      <p className="text-eyebrow text-brand-electric-strong">{planName}</p>
       <p className="mt-3 flex items-baseline gap-1.5">
         <span className="text-display-2 text-text-primary">{price}</span>
         {price !== "Free" ? <span className="text-caption text-text-muted">{cadence}</span> : null}
@@ -37,7 +37,7 @@ export function PricingCard({
       <ul className="mt-5 space-y-2.5">
         {features.map((feature) => (
           <li key={feature} className="text-body flex items-start gap-2 text-text-secondary">
-            <span className="mt-0.5 text-brand-cyan-strong" aria-hidden>
+            <span className="mt-0.5 text-brand-electric-strong" aria-hidden>
               ✓
             </span>
             <span>{feature}</span>

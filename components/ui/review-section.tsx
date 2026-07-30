@@ -95,11 +95,7 @@ export function ReviewSection({
 
   useEffect(() => {
     let cancelled = false;
-    if (!signedIn) {
-      setOwnReview(null);
-      setOwnLoaded(true);
-      return;
-    }
+    if (!signedIn) return;
     fetchOwnReview(toolId).then((review) => {
       if (cancelled) return;
       setOwnReview(review);
@@ -174,7 +170,9 @@ export function ReviewSection({
     });
   }
 
-  const others = reviews.filter((review) => review.id !== ownReview?.id);
+  const visibleOwnReview = signedIn ? ownReview : null;
+  const visibleOwnLoaded = signedIn ? ownLoaded : true;
+  const others = reviews.filter((review) => review.id !== visibleOwnReview?.id);
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_1.1fr]">
@@ -200,22 +198,22 @@ export function ReviewSection({
               <AuthDialog
                 callbackUrl={callbackUrl}
                 enabled={googleAuthEnabled}
-                triggerClassName="inline-flex cursor-pointer rounded-pill bg-gradient-to-r from-brand-electric to-brand-violet px-5 py-2.5 text-sm font-semibold text-white shadow-glow-cyan transition hover:brightness-110"
+                triggerClassName="inline-flex min-h-11 cursor-pointer items-center rounded-button bg-brand-electric px-5 py-2.5 text-sm font-semibold text-white shadow-card transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:-translate-y-0.5 hover:bg-brand-electric-strong hover:shadow-card-hover"
                 triggerLabel="Sign in to review"
                 title={`Review ${toolName}`}
                 description="Use your account to post a verified review you can edit or remove anytime."
               />
             </div>
-          ) : !ownLoaded ? (
+          ) : !visibleOwnLoaded ? (
             <p className="text-caption text-text-muted">Loading your review…</p>
-          ) : ownReview && !editing ? (
+          ) : visibleOwnReview && !editing ? (
             <div className="space-y-3">
               <p className="text-body font-semibold text-text-primary">Your review</p>
               <div className="flex items-center gap-1 text-amber-300" aria-hidden>
-                {"★".repeat(ownReview.rating)}
-                <span className="text-text-muted">{"★".repeat(5 - ownReview.rating)}</span>
+                {"★".repeat(visibleOwnReview.rating)}
+                <span className="text-text-muted">{"★".repeat(5 - visibleOwnReview.rating)}</span>
               </div>
-              <p className="text-body text-text-secondary">{ownReview.comment}</p>
+              <p className="text-body text-text-secondary">{visibleOwnReview.comment}</p>
               <div className="flex gap-3">
                 <Button variant="secondary" size="sm" onClick={() => setEditing(true)}>
                   Edit
@@ -238,7 +236,7 @@ export function ReviewSection({
                 minLength={10}
                 required
                 placeholder={`Share how ${toolName} fit your workflow (min. 10 characters)…`}
-                className="w-full rounded-sm border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-text-primary outline-none focus:border-border-accent"
+                className="w-full rounded-input border border-border-subtle bg-surface-2 px-4 py-3 text-sm text-text-primary outline-none transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] placeholder:text-text-muted focus:border-brand-electric focus:ring-2 focus:ring-brand-cyan-strong/30"
               />
               {error ? (
                 <p role="alert" className="text-sm text-rose-300">

@@ -77,26 +77,44 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
   ];
 
   return (
-    <div className="space-y-10 pb-14 pt-8">
+    <div className="space-y-14 pb-14">
       <StructuredDataScript id={`${tool.slug}-schema`} data={structuredData} />
       <ToolHeader title={tool.title} description={tool.description} eyebrow={tool.eyebrow} tool={tool} compact />
-      <div className="grid gap-6 lg:grid-cols-[17rem_1fr]">
-        <ToolSidebar activeSlug={tool.slug} />
-        <div className="min-w-0 space-y-10">
+      <div className="grid gap-8 lg:grid-cols-[16rem_1fr]">
+        <div className="order-2 lg:order-1">
+          <ToolSidebar activeSlug={tool.slug} />
+        </div>
+        <div className="order-1 min-w-0 space-y-14 lg:order-2">
           <ToolActions slug={tool.slug} actionLabel={tool.primaryAction} />
           {children}
-          <section className="rounded-card border border-border-subtle bg-surface-2 p-6 shadow-card">
+          <section>
+            <p className="text-eyebrow text-brand-electric-strong">How it works</p>
+            <h2 className="text-display-2 mt-2 text-text-primary">A simple local workflow</h2>
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+              {[
+                "Paste or enter your source material.",
+                "Adjust the fields for the model or workflow.",
+                "Review the live result and copy it when ready.",
+              ].map((step) => (
+                <div key={step} className="border-t border-border-subtle pt-4">
+                  <p className="text-sm leading-6 text-text-secondary">{step}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+          <section>
             <p className="text-eyebrow text-brand-violet-strong">Use cases</p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            <h2 className="text-display-2 mt-2 text-text-primary">Benefits and use cases</h2>
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
               {tool.examples.map((example) => (
-                <div key={example} className="rounded-2xl border border-border-subtle bg-surface-1 p-4 text-sm font-semibold text-text-primary">
+                <div key={example} className="rounded-card border border-border-subtle bg-surface-2 p-4 text-sm font-semibold text-text-primary shadow-card">
                   {example}
                 </div>
               ))}
             </div>
           </section>
-          <RelatedTools tools={relatedTools} />
           <FAQ items={tool.faqs} />
+          <RelatedTools tools={relatedTools} />
           <ToolFooter />
         </div>
       </div>

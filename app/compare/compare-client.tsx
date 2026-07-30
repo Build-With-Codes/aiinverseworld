@@ -57,11 +57,11 @@ export function CompareClient({
         </section>
       ) : null}
 
-      <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
+      <section className="grid gap-8 border-b border-border-subtle pb-10 lg:grid-cols-[0.78fr_1.22fr] lg:items-end">
         <SectionHeading
           eyebrow="Compare"
-          title="Compare any two AI tools"
-          description="Pick any two tools from the catalog and get a side-by-side breakdown."
+          title="Compare AI tools with a clear side-by-side workflow"
+          description="Start with two products, then move into pricing, capability, platform fit, and practical tradeoffs."
         />
         <CompareSelector
           currentLeft={selectedPair?.left.id ?? ""}
@@ -72,7 +72,7 @@ export function CompareClient({
 
       {selectedPair ? (
         <section className="space-y-6">
-          <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
+          <div className="border-b border-border-subtle pb-2">
             <SectionHeading
               eyebrow="Selected comparison"
               title={`${selectedPair.left.name} vs ${selectedPair.right.name}`}
@@ -83,26 +83,30 @@ export function CompareClient({
         </section>
       ) : null}
 
-      <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="font-semibold text-white">
-            {comparisons.length} curated comparisons
-          </p>
-          <input
-            aria-label="Search comparisons"
-            placeholder="Search comparisons..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            suppressHydrationWarning
-            className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-2.5 text-sm text-text-secondary outline-none placeholder:text-text-muted focus:border-border-accent sm:w-72"
-          />
+      <section className="space-y-6">
+        <div className="flex flex-col gap-4 border-b border-border-subtle pb-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-eyebrow text-brand-cyan-strong">Trending comparisons</p>
+            <h2 className="mt-2 text-heading-1 text-text-primary">{comparisons.length} curated matchups</h2>
+          </div>
+          <label className="relative block w-full sm:w-80">
+            <span className="sr-only">Search comparisons</span>
+            <input
+              aria-label="Search comparisons"
+              placeholder="Search comparisons..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              suppressHydrationWarning
+              className="platform-input rounded-pill px-4 py-3 text-sm"
+            />
+          </label>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((c) => (
             <Link
               key={c.slug}
               href={`/compare/${c.slug}`}
-              className="group flex flex-col gap-4 rounded-[22px] border border-border-subtle bg-surface-1 p-5 transition hover:-translate-y-0.5 hover:border-border-accent hover:shadow-card-hover"
+              className="group flex flex-col gap-4 rounded-card border border-border-subtle bg-surface-2/72 p-5 transition duration-[var(--motion-hover)] hover:-translate-y-0.5 hover:border-border-accent hover:bg-surface-2 hover:shadow-card"
             >
               {c.left && c.right ? (
                 <div className="flex items-center gap-3">
@@ -138,7 +142,7 @@ export function CompareClient({
           ))}
         </div>
         {filtered.length === 0 && (
-          <p className="py-10 text-center text-sm text-text-muted">No comparisons match your search.</p>
+          <p className="border-y border-border-subtle py-10 text-center text-sm text-text-muted">No comparisons match your search.</p>
         )}
       </section>
     </div>

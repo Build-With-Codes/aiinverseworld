@@ -185,7 +185,7 @@ function compactNumber(value: number) {
 }
 
 function fieldClassName() {
-  return "h-10 w-full rounded-sm border border-border-subtle bg-surface-1/70 px-3 text-sm text-text-primary outline-none placeholder:text-text-muted focus:border-border-accent focus:bg-surface-1";
+  return "platform-filter-input h-10 rounded-sm px-3 text-sm";
 }
 
 function labelClassName() {
@@ -198,7 +198,6 @@ export function JobsClient() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [meta, setMeta] = useState<JobsPayload["meta"]>({});
   const [query, setQuery] = useState("");
-  const [location, setLocation] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("ai-ml");
   const [workArrangement, setWorkArrangement] = useState("All");
   const [experience, setExperience] = useState("");
@@ -226,7 +225,6 @@ export function JobsClient() {
       });
 
       if (query.trim()) params.set("q", query.trim());
-      if (location.trim()) params.set("location", location.trim());
       if (selectedCategory !== "all") params.set("category", selectedCategory);
       if (workArrangement === "Remote") params.set("remote", "true");
       if (workArrangement === "Hybrid" || workArrangement === "On-site") params.set("workplaceType", workArrangement);
@@ -265,7 +263,7 @@ export function JobsClient() {
       window.clearTimeout(timeout);
       controller.abort();
     };
-  }, [employmentType, experience, location, page, postedWithin, query, salaryMax, salaryMin, searchVersion, selectedCategory, sort, workArrangement]);
+  }, [employmentType, experience, page, postedWithin, query, salaryMax, salaryMin, searchVersion, selectedCategory, sort, workArrangement]);
 
   const total = meta?.total ?? meta?.count ?? jobs.length;
   const currentPage = meta?.page ?? page;
@@ -278,7 +276,6 @@ export function JobsClient() {
     workArrangement !== "All",
     experience,
     employmentType,
-    location.trim(),
     salaryMin.trim(),
     salaryMax.trim(),
     postedWithin,
@@ -314,7 +311,6 @@ export function JobsClient() {
 
   function clearFilters() {
     setQuery("");
-    setLocation("");
     setSelectedCategory("ai-ml");
     setWorkArrangement("All");
     setExperience("");
@@ -479,22 +475,20 @@ export function JobsClient() {
 
   return (
     <div className="pb-12 pt-6 sm:pt-8">
-      <section className="relative overflow-hidden rounded-card border border-border-subtle bg-surface-glass shadow-card">
-        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-cyan/70 to-brand-violet/40" />
-        <div className="absolute right-[-5rem] top-[-7rem] h-52 w-52 rounded-full bg-brand-cyan/10 blur-3xl" />
-        <div className="relative p-4 sm:p-5">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <section className="border-b border-border-subtle pb-6">
+        <div className="relative">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-2xl">
               <Badge variant="brand" className="tracking-[0.14em]">AI & Future Technology Jobs</Badge>
-              <h1 className="mt-2 text-heading-1 text-text-primary">Jobs for the people building what&apos;s next.</h1>
-              <p className="mt-1 max-w-2xl text-sm leading-6 text-text-secondary">
-                High-signal AI, software, data, cloud, security, and product roles.
+              <h1 className="mt-3 text-display-2 text-text-primary">Find AI roles with fewer filters and better signal.</h1>
+              <p className="mt-3 max-w-2xl text-base leading-7 text-text-secondary">
+                Search high-signal AI, software, data, cloud, security, and product roles from connected job feeds.
               </p>
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-4 rounded-card border border-border-strong bg-surface-1/80 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] focus-within:border-border-accent">
-            <div className="grid gap-2 lg:grid-cols-[minmax(0,1.2fr)_minmax(15rem,0.8fr)_auto_auto]">
+          <form onSubmit={handleSubmit} className="platform-search-shell mt-6 rounded-card p-2">
+            <div className="grid gap-2 lg:grid-cols-[minmax(0,1fr)_auto_auto]">
               <input
                 aria-label="Search AI jobs"
                 value={query}
@@ -503,17 +497,7 @@ export function JobsClient() {
                   setPage(1);
                 }}
                 placeholder="Role, skill, company, or stack"
-                className="h-12 min-w-0 rounded-sm border border-transparent bg-transparent px-3 text-base text-text-primary outline-none placeholder:text-text-muted focus:border-transparent"
-              />
-              <input
-                aria-label="Location"
-                value={location}
-                onChange={(event) => {
-                  setLocation(event.target.value);
-                  setPage(1);
-                }}
-                placeholder="Location or remote"
-                className="h-12 min-w-0 rounded-sm border border-border-subtle bg-surface-2 px-3 text-base text-text-primary outline-none placeholder:text-text-muted focus:border-border-accent"
+                className="platform-shell-input h-12 min-w-0 rounded-sm px-3 text-base placeholder:text-text-muted"
               />
               <Button type="submit" className="h-12 rounded-sm px-5">Search</Button>
               <Button
@@ -529,6 +513,7 @@ export function JobsClient() {
           </form>
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
+            <span className="text-xs font-semibold uppercase tracking-[0.16em] text-text-muted">Trending skills</span>
             {trendingSearches.map((chip) => (
               <button
                 key={chip}
@@ -548,7 +533,7 @@ export function JobsClient() {
       </section>
 
       <nav className="mt-5 overflow-x-auto pb-1 no-scrollbar" aria-label="Job categories">
-        <div className="mx-auto flex w-max min-w-full gap-2 rounded-card border border-border-subtle bg-surface-2/75 p-2 sm:justify-center">
+        <div className="mx-auto flex w-max min-w-full gap-2 border-b border-border-subtle pb-2 sm:justify-center">
           {categories.map((category) => (
             <button
               key={category.value}
@@ -567,18 +552,18 @@ export function JobsClient() {
       </nav>
 
       {showFilters ? (
-        <section className="mt-4 rounded-card border border-border-subtle bg-surface-glass p-4 shadow-card lg:hidden">
+        <section className="mt-4 border-y border-border-subtle py-4 lg:hidden">
           {filterPanel}
         </section>
       ) : null}
 
       <section className="mt-6 grid gap-5 lg:grid-cols-[17.5rem_minmax(0,1fr)] lg:items-start">
-        <aside className="sticky top-24 hidden rounded-card border border-border-subtle bg-surface-glass p-4 shadow-card lg:block">
+        <aside className="sticky top-24 hidden border-r border-border-subtle pr-5 lg:block">
           {filterPanel}
         </aside>
 
         <div id="jobs-results" className="min-w-0 scroll-mt-24 space-y-3">
-          <div className="flex flex-col gap-3 rounded-card border border-border-subtle bg-surface-2/65 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 border-b border-border-subtle pb-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-semibold text-text-primary">{isLoading ? "Searching jobs..." : `${jobs.length} visible roles`}</p>
               <p className="mt-0.5 text-xs text-text-muted">
@@ -612,7 +597,7 @@ export function JobsClient() {
               <p className="mt-2 text-sm text-rose-100/80">{error}</p>
             </div>
           ) : jobs.length > 0 ? (
-            <div className="overflow-hidden rounded-card border border-border-subtle bg-surface-2 shadow-card">
+            <div className="overflow-hidden border-y border-border-subtle bg-surface-2/45">
               {jobs.map((job, index) => {
                 const href = getApplyHref(job);
                 const salary = formatSalary(job);
@@ -679,14 +664,14 @@ export function JobsClient() {
               })}
             </div>
           ) : (
-            <div className="rounded-card border border-border-subtle bg-surface-2 p-6 text-center sm:p-8">
+            <div className="border-y border-border-subtle py-10 text-center">
               <p className="font-semibold text-text-primary">No jobs match these filters.</p>
               <p className="mt-2 text-sm text-text-muted">Try a broader role, a lighter salary range, or another future-tech category.</p>
             </div>
           )}
 
           {!isLoading && !error && totalPages > 1 ? (
-            <nav className="flex flex-col gap-3 rounded-card border border-border-subtle bg-surface-2/65 p-4 sm:flex-row sm:items-center sm:justify-between" aria-label="Jobs pagination">
+            <nav className="flex flex-col gap-3 border-t border-border-subtle pt-4 sm:flex-row sm:items-center sm:justify-between" aria-label="Jobs pagination">
               <p className="text-sm text-text-muted">
                 Page <span className="font-semibold text-text-primary">{currentPage}</span> of <span className="font-semibold text-text-primary">{totalPages}</span>
               </p>

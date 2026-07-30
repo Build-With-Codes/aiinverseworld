@@ -24,10 +24,10 @@ export function NavLink({ href, label }: NavLinkProps) {
   return (
     <Link
       href={href}
-      className={`cursor-pointer rounded-pill px-4 py-2 text-sm font-semibold tracking-wide transition duration-200 ${
+      className={`cursor-pointer rounded-pill px-4 py-2 text-sm font-semibold tracking-wide transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] ${
         active
-          ? "bg-brand-cyan/14 text-text-primary shadow-[0_0_0_1px_var(--border-accent)] hover:bg-brand-cyan/22"
-          : "text-text-secondary hover:bg-brand-cyan/12 hover:text-text-primary"
+          ? "bg-brand-electric/12 text-text-primary shadow-[0_0_0_1px_var(--border-accent)] hover:bg-brand-electric/18"
+          : "text-text-secondary hover:bg-brand-electric/10 hover:text-text-primary"
       }`}
     >
       {label}

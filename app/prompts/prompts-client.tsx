@@ -52,7 +52,7 @@ function compactNumber(value?: number | null) {
 }
 
 function fieldClass() {
-  return "h-11 rounded-sm border border-border-subtle bg-surface-1/70 px-3 text-sm text-text-primary outline-none transition placeholder:text-text-muted focus:border-border-accent focus:bg-surface-1";
+  return "platform-filter-input h-11 rounded-sm px-3 text-sm";
 }
 
 function PromptIcon({ name, className = "h-5 w-5" }: { name: IconName; className?: string }) {
@@ -233,7 +233,7 @@ function getInitialVariables(prompt?: AiPrompt | null) {
 
 function PromptStatsGrid({
   items,
-  surface = "bg-surface-2/70",
+  surface = "bg-transparent",
 }: {
   items: Array<[number | undefined | null, string]>;
   surface?: string;
@@ -241,7 +241,7 @@ function PromptStatsGrid({
   return (
     <>
       {items.map(([value, label]) => (
-        <div key={label} className={`rounded-sm border border-border-subtle ${surface} p-4`}>
+        <div key={label} className={`border-l border-border-subtle pl-4 first:border-l-0 first:pl-0 ${surface}`}>
           {value === undefined || value === null ? (
             <div className="space-y-2" aria-label={`${label} loading`}>
               <div className="skeleton-shimmer h-8 w-20 rounded-full" />
@@ -377,20 +377,18 @@ export function PromptsClient() {
 
   return (
     <div className="pt-8">
-      <section className="relative overflow-hidden rounded-card-lg border border-border-subtle bg-surface-2/85 px-5 py-7 shadow-card backdrop-blur-xl sm:px-8 lg:px-10">
-        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand-violet/18 blur-3xl" />
-        <div className="pointer-events-none absolute left-12 top-20 h-48 w-48 rounded-full bg-brand-cyan/12 blur-3xl" />
-        <div className="grid gap-8 lg:grid-cols-[1.05fr_0.75fr] lg:items-center">
-          <div className="relative">
+      <section className="border-b border-border-subtle pb-8">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_21rem] lg:items-end">
+          <div>
             <Badge variant="brand">Prompt Library</Badge>
             <h1 className="mt-5 max-w-3xl text-display-2 text-text-primary">
-              Discover, optimize and share production-ready AI prompts
+              Search, adapt, and ship production-ready prompts
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-text-secondary">
               Search natural language goals, customize variables, compare model fit, and copy prompts built for real workflows.
             </p>
             <form
-              className="mt-7 flex flex-col gap-3 rounded-card border border-border-subtle bg-surface-1/85 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] sm:flex-row"
+              className="platform-search-shell mt-7 flex flex-col gap-3 rounded-card p-2 sm:flex-row"
               onSubmit={(event) => {
                 event.preventDefault();
                 setPage(1);
@@ -404,7 +402,7 @@ export function PromptsClient() {
                     setQuery(event.target.value);
                     setPage(1);
                   }}
-                  className="min-w-0 flex-1 border-0 bg-transparent text-sm text-text-primary outline-none placeholder:text-text-muted"
+                  className="platform-shell-input min-w-0 flex-1 px-0 py-0 text-sm placeholder:text-text-muted"
                   placeholder='Search prompts, e.g. "Write a marketing email..."'
                   aria-label="Search prompts"
                 />
@@ -429,23 +427,21 @@ export function PromptsClient() {
               </div>
             ) : null}
           </div>
-          <div className="relative min-h-64 overflow-hidden rounded-card border border-border-subtle bg-surface-1/80 p-6 shadow-card">
-            <div className="absolute inset-x-10 top-10 h-28 rounded-full bg-brand-violet/18 blur-3xl" />
-            <div className="relative mx-auto flex h-56 max-w-sm items-center justify-center">
-              <div className="absolute bottom-4 h-8 w-56 rounded-full bg-brand-cyan/20 blur-xl" />
-              <div className="relative grid h-36 w-36 place-items-center rounded-[2rem] bg-gradient-to-br from-brand-electric to-brand-violet shadow-glow-violet">
-                <PromptIcon name="message" className="h-16 w-16 text-white" />
-              </div>
-              <div className="absolute left-4 top-8 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 text-white shadow-[0_18px_50px_rgba(45,212,191,0.28)]">
-                <PromptIcon name="mail" className="h-7 w-7" />
-              </div>
-              <div className="absolute bottom-8 right-5 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-amber-300 to-rose-500 text-white shadow-[0_18px_50px_rgba(251,146,60,0.28)]">
-                <PromptIcon name="code" className="h-7 w-7" />
-              </div>
+          <div className="hidden border-l border-border-subtle pl-7 lg:block">
+            <p className="text-eyebrow text-brand-cyan-strong">Workspace signals</p>
+            <div className="mt-5 grid gap-5">
+              <PromptStatsGrid
+                items={[
+                  [summary?.total, "Prompts"],
+                  [summary?.categories?.length, "Categories"],
+                  [summary?.models?.length, "AI Models"],
+                  [summary?.copies, "Copies"],
+                ]}
+              />
             </div>
           </div>
         </div>
-        <div className="mt-8 grid gap-3 border-t border-border-subtle pt-6 sm:grid-cols-4">
+        <div className="mt-7 grid gap-4 border-t border-border-subtle pt-5 sm:grid-cols-4 lg:hidden">
           <PromptStatsGrid
             items={[
               [summary?.total, "Prompts"],
@@ -459,7 +455,7 @@ export function PromptsClient() {
 
       <section className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="space-y-5">
-          <div className="grid gap-3 rounded-card border border-border-subtle bg-surface-2/55 p-4 sm:grid-cols-2 xl:grid-cols-5">
+          <div className="grid gap-3 border-b border-border-subtle pb-4 sm:grid-cols-2 xl:grid-cols-5">
             <select value={category} onChange={(event) => { setCategory(event.target.value); setPage(1); }} className={fieldClass()}>
               {categoryOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
             </select>
@@ -504,10 +500,7 @@ export function PromptsClient() {
             {loading ? (
               <div className="space-y-3">
                 {Array.from({ length: 4 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="grid animate-pulse gap-4 rounded-card border border-border-subtle bg-surface-2/60 p-4 shadow-card sm:grid-cols-[5.5rem_1fr_auto]"
-                  >
+                  <div key={index} className="grid animate-pulse gap-4 border-b border-border-subtle py-4 sm:grid-cols-[5.5rem_1fr_auto]">
                     <div className="h-[5.5rem] w-[5.5rem] rounded-[1.35rem] bg-surface-1" />
                     <div className="min-w-0 space-y-3">
                       <div className="h-4 w-28 rounded-full bg-surface-1" />
@@ -535,7 +528,7 @@ export function PromptsClient() {
               return (
                 <article
                   key={prompt.slug}
-                  className="group grid gap-4 rounded-card border border-border-subtle bg-surface-2/60 p-4 shadow-card transition hover:border-border-accent hover:bg-surface-2 sm:grid-cols-[5.5rem_1fr_auto]"
+                  className="group grid gap-4 border-b border-border-subtle py-4 transition hover:bg-surface-2/45 sm:grid-cols-[5.5rem_1fr_auto]"
                 >
                   <button
                     type="button"
@@ -587,7 +580,7 @@ export function PromptsClient() {
               );
             })}
             {!loading && prompts.length === 0 ? (
-              <div className="rounded-card border border-border-subtle bg-surface-2/70 p-8 text-center shadow-card">
+              <div className="border-y border-border-subtle py-10 text-center">
                 <p className="text-lg font-bold text-text-primary">No prompts in the workspace yet</p>
                 <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-text-secondary">
                   The Prompt Library is wired to the job-service database. Start the scheduler with prompt source URLs, or run the sync endpoint after migrations create the prompt tables.
@@ -596,7 +589,7 @@ export function PromptsClient() {
             ) : null}
           </div>
 
-          <div className="flex items-center justify-between rounded-card border border-border-subtle bg-surface-2/60 p-4">
+          <div className="flex items-center justify-between border-t border-border-subtle pt-4">
             <Button type="button" variant="secondary" disabled={page <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))}>Previous</Button>
             <p className="text-sm font-semibold text-text-muted">Page {meta.page} of {meta.totalPages}</p>
             <Button type="button" variant="secondary" disabled={page >= meta.totalPages} onClick={() => setPage((value) => value + 1)}>Next</Button>
@@ -634,7 +627,7 @@ export function PromptsClient() {
             )}
           </div>
 
-          <div className="rounded-card border border-border-subtle bg-surface-2/70 p-5">
+          <div className="border-t border-border-subtle pt-5">
             <h2 className="text-lg font-bold text-text-primary">Categories</h2>
             <div className="mt-4 space-y-3">
               {sidebarCategories.length > 0 ? sidebarCategories.map((item) => (
@@ -646,7 +639,7 @@ export function PromptsClient() {
             </div>
           </div>
 
-          <div className="rounded-card border border-border-subtle bg-surface-2/70 p-5">
+          <div className="border-t border-border-subtle pt-5">
             <h2 className="text-lg font-bold text-text-primary">Top Models</h2>
             <div className="mt-4 space-y-3">
               {(summary?.models ?? []).slice(0, 6).map((item) => (
@@ -668,7 +661,7 @@ export function PromptsClient() {
         </aside>
       </section>
 
-      <section className="mt-8 grid gap-3 rounded-card-lg border border-border-subtle bg-surface-2/65 p-5 sm:grid-cols-4">
+      <section className="mt-8 grid gap-4 border-y border-border-subtle py-5 sm:grid-cols-4">
         <PromptStatsGrid
           surface="bg-surface-1/70"
           items={[

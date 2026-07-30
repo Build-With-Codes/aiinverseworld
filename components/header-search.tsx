@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { FormEvent, MouseEvent, useRef, useState } from "react";
+import { FormEvent, KeyboardEvent, MouseEvent, useRef, useState } from "react";
 
 type HeaderSearchProps = {
   onSubmit?: () => void;
@@ -16,6 +16,13 @@ export function HeaderSearch({ onSubmit, trendingQueries = [] }: HeaderSearchPro
   function focusInput(event: MouseEvent) {
     if (event.target !== event.currentTarget) return;
     inputRef.current?.focus();
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+      event.preventDefault();
+      inputRef.current?.focus();
+    }
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -39,14 +46,14 @@ export function HeaderSearch({ onSubmit, trendingQueries = [] }: HeaderSearchPro
         aria-label="Search AI tools"
         onSubmit={handleSubmit}
         onClick={focusInput}
-        className="flex min-w-0 cursor-text items-center gap-2 rounded-full border border-border-subtle bg-surface-2 px-3 py-2 text-text-secondary shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-xl transition focus-within:border-brand-cyan-strong focus-within:bg-brand-cyan/10 focus-within:ring-2 focus-within:ring-brand-cyan-strong/40"
+        className="platform-search-shell flex min-w-0 cursor-text items-center gap-1.5 rounded-full px-2.5 py-1 text-text-secondary backdrop-blur-xl transition duration-[var(--motion-hover)] ease-[var(--ease-premium)]"
       >
         <button
           type="submit"
           aria-label="Submit search"
-          className="flex h-6 w-6 shrink-0 items-center justify-center text-brand-cyan-strong transition hover:text-white group-focus-within:text-cyan-100"
+          className="flex h-5 w-5 shrink-0 items-center justify-center text-brand-electric-strong transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:text-text-primary group-focus-within:text-brand-cyan-strong"
         >
-          <svg viewBox="0 0 20 20" fill="none" className="h-4.5 w-4.5">
+          <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
             <path
               d="m14.2 14.2 3.3 3.3M8.8 15.2a6.4 6.4 0 1 1 0-12.8 6.4 6.4 0 0 1 0 12.8Z"
               stroke="currentColor"
@@ -56,36 +63,24 @@ export function HeaderSearch({ onSubmit, trendingQueries = [] }: HeaderSearchPro
             />
           </svg>
         </button>
-       <input
-  ref={inputRef}
-  type="search"
-  value={query}
-  onChange={(e) => setQuery(e.target.value)}
-  placeholder="Search tools"
-  className="
-    min-w-0
-    flex-1
-    bg-transparent
-    text-sm
-    text-slate-200
-    border-0
-    outline-none
-    ring-0
-    focus:border-0
-    focus:outline-none
-    focus:ring-0
-    focus-visible:outline-none
-    focus-visible:ring-0
-    appearance-none
-    placeholder:text-text-muted
-  "
-/>
+        <input
+          ref={inputRef}
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Search tools"
+          className="platform-shell-input min-w-0 flex-1 appearance-none px-0 py-0 text-[13px] placeholder:text-text-muted focus-visible:outline-none"
+        />
+        <kbd className="hidden rounded-full border border-border-subtle bg-surface-1 px-1.5 py-0 text-[9px] font-semibold text-text-muted xl:inline-flex">
+          Ctrl K
+        </kbd>
       </form>
 
       {trendingQueries.length > 0 ? (
         <div className="app-glass pointer-events-none absolute right-0 top-[calc(100%+10px)] z-50 hidden w-[min(20rem,calc(100vw-2rem))] rounded-card border border-border-subtle bg-surface-1/96 p-2 opacity-0 shadow-[0_24px_70px_rgba(2,6,23,0.42)] backdrop-blur-xl transition group-focus-within/search:pointer-events-auto group-focus-within/search:block group-focus-within/search:opacity-100">
           <div className="flex items-center gap-2 border-b border-border-subtle px-2 pb-2 pt-1">
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-cyan/10 text-brand-cyan-strong">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-electric/10 text-brand-electric-strong">
               <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
                 <path
                   d="m14.2 14.2 3.3 3.3M8.8 15.2a6.4 6.4 0 1 1 0-12.8 6.4 6.4 0 0 1 0 12.8Z"
@@ -96,7 +91,7 @@ export function HeaderSearch({ onSubmit, trendingQueries = [] }: HeaderSearchPro
                 />
               </svg>
             </span>
-            <p className="text-xs font-semibold tracking-[0.18em] text-brand-cyan-strong uppercase">
+            <p className="text-xs font-semibold tracking-[0.18em] text-brand-electric-strong uppercase">
               Suggestions
             </p>
           </div>
@@ -106,9 +101,9 @@ export function HeaderSearch({ onSubmit, trendingQueries = [] }: HeaderSearchPro
                 key={item}
                 type="button"
                 onClick={() => handleTrendingSearch(item)}
-                className="flex w-full items-center gap-3 rounded-2xl px-3 py-2.5 text-left text-sm font-medium text-slate-200 transition hover:bg-brand-cyan/10 hover:text-white"
+                className="flex w-full items-center gap-3 rounded-card px-3 py-2.5 text-left text-sm font-medium text-text-secondary transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:bg-brand-electric/10 hover:text-text-primary"
               >
-                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-cyan/10" />
+                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand-cyan/70" />
                 <span>{item}</span>
               </button>
             ))}

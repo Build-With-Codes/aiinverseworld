@@ -75,7 +75,7 @@ export default function PromptToolsPage() {
   ];
 
   return (
-    <div className="space-y-16 pb-14 pt-8">
+    <div className="space-y-20 pb-14">
       <StructuredDataScript id="prompt-tools-schema" data={structuredData} />
       <ToolHeader
         title="Prompt Tools"
@@ -85,13 +85,13 @@ export default function PromptToolsPage() {
 
       <Suspense fallback={<SectionFallback />}>
         <FadeInSection>
-          <section aria-label="Prompt tools values" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <section aria-label="Prompt tools values" className="grid gap-6 border-b border-border-subtle pb-12 sm:grid-cols-2 lg:grid-cols-4">
             {promptStudioValues.map((item) => (
               <div
                 key={item.title}
-                className="rounded-3xl border border-border-subtle bg-surface-2 p-5 shadow-card transition duration-300 hover:-translate-y-0.5 hover:border-border-accent hover:bg-surface-3"
+                className="transition duration-[var(--motion-hover)] hover:-translate-y-0.5"
               >
-                <div className="mb-5 h-1.5 w-16 rounded-pill bg-gradient-to-r from-brand-electric via-brand-violet to-brand-cyan" />
+                <div className="mb-5 h-1.5 w-12 rounded-pill bg-brand-electric" />
                 <h2 className="text-heading-2 text-text-primary">{item.title}</h2>
                 <p className="mt-2 text-sm leading-6 text-text-secondary">{item.description}</p>
               </div>
@@ -101,7 +101,7 @@ export default function PromptToolsPage() {
       </Suspense>
 
       <section>
-        <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <div className="mb-8 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="text-eyebrow text-brand-cyan-strong">Tool suite</p>
             <h2 className="text-display-2 mt-2 text-text-primary">Choose the exact prompt workflow you need</h2>
@@ -129,8 +129,8 @@ export default function PromptToolsPage() {
         </StaggerGrid>
       </section>
 
-      <section className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-        <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-8 shadow-card">
+      <section className="grid gap-10 border-y border-border-subtle py-14 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div>
           <p className="text-eyebrow text-brand-violet-strong">Model playbooks</p>
           <h2 className="text-display-2 mt-2 text-text-primary">Write once, adapt with intent</h2>
           <p className="text-body mt-4 text-text-secondary">
@@ -147,7 +147,7 @@ export default function PromptToolsPage() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           {modelPlaybooks.map((model) => (
-            <article key={model.name} className="rounded-3xl border border-border-subtle bg-surface-2 p-5 shadow-card">
+            <article key={model.name} className="rounded-card border border-border-subtle bg-surface-2 p-5 shadow-card transition duration-[var(--motion-hover)] hover:-translate-y-0.5 hover:border-border-accent">
               <h3 className="text-heading-2 text-text-primary">{model.name}</h3>
               <p className="mt-2 text-sm font-semibold text-brand-cyan-strong">{model.bestFor}</p>
               <p className="mt-4 text-sm leading-6 text-text-secondary">{model.guidance}</p>

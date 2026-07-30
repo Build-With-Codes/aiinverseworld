@@ -78,13 +78,13 @@ function ToolCombobox({
       <label className="text-xs font-semibold tracking-widest text-text-muted uppercase">{label}</label>
 
       {open ? (
-        <div className="rounded-2xl border border-border-accent bg-surface-1 p-2 shadow-card">
+        <div className="rounded-card bg-surface-1/82 p-2 shadow-card">
           <input
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search tools..."
-            className="w-full rounded-xl border border-border-subtle bg-surface-2 px-3.5 py-2.5 text-sm text-text-primary outline-none placeholder:text-text-muted focus:border-border-accent"
+            className="platform-filter-input px-3.5 py-2.5 text-sm"
           />
           <div className="no-scrollbar mt-2 max-h-64 space-y-0.5 overflow-y-auto">
             {filtered.map((option) => (
@@ -116,7 +116,7 @@ function ToolCombobox({
         <button
           type="button"
           onClick={openPicker}
-          className="flex w-full cursor-pointer items-center gap-3 rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-left transition hover:border-border-accent"
+          className="platform-input flex cursor-pointer items-center gap-3 px-4 py-3 text-left transition hover:bg-brand-cyan/8"
         >
           {selected ? (
             <>

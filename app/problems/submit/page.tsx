@@ -6,7 +6,6 @@ import { getRouteSeo } from "@/services/seo.service";
 import { submitProblemAction } from "@/app/actions/problems";
 import { SubmitProblemButton } from "@/components/problems/submit-button";
 import { SectionHeading } from "@/components/section-heading";
-import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata(getRouteSeo("/problems/submit"));
 
@@ -30,19 +29,19 @@ export default function SubmitProblemPage() {
 
         <form action={submitProblemAction} className="grid gap-6 lg:grid-cols-2">
           <div className="lg:col-span-2">
-            <label className="mb-2 block text-sm font-medium text-white">
+            <label className="mb-2 block text-sm font-medium text-text-primary">
               Problem Title
             </label>
             <input
               required
               name="title"
               placeholder="Scheduling staff shifts is a nightmare"
-              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-4 text-sm text-white outline-none"
+              className="platform-input px-4 py-4 text-sm"
             />
           </div>
 
           <div className="lg:col-span-2">
-            <label className="mb-2 block text-sm font-medium text-white">
+            <label className="mb-2 block text-sm font-medium text-text-primary">
               Describe the problem
             </label>
             <textarea
@@ -50,31 +49,31 @@ export default function SubmitProblemPage() {
               name="description"
               rows={6}
               placeholder="We manage 50 employees and spend hours every week creating schedules."
-              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-4 text-sm text-white outline-none"
+              className="platform-textarea px-4 py-4 text-sm"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-white">
+            <label className="mb-2 block text-sm font-medium text-text-primary">
               Industry
             </label>
             <input
               required
               name="industry"
               placeholder="Retail"
-              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-4 text-sm text-white outline-none"
+              className="platform-input px-4 py-4 text-sm"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-white">
+            <label className="mb-2 block text-sm font-medium text-text-primary">
               How often does this happen?
             </label>
             <select
               required
               name="frequency"
               defaultValue=""
-              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-4 text-sm text-white outline-none"
+              className="platform-select px-4 py-4 text-sm"
             >
               <option value="" disabled>
                 Select frequency
@@ -88,7 +87,7 @@ export default function SubmitProblemPage() {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-white">
+            <label className="mb-2 block text-sm font-medium text-text-primary">
               How painful is it? (1–10)
             </label>
             <input
@@ -98,19 +97,19 @@ export default function SubmitProblemPage() {
               type="number"
               name="painScore"
               placeholder="9"
-              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-4 text-sm text-white outline-none"
+              className="platform-input px-4 py-4 text-sm"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-white">
+            <label className="mb-2 block text-sm font-medium text-text-primary">
               Email (optional)
             </label>
             <input
               type="email"
               name="email"
               placeholder="you@company.com"
-              className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-4 py-4 text-sm text-white outline-none"
+              className="platform-input px-4 py-4 text-sm"
             />
           </div>
 

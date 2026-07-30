@@ -1,16 +1,17 @@
 import Link from "next/link";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 
-type ButtonVariant = "primary" | "secondary" | "outline" | "ghost";
+type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "danger";
 type ButtonSize = "sm" | "md" | "lg";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-gradient-to-r from-brand-electric to-brand-violet text-white shadow-glow-cyan hover:brightness-110",
+    "bg-brand-electric text-white shadow-card hover:-translate-y-0.5 hover:bg-brand-electric-strong hover:shadow-card-hover",
   secondary:
-    "border border-border-strong bg-surface-3 text-text-primary hover:border-border-accent",
-  outline: "border border-border-accent text-text-primary hover:bg-surface-2",
+    "border border-border-subtle bg-surface-2 text-text-primary hover:border-border-strong hover:bg-surface-3",
+  outline: "border border-border-strong bg-transparent text-text-primary hover:bg-surface-2",
   ghost: "text-text-secondary hover:bg-surface-2 hover:text-text-primary",
+  danger: "bg-error text-white shadow-card hover:-translate-y-0.5 hover:brightness-95 hover:shadow-card-hover",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -35,7 +36,7 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  const classes = `inline-flex cursor-pointer items-center justify-center gap-2 rounded-pill font-semibold transition duration-200 ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
+  const classes = `inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-button font-semibold transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-cyan-strong disabled:pointer-events-none disabled:opacity-55 ${variantClasses[variant]} ${sizeClasses[size]} ${className}`;
 
   if (href) {
     const isExternal = /^https?:\/\//.test(href);

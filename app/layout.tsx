@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Sora } from "next/font/google";
+import { Inter } from "next/font/google";
 
 import { authOptions } from "@/auth";
 import { ChatSupportGate } from "@/components/chat-support-gate";
@@ -23,12 +23,6 @@ import "./globals.css";
 const bodyFont = Inter({
   subsets: ["latin"],
   variable: "--font-body-sans",
-  display: "swap",
-});
-
-const displayFont = Sora({
-  subsets: ["latin"],
-  variable: "--font-display-sans",
   display: "swap",
 });
 
@@ -70,7 +64,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`h-full antialiased ${bodyFont.variable} ${displayFont.variable}`}
+      className={`h-full antialiased ${bodyFont.variable}`}
       suppressHydrationWarning
       data-scroll-behavior="smooth"
     >

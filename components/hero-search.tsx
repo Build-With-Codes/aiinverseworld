@@ -126,26 +126,21 @@ export function HeroSearch() {
   return (
     <div
       id="ai-finder"
-      className="home-ai-finder rounded-[32px] border border-border-subtle bg-surface-3 p-4 shadow-[0_24px_120px_rgba(8,15,35,0.45)] backdrop-blur-2xl"
+      className="home-ai-finder rounded-[32px] bg-surface-3/82 p-4 shadow-[0_24px_120px_rgba(8,15,35,0.34)] backdrop-blur-2xl"
     >
   <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
   {/* Search Input */}
   <div className="group relative min-w-0">
     <div
       className="
+        platform-search-shell
         relative
         flex
         min-h-[60px]
         items-center
         rounded-2xl
-        border
-        border-border-subtle
-        bg-surface-1
         transition-all
         duration-300
-        group-focus-within:border-brand-cyan-strong
-        group-focus-within:ring-2
-        group-focus-within:ring-brand-cyan-strong/20
       "
     >
       {/* AI Icon */}
@@ -162,37 +157,13 @@ export function HeroSearch() {
         className="
           min-w-0
           flex-1
-          bg-transparent
+          platform-shell-input
           px-4
           py-2
           text-base
-          text-white
-          outline-none
           placeholder:text-text-muted
         "
       />
-
-      {/* Enter shortcut */}
-      {!query && (
-        <span
-          className="
-            mr-4
-            hidden
-            shrink-0
-            rounded-lg
-            border
-            border-border-subtle
-            bg-surface-2
-            px-3
-            py-1.5
-            text-xs
-            text-text-muted
-            sm:block
-          "
-        >
-          Enter ↵
-        </span>
-      )}
     </div>
   </div>
 
@@ -235,7 +206,7 @@ export function HeroSearch() {
             key={tag}
             onClick={() => selectPrompt(tag)}
             disabled={isLoading}
-            className="rounded-full border border-border-subtle bg-surface-2 px-3 py-2 text-xs text-text-secondary transition hover:border-border-accent hover:text-white disabled:opacity-60"
+            className="rounded-full bg-surface-2/78 px-3 py-2 text-xs text-text-secondary transition hover:bg-brand-cyan/10 hover:text-text-primary disabled:opacity-60"
           >
            ✦  {tag}
           </button>

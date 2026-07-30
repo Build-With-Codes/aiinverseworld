@@ -97,7 +97,7 @@ export function MobileMenu({
         aria-label={open ? "Close navigation menu" : "Open navigation menu"}
         aria-expanded={open}
         onClick={handleToggle}
-        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-pill border border-border-subtle bg-surface-2 text-text-secondary transition hover:border-border-accent hover:bg-brand-cyan/12 hover:text-text-primary"
+        className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-pill border border-border-subtle bg-surface-2 text-text-secondary transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:border-border-strong hover:bg-brand-electric/10 hover:text-text-primary"
       >
         <span className="flex flex-col gap-1.5">
           <span className="block h-0.5 w-4 rounded-full bg-current" />
@@ -117,11 +117,11 @@ export function MobileMenu({
               />
               <div
                 ref={contentRef}
-                className="absolute bottom-3 right-3 top-3 flex w-[min(24rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-card-lg border border-border-subtle bg-surface-1/95 shadow-[0_24px_90px_rgba(2,6,23,0.62)] backdrop-blur-xl"
+                className="absolute bottom-3 right-3 top-3 flex w-[min(24rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-dialog border border-border-subtle bg-surface-1/95 shadow-modal backdrop-blur-xl transition duration-[var(--motion-modal)] ease-[var(--ease-premium)]"
               >
                 <div className="flex items-center justify-between gap-3 border-b border-border-subtle px-4 py-4">
                   <div className="min-w-0">
-                    <p className="text-eyebrow text-brand-cyan-strong">Menu</p>
+                    <p className="text-eyebrow text-brand-electric-strong">Menu</p>
                     <p className="mt-1 truncate text-sm font-semibold text-text-primary">AiverseWorld</p>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
@@ -129,7 +129,7 @@ export function MobileMenu({
                     <button
                       type="button"
                       onClick={handleClose}
-                      className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-border-subtle bg-surface-2 text-base font-semibold leading-none text-text-secondary transition hover:border-border-accent hover:text-text-primary"
+                      className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-border-subtle bg-surface-2 text-base font-semibold leading-none text-text-secondary transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:border-border-strong hover:text-text-primary"
                       aria-label="Close menu"
                     >
                       X
@@ -148,7 +148,7 @@ export function MobileMenu({
                           key={item.href}
                           href={item.href}
                           onClick={handleClose}
-                          className="block cursor-pointer rounded-md border border-border-subtle bg-surface-2 px-4 py-3 text-sm font-semibold text-text-secondary transition hover:border-border-accent hover:bg-brand-cyan/10 hover:text-text-primary"
+                          className="block cursor-pointer rounded-md border border-border-subtle bg-surface-2 px-4 py-3 text-sm font-semibold text-text-secondary transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:border-border-strong hover:bg-brand-electric/10 hover:text-text-primary"
                         >
                           {item.label}
                         </Link>
@@ -171,7 +171,7 @@ export function MobileMenu({
                                 className="h-11 w-11 rounded-full object-cover"
                               />
                             ) : (
-                              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-cyan/10 text-sm font-semibold text-brand-cyan-strong">
+                              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-electric/10 text-sm font-semibold text-brand-electric-strong">
                                 {(userName || "U").slice(0, 1)}
                               </div>
                             )}
@@ -190,7 +190,7 @@ export function MobileMenu({
                               key={item.href}
                               href={item.href}
                               onClick={handleClose}
-                              className="block cursor-pointer rounded-md border border-border-subtle bg-surface-2 px-4 py-3 text-sm font-semibold text-text-secondary transition hover:border-border-accent hover:bg-brand-cyan/10 hover:text-text-primary"
+                              className="block cursor-pointer rounded-md border border-border-subtle bg-surface-2 px-4 py-3 text-sm font-semibold text-text-secondary transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:border-border-strong hover:bg-brand-electric/10 hover:text-text-primary"
                             >
                               {item.label}
                             </Link>
@@ -205,7 +205,7 @@ export function MobileMenu({
                       <AuthDialog
                         callbackUrl="/"
                         enabled={authEnabled}
-                        triggerClassName="w-full cursor-pointer rounded-md bg-gradient-to-r from-brand-electric to-brand-violet px-4 py-3 text-sm font-semibold text-white shadow-glow-cyan transition hover:brightness-110"
+                        triggerClassName="min-h-11 w-full cursor-pointer rounded-button bg-brand-electric px-4 py-3 text-sm font-semibold text-white shadow-card transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:-translate-y-0.5 hover:bg-brand-electric-strong hover:shadow-card-hover"
                       />
                     )}
                   </div>

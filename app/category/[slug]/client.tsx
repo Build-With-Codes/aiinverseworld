@@ -237,7 +237,7 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated, c
             value={query}
             onChange={(event) => updateQuery(event.target.value)}
             suppressHydrationWarning
-            className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-5 py-4 text-sm text-text-secondary outline-none placeholder:text-text-muted focus:border-border-accent"
+            className="platform-input px-5 py-4 text-sm"
           />
         </div>
 

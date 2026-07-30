@@ -8,7 +8,6 @@ import { MobileMenu } from "@/components/mobile-menu";
 import { NavLink } from "@/components/nav-link";
 import { SocialLink } from "@/components/social-link";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { cardClass } from "@/components/ui/card";
 import { googleAuthEnabled } from "@/lib/auth-config";
 import { getRankings, getSpotlights, getTrending } from "@/lib/engagement";
 import { socialLinks } from "@/lib/social-links";
@@ -67,44 +66,44 @@ const navItems = [
   { href: "/problems/submit", label: "Submit Problem" },
 ];
 
-const monetizationPages = [
-  { href: "/cookie-policy", label: "Cookie Policy" },
-  { href: "/advertising-disclosure", label: "Advertising Disclosure" },
-  { href: "/affiliate-disclosure", label: "Affiliate Disclosure" },
-  { href: "/disclaimer", label: "Disclaimer" },
-  { href: "/dmca", label: "DMCA Policy" },
-];
-
 const footerGroups = [
   {
-    title: "Platform",
+    title: "Product",
     links: [
-      { href: "/", label: "Home" },
-      { href: "/blog", label: "Blog" },
+      { href: "/search", label: "Search" },
+      { href: "/compare", label: "Compare" },
       { href: "/prompt-tools", label: "Prompt Tools" },
       { href: "/prompts", label: "Prompt Library" },
-      { href: "/problems", label: "Problems" },
-      { href: "/problems/submit", label: "Submit Problem" },
-      { href: "/games/hand-detect", label: "Motion Truck Drive" },
-      { href: "/news", label: "AI News" },
-      { href: "/search", label: "Search" },
-      { href: "/about", label: "About Us" },
-      { href: "/faq", label: "FAQ" },
-      { href: "/contact", label: "Contact" },
+      { href: "/jobs", label: "Jobs" },
     ],
   },
   {
-    title: "Trust",
+    title: "Resources",
     links: [
-      { href: "/privacy", label: "Privacy Policy" },
-      { href: "/terms", label: "Terms of Service" },
-      { href: "/security", label: "Security" },
-      { href: "/copyright", label: "Copyright" },
+      { href: "/blog", label: "Blog" },
+      { href: "/news", label: "AI News" },
+      { href: "/category", label: "Categories" },
+      { href: "/collections", label: "Collections" },
+      { href: "/faq", label: "FAQ" },
     ],
   },
   {
-    title: "Policies",
-    links: monetizationPages,
+    title: "Company",
+    links: [
+      { href: "/about", label: "About" },
+      { href: "/contact", label: "Contact" },
+      { href: "/security", label: "Security" },
+      { href: "/problems/submit", label: "Submit Problem" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { href: "/privacy", label: "Privacy" },
+      { href: "/terms", label: "Terms" },
+      { href: "/cookie-policy", label: "Cookies" },
+      { href: "/advertising-disclosure", label: "Advertising" },
+    ],
   },
 ];
 
@@ -121,7 +120,7 @@ export async function SiteShell({ children }: SiteShellProps) {
       <div className="mx-auto flex min-h-screen w-full max-w-[1600px] flex-col px-4 pb-10 sm:px-6 lg:px-8">
         <header className="sticky top-0 z-40 pt-4">
           <HeaderScrollShell>
-          <div className="app-glass header-bar flex items-center justify-between rounded-pill border border-border-subtle bg-surface-2 px-3 py-3 shadow-card backdrop-blur-xl transition-[box-shadow,border-color] duration-300 sm:px-4">
+          <div className="app-glass header-bar flex items-center justify-between rounded-pill border border-border-subtle bg-surface-2 px-3 py-3 backdrop-blur-xl transition-[box-shadow,border-color] duration-[var(--motion-dropdown)] ease-[var(--ease-premium)] sm:px-4">
             <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-3">
               <div className="brand-logo-frame relative h-11 w-11 overflow-hidden rounded-full">
                 <Image
@@ -134,7 +133,7 @@ export async function SiteShell({ children }: SiteShellProps) {
                 />
               </div>
               <div className="min-w-0">
-                <p className="text-caption truncate font-semibold tracking-[0.2em] text-brand-cyan-strong uppercase">
+                <p className="text-caption truncate font-semibold tracking-[0.2em] text-brand-electric-strong uppercase">
                   AiverseWorld
                 </p>
                 <p className="hidden text-xs text-text-muted sm:block">
@@ -171,7 +170,7 @@ export async function SiteShell({ children }: SiteShellProps) {
                   <AuthDialog
                     callbackUrl="/"
                     enabled={googleAuthEnabled}
-                    triggerClassName="cursor-pointer rounded-pill bg-gradient-to-r from-brand-electric to-brand-violet px-4 py-2 text-sm font-semibold text-white shadow-glow-cyan transition hover:brightness-110"
+                    triggerClassName="min-h-11 cursor-pointer rounded-button bg-brand-electric px-4 py-2 text-sm font-semibold text-white shadow-card transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:-translate-y-0.5 hover:bg-brand-electric-strong hover:shadow-card-hover"
                   />
                 )}
               </div>
@@ -194,11 +193,11 @@ export async function SiteShell({ children }: SiteShellProps) {
           {children}
         </main>
 
-        <footer className={`app-glass mt-16 px-6 py-10 sm:px-8 ${cardClass({ radius: "card-lg", padding: "none" })}`}>
-          <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
+        <footer className="mt-16 border-t border-border-subtle py-8">
+          <div className="grid gap-8 lg:grid-cols-[1.15fr_repeat(4,minmax(0,0.55fr))]">
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <div className="brand-logo-frame relative h-11 w-11 overflow-hidden rounded-full">
+                <div className="brand-logo-frame relative h-10 w-10 overflow-hidden rounded-full">
                   <Image
                     src={logoImage}
                     alt="AiverseWorld logo"
@@ -207,13 +206,19 @@ export async function SiteShell({ children }: SiteShellProps) {
                     className="object-contain"
                   />
                 </div>
-                <p className="text-caption font-semibold tracking-[0.24em] text-brand-cyan-strong uppercase">
+                <p className="text-caption font-semibold tracking-[0.24em] text-brand-electric-strong uppercase">
                   AiverseWorld
                 </p>
               </div>
-              <p className="text-body max-w-md text-text-secondary">
-                Explore AI tools, expert guides, comparisons, industry insights, and emerging technology trends.
+              <p className="max-w-sm text-sm leading-6 text-text-secondary">
+                A cohesive AI platform for tool discovery, comparisons, prompt workflows, news, and future-tech jobs.
               </p>
+              <Link
+                href="/contact"
+                className="inline-flex rounded-pill border border-border-subtle px-3 py-1.5 text-xs font-semibold text-text-secondary transition hover:border-border-accent hover:text-text-primary"
+              >
+                Contact the team
+              </Link>
               <div className="flex flex-wrap gap-3">
                 {socialLinks.map((link) => (
                   <SocialLink
@@ -227,8 +232,8 @@ export async function SiteShell({ children }: SiteShellProps) {
 
             {footerGroups.map((group) => (
               <div key={group.title}>
-                <p className="mb-4 text-sm font-semibold text-text-primary">{group.title}</p>
-                <div className="space-y-3">
+                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-text-primary">{group.title}</p>
+                <div className="space-y-2">
                   {group.links.map((link) => (
                     <Link
                       key={link.href}
@@ -242,26 +247,26 @@ export async function SiteShell({ children }: SiteShellProps) {
               </div>
             ))}
           </div>
-          <div className="mt-8 rounded-sm border border-border-strong bg-surface-2 p-4 text-sm leading-6 text-text-primary">
+          <div className="mt-8 border-t border-border-subtle pt-5 text-xs leading-5 text-text-muted">
             AiverseWorld uses cookies and similar technologies for essential site
             functions, analytics, and advertising. Third-party partners, including
             Google AdSense where enabled, may use cookies or tracking scripts to
             measure ads, prevent fraud, and personalize advertising with your
             consent. Review our{" "}
-            <Link href="/cookie-policy" className="font-semibold text-brand-cyan-strong hover:text-brand-cyan">
+            <Link href="/cookie-policy" className="font-semibold text-brand-electric-strong hover:text-brand-electric">
               Cookie Policy
             </Link>
             ,{" "}
-            <Link href="/privacy" className="font-semibold text-brand-cyan-strong hover:text-brand-cyan">
+            <Link href="/privacy" className="font-semibold text-brand-electric-strong hover:text-brand-electric">
               Privacy Policy
             </Link>
             , and{" "}
-            <Link href="/advertising-disclosure" className="font-semibold text-brand-cyan-strong hover:text-brand-cyan">
+            <Link href="/advertising-disclosure" className="font-semibold text-brand-electric-strong hover:text-brand-electric">
               Advertising Disclosure
             </Link>
             .
           </div>
-          <div className="mt-10 border-t border-border-subtle pt-6 text-sm text-text-muted">
+          <div className="mt-5 text-xs text-text-muted">
             Copyright © 2026 AiverseWorld. All rights reserved.
           </div>
         </footer>

@@ -2,90 +2,33 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
-import { FaviconBadge } from "@/components/favicon-badge";
-import { NewsCard } from "@/components/news-card";
 import { CategoryCard } from "@/components/category-card";
+import { FaviconBadge } from "@/components/favicon-badge";
+import { HeroSearch } from "@/components/hero-search";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
+import { DiscoveryRail } from "@/components/engagement/discovery-rail";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cardClass } from "@/components/ui/card";
-import { EditorialBlock } from "@/components/ui/editorial-block";
-import { FadeInSection, HoverLift, StaggerGrid, StaggerItem } from "@/components/ui/motion";
-import { DiscoveryRail } from "@/components/engagement/discovery-rail";
-import { RecentlyViewedRail } from "@/components/engagement/recently-viewed-rail";
-import { SpotlightCard } from "@/components/engagement/spotlight-card";
-import { getNewsArticles } from "@/lib/news";
+import { FadeInSection, StaggerGrid, StaggerItem } from "@/components/ui/motion";
+import { getRankings } from "@/lib/engagement";
+import { finderQuestions } from "@/lib/home-content";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { getToolCatalog } from "@/lib/tool-catalog";
 import { getRouteSeo } from "@/services/seo.service";
-import { getBestLists, getComparisons, getToolCatalog, recommendTools } from "@/lib/tool-catalog";
-import {
-  getCollections,
-  getRankings,
-  getSpotlights,
-  getTrending,
-} from "@/lib/engagement";
-import { getAllBlogPosts } from "@/lib/blog-api";
-import { blogSuggestionFAQs } from "@/lib/blog-suggestions";
-import { HeroSearch } from "@/components/hero-search";
-import { ToolMarquee } from "@/components/tool-marquee";
-import { aiFinderOptions, finderQuestions, homeRecommendationQuery } from "@/lib/home-content";
 
-const workflowIconPaths: Record<(typeof aiFinderOptions)[number]["icon"], string> = {
-  growth: "M1 18l7.5-7.5 5 5L23 6M17 6h6v6",
-  builders: "M16 6l6 6-6 6M8 18l-6-6 6-6",
-  creators: "M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z",
-};
-
-function WorkflowIcon({ name }: { name: (typeof aiFinderOptions)[number]["icon"] }) {
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" aria-hidden>
-      <path
-        d={workflowIconPaths[name]}
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-// Route-segment safety net matching REVALIDATE_SECONDS below — caps how
-// stale a cached render of this page can get even if a fetch call's own
-// revalidate value were ever out of sync.
 export const revalidate = 300;
 
 export const metadata: Metadata = buildMetadata(getRouteSeo("/"));
 
-// Public, non-personalized data — safe to let Next.js serve a cached page for
-// this many seconds instead of re-rendering (and hitting the backend) on
-// every single visit. Every fetch below must opt into this explicitly, since
-// a single no-store/dynamic fetch would force the whole route dynamic again.
 const REVALIDATE_SECONDS = 300;
 
 export default function Home() {
-
-
-
-  // Request-time freshness label — intentionally impure (this is a Server
-  // Component computed per request, not memoized render output).
   return (
-    <div className="space-y-12 pb-10 pt-10">
-      {/* Hero */}
-      <section className="relative grid gap-10 overflow-hidden lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
-        <div
-          className="hero-orb pointer-events-none absolute -top-32 left-[-10%] h-80 w-80 rounded-full blur-3xl"
-          style={{ background: "var(--hero-orb-electric)" }}
-          aria-hidden
-        />
-        <div
-          className="hero-orb hero-orb--delay pointer-events-none absolute top-10 right-[-8%] h-72 w-72 rounded-full blur-3xl"
-          style={{ background: "var(--hero-orb-violet)" }}
-          aria-hidden
-        />
-
+    <div className="space-y-20 pb-14 pt-10">
+      <section className="relative grid gap-12 overflow-hidden py-6 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:py-12">
         <div className="relative space-y-8">
           <FadeInSection>
             <Badge variant="brand">Enterprise-grade AI discovery</Badge>
@@ -95,9 +38,8 @@ export default function Home() {
               Discover, Compare, and Choose the Best AI Tools
             </h1>
             <p className="text-body-lg max-w-2xl text-text-secondary">
-              AiverseWorld is your curated search engine for AI products across
-              assistants, coding, video, research, automation, and enterprise
-              platforms. Compare real tools, pricing signals, and use cases fast.
+              AiverseWorld helps teams discover verified AI tools, compare real product options,
+              and use private prompt utilities without turning research into a messy directory hunt.
             </p>
           </FadeInSection>
 
@@ -108,153 +50,58 @@ export default function Home() {
           <Suspense fallback={null}>
             <TrendingQueryChips />
           </Suspense>
-
         </div>
 
-        <FadeInSection delay={0.15} className="relative grid gap-4">
-          <div className={`${cardClass({ padding: "lg", glow: "cyan" })} border-border-accent`}>
-            <p className="text-eyebrow text-brand-cyan-strong">AI Finder</p>
-            <h2 className="text-heading-1 mt-3 text-text-primary">
-              Answer a few questions and get a shortlist in seconds
-            </h2>
-            <div className="mt-6 space-y-3">
-              {finderQuestions.slice(0, 4).map((question, index) => (
-                <HoverLift key={question.label}>
-                  <Link
-                    href={`/?recommend=${encodeURIComponent(question.query)}#ai-finder`}
-                    className="flex items-center justify-between rounded-sm border border-border-subtle bg-surface-1 px-4 py-3"
-                  >
-                    <span className="text-sm text-text-secondary">{question.label}</span>
-                    <span className="text-caption text-text-muted">0{index + 1}</span>
-                  </Link>
-                </HoverLift>
-              ))}
-            </div>
-          </div>
+        <FadeInSection delay={0.15} className="relative">
+          <AiPlatformVisualization />
         </FadeInSection>
       </section>
 
-      <Suspense fallback={<SectionFallback rows={2} />}>
-        <ToolMarqueeSection />
-      </Suspense>
+      <FadeInSection>
+        <TrustedStatsSection />
+      </FadeInSection>
 
-      {/* Continue exploring — personalized (signed-in returning users) */}
-      <RecentlyViewedRail />
-
-      {/* AI Tool Spotlights - premium rotating picks */}
-      <Suspense fallback={<SectionFallback />}>
-        <SpotlightsSection />
-      </Suspense>
-
-      {/* 1. Featured AI Tools */}
       <Suspense fallback={<RailFallback />}>
         <FeaturedToolsSection />
       </Suspense>
 
-      {/* 2. Trending AI Tools (backend-dynamic, recency-weighted) */}
-      <Suspense fallback={<RailFallback />}>
-        <TrendingToolsSection />
-      </Suspense>
-
-      {/* Most Saved */}
-      <Suspense fallback={<RailFallback />}>
-        <MostSavedSection />
-      </Suspense>
-
-      {/* Curated collections strip */}
-      <Suspense fallback={<SectionFallback />}>
-        <CollectionsSection />
-      </Suspense>
-
-      {/* 3. AI Categories (+ comparisons) */}
       <Suspense fallback={<SectionFallback rows={2} />}>
-        <CategoriesAndComparisonsSection />
+        <PopularCategoriesSection />
       </Suspense>
 
-      {/* 4. Recently Added Tools */}
       <Suspense fallback={<SectionFallback />}>
         <RecentlyAddedSection />
       </Suspense>
 
-      {/* 5. AI Workflow Explorer */}
+      <PromptStudioSection />
+      <EnterprisePlatformSection />
+      <PrivacyAndFAQSection />
+
       <FadeInSection>
-        <SectionHeading
-          eyebrow="Workflow Explorer"
-          title="Built for every operator"
-          description="Pick the role closest to yours and jump straight to a shortlist tuned for that workflow."
-        />
-        <StaggerGrid className="grid gap-5 sm:grid-cols-3">
-          {aiFinderOptions.map((option) => (
-            <StaggerItem key={option.title}>
-              <HoverLift>
-                <Link
-                  href={`/?recommend=${encodeURIComponent(option.query)}#ai-finder`}
-                  className={`group block bg-gradient-to-br ${option.accent} ${cardClass({ hover: true, padding: "lg" })}`}
-                >
-                  <span
-                    className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl border ${option.iconClass}`}
-                    aria-hidden
-                  >
-                    <WorkflowIcon name={option.icon} />
-                  </span>
-                  <h3 className="mt-4 font-semibold text-text-primary">{option.title}</h3>
-                  <p className="text-body mt-2 text-text-secondary">{option.description}</p>
-                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-cyan-strong">
-                    Explore tools
-                    <span aria-hidden className="transition group-hover:translate-x-0.5">
-                      →
-                    </span>
-                  </span>
-                </Link>
-              </HoverLift>
-            </StaggerItem>
-          ))}
-        </StaggerGrid>
-      </FadeInSection>
-
-      {/* 6. Expert Recommendations */}
-      <Suspense fallback={<RailFallback />}>
-        <RecommendationsSection />
-      </Suspense>
-
-      {/* 7. Editorial Insights */}
-      <Suspense fallback={<SectionFallback />}>
-        <EditorialInsightsSection />
-      </Suspense>
-
-      {/* Curated lists + creative tools */}
-      <Suspense fallback={<SectionFallback />}>
-        <BestListsSection />
-      </Suspense>
-
-      <Suspense fallback={<SectionFallback />}>
-        <CreativeToolsSection />
-      </Suspense>
-
-      {/* 8. Newsletter / community */}
-      <FadeInSection>
-        <div className={`${cardClass({ padding: "lg", radius: "card-lg", glow: "violet" })} flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:justify-between`}>
-          <div className="flex items-center gap-4">
-            <FaviconBadge
-              name="AiverseWorld"
-              faviconUrl="/logo.webp"
-              className="hidden h-12 w-12 shrink-0 rounded-2xl sm:flex"
-            />
-            <div>
-              <p className="text-eyebrow text-brand-cyan-strong">Join the community</p>
-              <h2 className="text-heading-1 mt-2 text-text-primary">
-                Get the best new AI tools in your inbox
-              </h2>
-              <p className="text-body mt-2 max-w-xl text-text-secondary">
-                One email a week: new launches, category deep-dives, and shortlist-worthy tools our
-                editors verified.
-              </p>
+        <section className="rounded-card-lg border border-border-accent bg-gradient-to-r from-brand-electric/12 via-brand-violet/10 to-transparent p-7 lg:p-10">
+          <div className="flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex items-center gap-4">
+              <FaviconBadge
+                name="AiverseWorld"
+                faviconUrl="/logo.webp"
+                className="hidden h-12 w-12 shrink-0 rounded-2xl sm:flex"
+              />
+              <div>
+                <p className="text-eyebrow text-brand-electric-strong">Join the community</p>
+                <h2 className="text-heading-1 mt-2 text-text-primary">
+                  Get the best new AI tools in your inbox
+                </h2>
+                <p className="text-body mt-2 max-w-xl text-text-secondary">
+                  One email a week: new launches, category deep-dives, and shortlist-worthy tools our
+                  editors verified.
+                </p>
+              </div>
+            </div>
+            <div className="w-full lg:w-auto lg:min-w-[22rem]">
+              <NewsletterSignup />
             </div>
           </div>
-          <div className="w-full lg:w-auto lg:min-w-[22rem]">
-            <NewsletterSignup />
-          </div>
-        </div>
+        </section>
       </FadeInSection>
     </div>
   );
@@ -279,7 +126,10 @@ function RailFallback() {
       <div className="h-6 w-48 animate-pulse rounded-full bg-surface-2" />
       <div className="grid gap-5 lg:grid-cols-3">
         {Array.from({ length: 3 }).map((_, index) => (
-          <div key={index} className="h-52 animate-pulse rounded-card-lg border border-border-subtle bg-surface-1" />
+          <div
+            key={index}
+            className="h-52 animate-pulse rounded-card-lg border border-border-subtle bg-surface-1"
+          />
         ))}
       </div>
     </section>
@@ -293,7 +143,7 @@ async function TrendingQueryChips() {
 
   return (
     <FadeInSection delay={0.12} className="flex flex-wrap items-center gap-2">
-      <span className="flex shrink-0 items-center gap-2 rounded-full border border-border-accent bg-brand-cyan/10 px-3 py-1.5 text-brand-cyan-strong">
+      <span className="flex shrink-0 items-center gap-2 rounded-full border border-border-accent bg-brand-electric/10 px-3 py-1.5 text-brand-electric-strong">
         <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden>
           <path
             d="M3 13.5 7.4 9l3 3 5.4-6.5M12.8 5.5h3v3"
@@ -305,14 +155,14 @@ async function TrendingQueryChips() {
         </svg>
         <span className="flex flex-col text-[10px] font-semibold uppercase leading-none tracking-[0.18em]">
           <span>Trending</span>
-          <span className="mt-0.5 text-cyan-100">now</span>
+          <span className="mt-0.5 text-text-muted">now</span>
         </span>
       </span>
       {trendingQueries.map((item) => (
         <Link
           key={item}
           href={`/search?q=${encodeURIComponent(item)}`}
-          className="shrink-0 rounded-full border border-border-subtle bg-surface-2 px-3 py-1.5 text-xs font-medium text-text-secondary transition hover:border-border-accent hover:bg-brand-cyan/10 hover:text-text-primary"
+          className="shrink-0 rounded-full border border-border-subtle bg-surface-2 px-3 py-1.5 text-xs font-medium text-text-secondary transition hover:border-border-accent hover:bg-brand-electric/10 hover:text-text-primary"
         >
           {item}
         </Link>
@@ -321,33 +171,79 @@ async function TrendingQueryChips() {
   );
 }
 
-async function ToolMarqueeSection() {
-  const catalog = await getToolCatalog(40, REVALIDATE_SECONDS);
+function AiPlatformVisualization() {
+  const tools = [
+    ["ChatGPT", "Reasoning"],
+    ["Claude", "Research"],
+    ["Gemini", "Multimodal"],
+    ["Cursor", "Coding"],
+    ["Midjourney", "Image"],
+    ["Runway", "Video"],
+    ["Perplexity", "Search"],
+  ];
+
   return (
-    <section className="space-y-3 overflow-hidden">
-      <ToolMarquee tools={catalog.tools.slice(0, 20)} direction="left" />
-      <ToolMarquee tools={catalog.tools.slice(20, 40)} direction="right" />
-    </section>
+    <div className="relative min-h-[28rem] overflow-hidden rounded-card-lg bg-gradient-to-br from-brand-electric/10 via-surface-2 to-brand-violet/10 p-6 lg:p-8">
+      <div className="absolute left-1/2 top-1/2 h-44 w-44 -translate-x-1/2 -translate-y-1/2 rounded-pill border border-border-accent bg-surface-glass backdrop-blur" />
+      <div className="absolute inset-8 rounded-pill border border-border-subtle" />
+      <div className="relative flex min-h-[24rem] flex-col justify-between">
+        <div className="flex items-start justify-between gap-5">
+          <div>
+            <p className="text-eyebrow text-brand-electric-strong">AI Finder</p>
+            <h2 className="text-heading-1 mt-3 max-w-sm text-text-primary">
+              Describe the job. Get the shortlist.
+            </h2>
+          </div>
+          <Button href="#ai-finder" variant="secondary">
+            Try AI Finder
+          </Button>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          {finderQuestions.slice(0, 4).map((question) => (
+            <Link
+              key={question.label}
+              href={`/?recommend=${encodeURIComponent(question.query)}#ai-finder`}
+              className="group rounded-card bg-surface-glass px-4 py-3 backdrop-blur transition duration-[var(--motion-hover)] hover:-translate-y-0.5 hover:bg-surface-3"
+            >
+              <span className="block text-sm font-semibold text-text-primary">{question.label}</span>
+              <span className="mt-1 block text-xs text-brand-electric-strong">Find recommended tools</span>
+            </Link>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {tools.slice(0, 4).map(([name, category]) => (
+            <div key={name} className="rounded-sm bg-surface-glass px-3 py-2 backdrop-blur">
+              <p className="text-sm font-semibold text-text-primary">{name}</p>
+              <p className="text-xs text-text-muted">{category}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
-async function SpotlightsSection() {
-  const spotlights = await getSpotlights(REVALIDATE_SECONDS);
-  if (spotlights.length === 0) return null;
+function TrustedStatsSection() {
+  const stats = [
+    ["140+", "Verified AI tools"],
+    ["40+", "Practical categories"],
+    ["500+", "Comparison paths"],
+    ["Daily", "Catalog updates"],
+  ];
 
   return (
-    <FadeInSection>
-      <SectionHeading
-        eyebrow="Spotlight"
-        title="Editor spotlights"
-        description="Rotating premium picks - Tool of the Day, Week, and Month, plus rising and highest-rated standouts."
-      />
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {spotlights.map((spotlight) => (
-          <SpotlightCard key={spotlight.key} spotlight={spotlight} />
+    <section aria-label="AiverseWorld platform statistics" className="border-y border-border-subtle py-8">
+      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map(([value, label]) => (
+          <div key={label}>
+            <p className="text-display-2 text-text-primary">{value}</p>
+            <p className="mt-1 text-sm font-medium text-text-secondary">{label}</p>
+          </div>
         ))}
       </div>
-    </FadeInSection>
+    </section>
   );
 }
 
@@ -359,164 +255,33 @@ async function FeaturedToolsSection() {
       title="Featured AI tools this month"
       description="Editorially highlighted tools worth shortlisting first, based on category strength, pricing clarity, and real-world adoption."
       tools={catalog.tools.slice(0, 6)}
+      viewAllHref="/search"
     />
   );
 }
 
-async function TrendingToolsSection() {
-  const trendingTools = await getTrending("7d", 10, REVALIDATE_SECONDS);
-  return (
-    <DiscoveryRail
-      eyebrow="Trending"
-      title="Trending AI tools right now"
-      description="Ranked by real engagement this week - views, saves, and comparisons across the catalog."
-      tools={trendingTools}
-      viewAllHref="/search?sort=popular"
-    />
-  );
-}
-
-async function MostSavedSection() {
-  const mostSaved = await getRankings("most-saved", 10, REVALIDATE_SECONDS);
-  return (
-    <DiscoveryRail
-      eyebrow="Most Saved"
-      title="Most saved by the community"
-      description="The tools people bookmark most to come back to."
-      tools={mostSaved}
-    />
-  );
-}
-
-async function CollectionsSection() {
-  const collections = await getCollections(REVALIDATE_SECONDS);
-  if (collections.length === 0) return null;
+async function PopularCategoriesSection() {
+  const catalog = await getToolCatalog(1, REVALIDATE_SECONDS);
+  const topCategories = [...catalog.categories].sort((a, b) => b.count - a.count).slice(0, 6);
 
   return (
     <FadeInSection>
       <SectionHeading
-        eyebrow="Collections"
-        title="Expert-curated collections"
-        description="Hand-picked, editorial roundups for specific goals and audiences."
+        eyebrow="Popular Categories"
+        title="Start with the kind of AI work you need"
+        description="Move from broad discovery to a focused shortlist with categories organized around real use cases."
         action={
-          <Button href="/collections" variant="outline">
-            All collections →
+          <Button href="/category" variant="outline">
+            All categories
           </Button>
         }
       />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {collections.map((collection) => (
-          <Link
-            key={collection.slug}
-            href={`/collections/${collection.slug}`}
-            className={cardClass({ hover: true })}
-          >
-            <span aria-hidden className="text-2xl">
-              {collection.emoji}
-            </span>
-            <p className="text-heading-2 mt-3 text-text-primary">{collection.title}</p>
-            <p className="text-body mt-2 text-text-secondary">{collection.tagline}</p>
-          </Link>
+        {topCategories.map((category) => (
+          <CategoryCard key={category.slug} category={category} />
         ))}
       </div>
     </FadeInSection>
-  );
-}
-
-async function CategoriesAndComparisonsSection() {
-  const [catalog, comparisonCatalog] = await Promise.all([
-    getToolCatalog(1, REVALIDATE_SECONDS),
-    getComparisons(12, REVALIDATE_SECONDS),
-  ]);
-  const topCategories = [...catalog.categories].sort((a, b) => b.count - a.count).slice(0, 4);
-  const liveComparisons = comparisonCatalog.comparisons;
-
-  return (
-    <section className="grid gap-6 xl:grid-cols-[0.88fr_1.12fr]">
-      <FadeInSection className={cardClass({ padding: "lg", radius: "card-lg" })}>
-        <SectionHeading
-          eyebrow="Explore"
-          title="Browse by category"
-          description="Move from broad discovery to a focused shortlist with categories optimized for real use cases."
-          action={
-            <Button href="/category" variant="outline">
-              All categories →
-            </Button>
-          }
-        />
-        <div className="grid gap-4 sm:grid-cols-2">
-          {topCategories.map((category) => (
-            <CategoryCard key={category.slug} category={category} />
-          ))}
-        </div>
-      </FadeInSection>
-      <div>
-        <FadeInSection delay={0.05} className={`mb-6 ${cardClass({ padding: "lg", radius: "card-lg" })}`}>
-          <SectionHeading
-            eyebrow="Compare"
-            title="Popular AI tool matchups"
-            description="Jump into high-intent comparisons people use before purchase and rollout decisions."
-          />
-          <div className="space-y-3">
-            {liveComparisons.slice(0, 3).map((comparison) => (
-              <Link
-                key={comparison.slug}
-                href={`/compare/${comparison.slug}`}
-                className="group flex items-center gap-3 rounded-2xl border border-border-subtle bg-surface-1 p-4 transition hover:-translate-y-0.5 hover:border-border-accent hover:shadow-card-hover"
-              >
-                {comparison.left && comparison.right ? (
-                  <>
-                    <FaviconBadge
-                      name={comparison.left.name}
-                      faviconUrl={comparison.left.favicon}
-                      className="h-9 w-9 shrink-0 rounded-xl"
-                      imgClassName="p-1"
-                      labelClassName="text-xs"
-                    />
-                    <span aria-hidden className="shrink-0 text-[10px] font-bold tracking-wide text-text-muted">
-                      VS
-                    </span>
-                    <FaviconBadge
-                      name={comparison.right.name}
-                      faviconUrl={comparison.right.favicon}
-                      className="h-9 w-9 shrink-0 rounded-xl"
-                      imgClassName="p-1"
-                      labelClassName="text-xs"
-                    />
-                  </>
-                ) : null}
-                <span className="min-w-0 flex-1 truncate font-semibold text-text-primary transition group-hover:text-brand-cyan-strong">
-                  {comparison.title}
-                </span>
-              </Link>
-            ))}
-            <Link
-              href="/compare"
-              className="block rounded-sm border border-border-accent bg-brand-cyan/8 p-4 text-center text-sm font-semibold text-brand-cyan-strong transition hover:bg-brand-cyan/12"
-            >
-              View all {liveComparisons.length} comparisons
-            </Link>
-          </div>
-        </FadeInSection>
-        <FadeInSection delay={0.1} className={cardClass({ padding: "lg", radius: "card-lg" })}>
-          <p className="text-eyebrow mb-4 text-brand-cyan-strong">People Also Ask</p>
-          <div className="space-y-3">
-            {(blogSuggestionFAQs["50-chatgpt-prompts-save-hours"] || []).map((faq) => (
-              <Link
-                key={faq.question}
-                href={`/blog/${faq.relatedSlug}`}
-                className="group flex items-start gap-3 rounded-sm border border-border-subtle bg-surface-1 p-4 transition hover:border-border-accent hover:bg-surface-3"
-              >
-                <span className="mt-1 shrink-0 text-brand-cyan-strong">›</span>
-                <p className="text-sm text-text-secondary transition group-hover:text-text-primary">
-                  {faq.question}
-                </p>
-              </Link>
-            ))}
-          </div>
-        </FadeInSection>
-      </div>
-    </section>
   );
 }
 
@@ -529,9 +294,9 @@ async function RecentlyAddedSection() {
   return (
     <FadeInSection>
       <SectionHeading
-        eyebrow="Fresh"
-        title="Recently added and verified"
-        description="Newly verified catalog entries, sorted by the most recent verification date."
+        eyebrow="Recently Added"
+        title="Freshly verified AI tools"
+        description="New catalog entries and updates, sorted by the most recent verification date."
       />
       <StaggerGrid className="grid gap-6 lg:grid-cols-3">
         {recentlyAddedTools.map((tool) => (
@@ -544,125 +309,124 @@ async function RecentlyAddedSection() {
   );
 }
 
-async function RecommendationsSection() {
-  const researchRecommendations = await recommendTools(homeRecommendationQuery, 8, REVALIDATE_SECONDS);
-  if (researchRecommendations.length === 0) return null;
-
-  return (
-    <DiscoveryRail
-      eyebrow="Recommended from catalog"
-      title="Tell us the job, get an AI shortlist"
-      description="The finder scores tools against user intent, categories, audiences, tags, platforms, and pricing metadata."
-      tools={researchRecommendations}
-    />
-  );
-}
-
-async function EditorialInsightsSection() {
-  const [blogPosts, newsArticles] = await Promise.all([
-    getAllBlogPosts(12, REVALIDATE_SECONDS),
-    getNewsArticles(3, undefined, REVALIDATE_SECONDS),
-  ]);
+function PromptStudioSection() {
+  const modules = [
+    "Token counter",
+    "Cost calculator",
+    "Prompt formatter",
+    "Prompt cleaner",
+    "System prompts",
+    "Image prompts",
+  ];
 
   return (
     <FadeInSection>
-      <SectionHeading
-        eyebrow="Editorial Insights"
-        title="AI guides, tips, and industry coverage"
-        description="Long-form guides from our editorial desk, plus short AI-assisted news summaries that link back to original publishers."
-      />
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {blogPosts.slice(0, 6).map((post) => (
-          <Link
-            key={post.slug}
-            href={`/blog/${post.slug}`}
-            className={`group ${cardClass({ hover: true })}`}
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <Badge variant="brand">{post.category}</Badge>
-              <span className="text-caption text-text-muted">{post.readTime}</span>
-            </div>
-            <h3 className="font-semibold text-text-primary transition group-hover:text-brand-cyan-strong">
-              {post.title}
-            </h3>
-            <p className="text-body mt-3 text-text-secondary">{post.description}</p>
-            <div className="mt-4 flex items-center justify-between">
-              <time className="text-caption text-text-muted">{post.publishedAt}</time>
-              <span className="text-sm text-brand-cyan-strong group-hover:underline">Read →</span>
-            </div>
-          </Link>
-        ))}
-      </div>
-      <div className="mt-8 text-center">
-        <Button href="/blog" variant="outline">
-          View all blog posts →
-        </Button>
-      </div>
-
-      {newsArticles.length > 0 ? (
-        <div className="mt-12">
-          <EditorialBlock eyebrow="AI News" title="Enterprise AI news, summarized with attribution">
-            We only display summaries, excerpts, and source metadata here. Readers should use the
-            original links for the complete article and publisher context.
-          </EditorialBlock>
-          <div className="mt-6 grid gap-6 lg:grid-cols-3">
-            {newsArticles.map((article) => (
-              <NewsCard key={article.id} article={article} />
-            ))}
-          </div>
-          <div className="mt-6">
-            <Button href="/news" variant="outline">
-              Explore the full AI news desk
+      <section className="grid gap-10 border-y border-border-subtle py-14 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+        <div>
+          <p className="text-eyebrow text-brand-violet-strong">Prompt Studio</p>
+          <h2 className="text-display-2 mt-3 text-text-primary">
+            Free browser-only prompt tools for serious AI workflows
+          </h2>
+          <p className="text-body-lg mt-4 max-w-2xl text-text-secondary">
+            Count tokens, estimate costs, format prompts, clean drafts, and build model-ready
+            instructions locally in the browser after the page loads.
+          </p>
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+            <Button href="/prompt-tools" size="lg">
+              Open Prompt Tools
+            </Button>
+            <Button href="/prompt-tools/token-counter" variant="secondary" size="lg">
+              Start with Token Counter
             </Button>
           </div>
         </div>
-      ) : null}
+        <div className="grid gap-3 sm:grid-cols-2">
+          {modules.map((module) => (
+            <Link
+              key={module}
+              href="/prompt-tools"
+              className={cardClass({ hover: true, padding: "md" })}
+            >
+              <p className="text-sm font-semibold text-text-primary">{module}</p>
+              <p className="mt-2 text-xs text-text-muted">Private, free, browser-only</p>
+            </Link>
+          ))}
+        </div>
+      </section>
     </FadeInSection>
   );
 }
 
-async function BestListsSection() {
-  const bestListCatalog = await getBestLists(REVALIDATE_SECONDS);
+function EnterprisePlatformSection() {
+  const features = [
+    "Verified AI tool profiles",
+    "Fast category and intent search",
+    "Human-curated collections",
+    "Comparison-ready product data",
+    "Prompt workflows for teams",
+    "Fresh editorial coverage",
+  ];
+
   return (
     <FadeInSection>
-      <SectionHeading
-        eyebrow="Best Of"
-        title="Curated AI tool lists"
-        description="Hand-picked lists by use case, category, and audience - built from real catalog data."
-      />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {bestListCatalog.lists.slice(0, 4).map((list) => (
-          <Link key={list.slug} href={`/best/${list.slug}`} className={cardClass({ hover: true })}>
-            <span className="text-caption text-brand-cyan-strong">{list.eyebrow}</span>
-            <p className="mt-2 font-semibold text-text-primary">{list.title}</p>
-            <p className="text-body mt-2 text-text-secondary">{list.description}</p>
-          </Link>
-        ))}
-      </div>
+      <section className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+        <div>
+          <p className="text-eyebrow text-brand-violet-strong">Enterprise platform</p>
+          <h2 className="text-display-2 mt-3 text-text-primary">
+            A calmer way to evaluate the AI stack your team depends on
+          </h2>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {features.map((feature) => (
+            <div key={feature} className="flex items-center gap-3 rounded-sm py-2">
+              <span className="h-2 w-2 rounded-pill bg-brand-electric" aria-hidden />
+              <span className="font-medium text-text-secondary">{feature}</span>
+            </div>
+          ))}
+        </div>
+      </section>
     </FadeInSection>
   );
 }
 
-async function CreativeToolsSection() {
-  const catalog = await getToolCatalog(120, REVALIDATE_SECONDS);
-  const creativeTools = catalog.tools
-    .filter((tool) => ["Image Generation", "Video Generation", "Design Assistant"].includes(tool.category))
-    .slice(0, 6);
+function PrivacyAndFAQSection() {
+  const faqs = [
+    {
+      question: "How does AiverseWorld choose tools?",
+      answer:
+        "We organize tools by use case, category, audience, platform, pricing signals, and editorial review so buyers can shortlist faster.",
+    },
+    {
+      question: "Are prompt tools private?",
+      answer:
+        "The prompt utilities use browser-side logic for counting, formatting, cleaning, and estimating after the page loads.",
+    },
+    {
+      question: "Can teams use it for research?",
+      answer:
+        "Yes. Discovery, comparisons, collections, and prompt tools are structured for repeatable AI evaluation workflows.",
+    },
+  ];
 
   return (
     <FadeInSection>
-      <SectionHeading
-        eyebrow="Creative"
-        title="Image, design, and video tools in one view"
-        description="Creative teams can explore image generation, design assistance, and video production tools from the live catalog."
-      />
-      <StaggerGrid className="grid gap-6 lg:grid-cols-3">
-        {creativeTools.map((tool) => (
-          <StaggerItem key={tool.slug}>
-            <ToolCard tool={tool} />
-          </StaggerItem>
-        ))}
-      </StaggerGrid>
+      <section className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+        <div>
+          <p className="text-eyebrow text-brand-electric-strong">Privacy and clarity</p>
+          <h2 className="text-display-2 mt-3 text-text-primary">Built for useful research, not noise</h2>
+          <p className="text-body-lg mt-4 text-text-secondary">
+            AiverseWorld keeps the public experience fast, readable, and focused on decision-making.
+          </p>
+        </div>
+        <div className="divide-y divide-border-subtle">
+          {faqs.map((item) => (
+            <article key={item.question} className="py-5 first:pt-0 last:pb-0">
+              <h3 className="text-heading-2 text-text-primary">{item.question}</h3>
+              <p className="mt-2 text-sm leading-6 text-text-secondary">{item.answer}</p>
+            </article>
+          ))}
+        </div>
+      </section>
     </FadeInSection>
   );
 }

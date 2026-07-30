@@ -25,7 +25,7 @@ function ToolLink({ tool, badge, onNavigate }: MenuTool & { onNavigate: () => vo
     <Link
       href={`/tool/${tool.slug}?id=${encodeURIComponent(tool.id)}`}
       onClick={onNavigate}
-      className="group flex items-start gap-3 rounded-sm border border-transparent p-2.5 transition hover:border-border-accent hover:bg-brand-cyan/8"
+      className="group flex items-start gap-3 rounded-sm border border-transparent p-2.5 transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:border-border-strong hover:bg-brand-electric/8"
     >
       <FaviconBadge
         name={tool.name}
@@ -36,7 +36,7 @@ function ToolLink({ tool, badge, onNavigate }: MenuTool & { onNavigate: () => vo
       />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <p className="truncate text-sm font-semibold text-text-primary transition group-hover:text-brand-cyan-strong">
+          <p className="truncate text-sm font-semibold text-text-primary transition group-hover:text-brand-electric-strong">
             {tool.name}
           </p>
           {badge ? (
@@ -53,7 +53,7 @@ function ToolLink({ tool, badge, onNavigate }: MenuTool & { onNavigate: () => vo
 
 function MenuTitle({ children }: { children: string }) {
   return (
-    <p className="text-eyebrow mb-2 px-2.5 text-brand-cyan-strong">{children}</p>
+    <p className="text-eyebrow mb-2 px-2.5 text-brand-electric-strong">{children}</p>
   );
 }
 
@@ -68,13 +68,13 @@ function PromptToolLink({
     <Link
       href={tool.href}
       onClick={onNavigate}
-      className="group block rounded-sm border border-transparent p-2.5 transition hover:border-border-accent hover:bg-brand-cyan/8"
+      className="group block rounded-sm border border-transparent p-2.5 transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:border-border-strong hover:bg-brand-electric/8"
     >
       <div className="flex items-center justify-between gap-2">
-        <p className="truncate text-sm font-semibold text-text-primary transition group-hover:text-brand-cyan-strong">
+        <p className="truncate text-sm font-semibold text-text-primary transition group-hover:text-brand-electric-strong">
           {tool.shortTitle}
         </p>
-        <span className="shrink-0 rounded-pill bg-brand-cyan/10 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-brand-cyan-strong uppercase">
+        <span className="shrink-0 rounded-pill bg-brand-electric/10 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-brand-electric-strong uppercase">
           {tool.category}
         </span>
       </div>
@@ -116,13 +116,13 @@ export function AiToolsMenu({ data }: { data: AiToolsMenuData }) {
         type="button"
         aria-expanded={open}
         onClick={toggle}
-        className="inline-flex cursor-pointer items-center gap-2 rounded-pill px-4 py-2 text-sm font-semibold text-text-primary transition hover:bg-brand-cyan/10 hover:text-brand-cyan-strong"
+        className="inline-flex cursor-pointer items-center gap-2 rounded-pill px-4 py-2 text-sm font-semibold text-text-primary transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:bg-brand-electric/10 hover:text-brand-electric-strong"
       >
         AI Tools
         <svg
           aria-hidden="true"
           viewBox="0 0 20 20"
-          className={`h-4 w-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          className={`h-4 w-4 transition-transform duration-[var(--motion-dropdown)] ease-[var(--ease-premium)] ${open ? "rotate-180" : ""}`}
         >
           <path
             d="M5.5 7.5 10 12l4.5-4.5"
@@ -137,7 +137,7 @@ export function AiToolsMenu({ data }: { data: AiToolsMenuData }) {
 
       {open ? (
         <div
-          className="fixed left-1/2 top-24 z-50 w-[min(72rem,calc(100vw-2rem))] -translate-x-1/2 origin-top animate-[megamenu-in_180ms_ease-out] overflow-hidden rounded-card-lg border border-border-subtle bg-surface-glass shadow-card-hover backdrop-blur-xl"
+          className="fixed left-1/2 top-24 z-50 w-[min(72rem,calc(100vw-2rem))] -translate-x-1/2 origin-top animate-[megamenu-in_var(--motion-dropdown)_var(--ease-premium)] overflow-hidden rounded-card-lg border border-border-subtle bg-surface-glass shadow-card-hover backdrop-blur-xl"
           onMouseLeave={close}
         >
           <div className="grid max-h-[75vh] grid-cols-1 gap-0 overflow-y-auto lg:grid-cols-[15rem_1fr]">
@@ -150,7 +150,7 @@ export function AiToolsMenu({ data }: { data: AiToolsMenuData }) {
                     key={category.slug}
                     href={`/category/${category.slug}`}
                     onClick={close}
-                    className="flex items-center justify-between gap-2 rounded-sm px-2.5 py-2 text-sm text-text-secondary transition hover:bg-brand-cyan/8 hover:text-text-primary"
+                    className="flex items-center justify-between gap-2 rounded-sm px-2.5 py-2 text-sm text-text-secondary transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:bg-brand-electric/8 hover:text-text-primary"
                   >
                     <span className="truncate">{category.name}</span>
                     <span className="text-caption shrink-0 text-text-muted">{category.count}</span>
@@ -160,7 +160,7 @@ export function AiToolsMenu({ data }: { data: AiToolsMenuData }) {
               <Link
                 href="/category"
                 onClick={close}
-                className="mt-3 block rounded-sm px-2.5 py-2 text-sm font-semibold text-brand-cyan-strong transition hover:bg-brand-cyan/8"
+                className="mt-3 block rounded-sm px-2.5 py-2 text-sm font-semibold text-brand-electric-strong transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:bg-brand-electric/8"
               >
                 All categories →
               </Link>
@@ -207,28 +207,28 @@ export function AiToolsMenu({ data }: { data: AiToolsMenuData }) {
             <Link
               href="/search"
               onClick={close}
-              className="rounded-pill border border-border-subtle px-3.5 py-1.5 text-sm text-text-secondary transition hover:border-border-accent hover:text-text-primary"
+              className="rounded-pill border border-border-subtle px-3.5 py-1.5 text-sm text-text-secondary transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:border-border-strong hover:text-text-primary"
             >
               Search all tools
             </Link>
             <Link
               href="/compare"
               onClick={close}
-              className="rounded-pill border border-border-subtle px-3.5 py-1.5 text-sm text-text-secondary transition hover:border-border-accent hover:text-text-primary"
+              className="rounded-pill border border-border-subtle px-3.5 py-1.5 text-sm text-text-secondary transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:border-border-strong hover:text-text-primary"
             >
               Compare tools
             </Link>
             <Link
               href="/collections"
               onClick={close}
-              className="rounded-pill border border-border-subtle px-3.5 py-1.5 text-sm text-text-secondary transition hover:border-border-accent hover:text-text-primary"
+              className="rounded-pill border border-border-subtle px-3.5 py-1.5 text-sm text-text-secondary transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:border-border-strong hover:text-text-primary"
             >
               Curated collections
             </Link>
             <Link
               href="/prompt-tools"
               onClick={close}
-              className="rounded-pill border border-border-subtle px-3.5 py-1.5 text-sm text-text-secondary transition hover:border-border-accent hover:text-text-primary"
+              className="rounded-pill border border-border-subtle px-3.5 py-1.5 text-sm text-text-secondary transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:border-border-strong hover:text-text-primary"
             >
               Prompt tools
             </Link>
@@ -241,3 +241,4 @@ export function AiToolsMenu({ data }: { data: AiToolsMenuData }) {
     </div>
   );
 }
+

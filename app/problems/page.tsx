@@ -7,7 +7,6 @@ import Link from "next/link";
 import { AiSolveVote } from "@/components/problems/ai-solve-vote";
 import { SectionHeading } from "@/components/section-heading";
 import { getProblems } from "@/lib/problem-store";
-import { buildUrl, defaultOpenGraphImage } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata(getRouteSeo("/problems"));
 
@@ -95,15 +94,15 @@ export default async function ProblemsPage({ searchParams }: ProblemsPageProps) 
           description="Think of this like a lightweight Product Hunt for problems: what hurts, how often it happens, and whether people believe AI can solve it."
         />
 
-        <form className="mb-6 grid gap-3 rounded-card border border-border-subtle bg-surface-2 p-4 lg:grid-cols-[minmax(0,1fr)_14rem_12rem_auto]">
+        <form className="platform-search-shell mb-6 grid gap-3 rounded-card p-3 lg:grid-cols-[minmax(0,1fr)_14rem_12rem_auto]">
           <input
-            className="rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-white outline-none placeholder:text-text-muted"
+            className="platform-shell-input min-h-11 px-3 py-2.5 text-sm placeholder:text-text-muted"
             defaultValue={searchQuery}
             name="q"
             placeholder="Search problems"
           />
           <select
-            className="rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-white outline-none"
+            className="platform-shell-input min-h-11 px-3 py-2.5 text-sm"
             defaultValue={selectedIndustry}
             name="industry"
           >
@@ -115,7 +114,7 @@ export default async function ProblemsPage({ searchParams }: ProblemsPageProps) 
             ))}
           </select>
           <select
-            className="rounded-2xl border border-border-subtle bg-surface-1 px-4 py-3 text-sm text-white outline-none"
+            className="platform-shell-input min-h-11 px-3 py-2.5 text-sm"
             defaultValue={sort}
             name="sort"
           >
@@ -125,7 +124,7 @@ export default async function ProblemsPage({ searchParams }: ProblemsPageProps) 
             <option value="ai-score">AI score</option>
           </select>
           <button
-            className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
+            className="rounded-button bg-brand-electric px-5 py-3 text-sm font-semibold text-white shadow-glow-cyan transition hover:bg-brand-electric-strong focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-cyan-strong"
             type="submit"
           >
             Filter

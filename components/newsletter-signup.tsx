@@ -17,7 +17,7 @@ export function NewsletterSignup() {
   if (status === "submitted") {
     return (
       <p className="text-body-lg text-text-primary">
-        Thanks — we'll let you know when the AiverseWorld newsletter launches.
+        Thanks, we&apos;ll let you know when the AiverseWorld newsletter launches.
       </p>
     );
   }
@@ -31,7 +31,7 @@ export function NewsletterSignup() {
         onChange={(event) => setEmail(event.target.value)}
         placeholder="you@company.com"
         aria-label="Email address"
-        className="w-full min-w-0 flex-1 rounded-pill border border-border-subtle bg-surface-1 px-5 py-3 text-sm text-text-primary outline-none focus:border-border-accent"
+        className="platform-input min-w-0 flex-1 rounded-pill px-5 py-3"
       />
       <Button type="submit" variant="primary" size="md" className="shrink-0">
         Notify me

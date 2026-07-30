@@ -12,9 +12,9 @@ type ToolHeaderProps = {
 
 export function ToolHeader({ title, description, eyebrow = "Prompt tools", tool, compact = false }: ToolHeaderProps) {
   return (
-    <section className="relative overflow-hidden rounded-card-lg border border-border-subtle bg-surface-2 px-5 py-10 shadow-card sm:px-8 lg:px-10">
+    <section className="relative overflow-hidden border-b border-border-subtle py-12 sm:py-14 lg:py-16">
       <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,color-mix(in_srgb,var(--brand-electric)_16%,transparent),transparent_34%),linear-gradient(120deg,transparent,color-mix(in_srgb,var(--brand-violet)_10%,transparent))]"
+        className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-brand-electric/10 via-brand-violet/6 to-transparent"
         aria-hidden
       />
       <div className="relative grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
@@ -31,7 +31,7 @@ export function ToolHeader({ title, description, eyebrow = "Prompt tools", tool,
           <p className="text-body-lg mt-5 max-w-3xl text-text-secondary">{description}</p>
         </div>
         {tool ? (
-          <div className="rounded-card border border-border-subtle bg-surface-glass p-5 shadow-card lg:w-72">
+          <div className="rounded-card border border-border-subtle bg-surface-glass p-5 shadow-card backdrop-blur lg:w-72">
             <p className="text-caption text-text-muted">Best for</p>
             <p className="mt-2 text-heading-2 text-text-primary">{tool.outcome}</p>
             <div className="mt-5">

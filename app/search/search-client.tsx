@@ -185,7 +185,7 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
         />
 
         <form
-          className="mb-4 flex flex-col gap-3 sm:flex-row"
+          className="platform-search-shell mb-4 flex flex-col gap-3 rounded-card p-2 sm:flex-row"
           onSubmit={(event) => {
             event.preventDefault();
             submitSearch();
@@ -196,7 +196,7 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
             placeholder="Example: I need AI for summarizing PDFs and research"
             value={draftQuery}
             onChange={(e) => updateQuery(e.target.value)}
-            className="min-w-0 flex-1 rounded-2xl border border-border-subtle bg-surface-1 px-5 py-4 text-sm text-text-primary outline-none placeholder:text-text-muted focus:border-border-accent"
+            className="platform-shell-input min-w-0 flex-1 px-4 py-3 text-sm placeholder:text-text-muted"
           />
           <button
             type="submit"

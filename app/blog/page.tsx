@@ -5,7 +5,6 @@ import { BlogCard } from "@/components/blog-card";
 import { SectionHeading } from "@/components/section-heading";
 import { StructuredDataScript } from "@/components/structured-data-script";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
-import { cardClass } from "@/components/ui/card";
 import { FadeInSection } from "@/components/ui/motion";
 import { getAllBlogPosts, getBlogCategories } from "@/lib/blog-api";
 import { buildUrl } from "@/lib/seo";
@@ -56,13 +55,14 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
         <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Blog" }]} />
       </div>
 
-      <FadeInSection className={cardClass({ padding: "lg", radius: "card-lg" })}>
-        <SectionHeading
-          eyebrow="AI Learning Hub"
-          title="Guides, trends & deep dives on AI"
-          description="Practical, editor-written coverage of the tools, models, and workflows shaping how people actually use AI."
-        />
-        <div className="flex flex-wrap gap-2">
+      <FadeInSection>
+        <section className="grid gap-8 border-b border-border-subtle pb-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(24rem,0.55fr)] lg:items-end">
+          <SectionHeading
+            eyebrow="AI Learning Hub"
+            title="Editorial intelligence for better AI decisions"
+            description="Practical, editor-written coverage of the tools, models, and workflows shaping how teams actually use AI."
+          />
+          <div className="flex flex-wrap gap-2 lg:justify-end">
           <Link
             href="/blog"
             className={`rounded-pill border px-4 py-1.5 text-sm font-medium transition ${
@@ -86,7 +86,8 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
               {category.name}
             </Link>
           ))}
-        </div>
+          </div>
+        </section>
       </FadeInSection>
 
       {featuredPost ? (
@@ -110,7 +111,7 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
       ) : null}
 
       {visiblePosts.length === 0 ? (
-        <div className={`text-center text-sm text-text-muted ${cardClass({ padding: "lg" })}`}>
+        <div className="border-y border-border-subtle py-12 text-center text-sm text-text-muted">
           No articles in this topic yet.{" "}
           <Link href="/blog" className="font-semibold text-brand-cyan-strong">
             View all articles

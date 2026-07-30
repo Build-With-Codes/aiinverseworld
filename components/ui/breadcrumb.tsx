@@ -38,7 +38,7 @@ export function Breadcrumb({ items }: { items: Crumb[] }) {
           return (
             <li key={`${item.label}-${index}`} className="flex items-center gap-1.5">
               {item.href && !isLast ? (
-                <Link href={item.href} className="transition hover:text-brand-cyan-strong">
+                <Link href={item.href} className="transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:text-brand-electric-strong">
                   {item.label}
                 </Link>
               ) : (
