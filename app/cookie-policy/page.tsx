@@ -39,7 +39,7 @@ export default function CookiePolicyPage() {
         <h2 className="text-2xl font-semibold text-white">Advertising and personalization</h2>
         <p className="text-base leading-8 text-text-secondary">
           AiverseWorld may load advertising and tracking scripts from approved
-          third-party partners, including Ezoic where enabled. These
+          third-party partners, including Google AdSense where enabled. These
           partners may use cookies, device identifiers, or similar technologies to
           measure ad performance, limit repeated ads, prevent fraud, and personalize
           advertising where legally permitted and consented. See our{" "}

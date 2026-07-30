@@ -2,6 +2,7 @@ import { MetadataRoute } from 'next';
 import { siteUrl } from '@/lib/seo';
 import { AIVERSE_JOBS_BASE_URL } from '@/lib/service-urls';
 import { apiGet } from '@/lib/api-service';
+import { promptTools } from '@/lib/prompt-tools';
 
 type BackendSitemapEntry = {
   url: string;
@@ -75,6 +76,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 0.7,
     },
+    {
+      url: `${baseUrl}/prompt-tools`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    ...promptTools.map((tool) => ({
+      url: `${baseUrl}${tool.href}`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.68,
+    })),
     {
       url: `${baseUrl}/contact`,
       lastModified: new Date(),

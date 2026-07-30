@@ -231,6 +231,34 @@ function getInitialVariables(prompt?: AiPrompt | null) {
   return Object.fromEntries(Object.entries(raw).map(([key, value]) => [key, String(value ?? "")]));
 }
 
+function PromptStatsGrid({
+  items,
+  surface = "bg-surface-2/70",
+}: {
+  items: Array<[number | undefined | null, string]>;
+  surface?: string;
+}) {
+  return (
+    <>
+      {items.map(([value, label]) => (
+        <div key={label} className={`rounded-sm border border-border-subtle ${surface} p-4`}>
+          {value === undefined || value === null ? (
+            <div className="space-y-2" aria-label={`${label} loading`}>
+              <div className="skeleton-shimmer h-8 w-20 rounded-full" />
+              <div className="skeleton-shimmer h-4 w-24 rounded-full" />
+            </div>
+          ) : (
+            <>
+              <p className="text-2xl font-bold text-text-primary">{compactNumber(value)}</p>
+              <p className="mt-1 text-sm text-text-muted">{label}</p>
+            </>
+          )}
+        </div>
+      ))}
+    </>
+  );
+}
+
 export function PromptsClient() {
   const [prompts, setPrompts] = useState<AiPrompt[]>([]);
   const [summary, setSummary] = useState<PromptsSummary | null>(null);
@@ -418,17 +446,14 @@ export function PromptsClient() {
           </div>
         </div>
         <div className="mt-8 grid gap-3 border-t border-border-subtle pt-6 sm:grid-cols-4">
-          {[
-            [compactNumber(summary?.total), "Prompts"],
-            [compactNumber(summary?.categories?.length), "Categories"],
-            [compactNumber(summary?.models?.length), "AI Models"],
-            [compactNumber(summary?.copies), "Copies"],
-          ].map(([value, label]) => (
-            <div key={label} className="rounded-sm border border-border-subtle bg-surface-2/70 p-4">
-              <p className="text-2xl font-bold text-text-primary">{value}</p>
-              <p className="mt-1 text-sm text-text-muted">{label}</p>
-            </div>
-          ))}
+          <PromptStatsGrid
+            items={[
+              [summary?.total, "Prompts"],
+              [summary?.categories?.length, "Categories"],
+              [summary?.models?.length, "AI Models"],
+              [summary?.copies, "Copies"],
+            ]}
+          />
         </div>
       </section>
 
@@ -644,17 +669,15 @@ export function PromptsClient() {
       </section>
 
       <section className="mt-8 grid gap-3 rounded-card-lg border border-border-subtle bg-surface-2/65 p-5 sm:grid-cols-4">
-        {[
-          [compactNumber(summary?.total), "Prompts"],
-          [compactNumber(summary?.copies), "Times copied"],
-          [compactNumber(summary?.saves), "Times saved"],
-          [compactNumber(summary?.views), "Total views"],
-        ].map(([value, label]) => (
-          <div key={label} className="rounded-sm border border-border-subtle bg-surface-1/70 p-4">
-            <p className="text-2xl font-bold text-text-primary">{value}</p>
-            <p className="text-sm text-text-muted">{label}</p>
-          </div>
-        ))}
+        <PromptStatsGrid
+          surface="bg-surface-1/70"
+          items={[
+            [summary?.total, "Prompts"],
+            [summary?.copies, "Times copied"],
+            [summary?.saves, "Times saved"],
+            [summary?.views, "Total views"],
+          ]}
+        />
       </section>
     </div>
   );

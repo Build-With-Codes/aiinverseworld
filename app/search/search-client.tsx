@@ -21,6 +21,7 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
   const [tools, setTools] = useState(initialTools);
   const [currentPagination, setCurrentPagination] = useState(pagination);
   const [query, setQuery] = useState(initialQuery);
+  const [draftQuery, setDraftQuery] = useState(initialQuery);
   const [category, setCategory] = useState("");
   const [pricing, setPricing] = useState("");
   const [platform, setPlatform] = useState("");
@@ -113,6 +114,7 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
 
   function clearAll() {
     setQuery("");
+    setDraftQuery("");
     setCategory("");
     setPricing("");
     setPlatform("");
@@ -129,7 +131,11 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
   }
 
   function updateQuery(value: string) {
-    setQuery(value);
+    setDraftQuery(value);
+  }
+
+  function submitSearch() {
+    setQuery(draftQuery.trim());
     setPage(1);
   }
 
@@ -178,15 +184,27 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
           description="Use the live catalog controls to narrow assistants, generators, automation apps, and developer tools without repeating the homepage discovery flow."
         />
 
-        <div className="mb-4">
+        <form
+          className="mb-4 flex flex-col gap-3 sm:flex-row"
+          onSubmit={(event) => {
+            event.preventDefault();
+            submitSearch();
+          }}
+        >
           <input
             aria-label="Search query"
             placeholder="Example: I need AI for summarizing PDFs and research"
-            value={query}
+            value={draftQuery}
             onChange={(e) => updateQuery(e.target.value)}
-            className="w-full rounded-2xl border border-border-subtle bg-surface-1 px-5 py-4 text-sm text-text-secondary outline-none placeholder:text-text-muted focus:border-border-accent"
+            className="min-w-0 flex-1 rounded-2xl border border-border-subtle bg-surface-1 px-5 py-4 text-sm text-text-primary outline-none placeholder:text-text-muted focus:border-border-accent"
           />
-        </div>
+          <button
+            type="submit"
+            className="rounded-2xl bg-gradient-to-r from-brand-electric to-brand-violet px-6 py-4 text-sm font-semibold text-white shadow-glow-cyan transition hover:brightness-110"
+          >
+            Search
+          </button>
+        </form>
 
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative">

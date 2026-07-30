@@ -34,10 +34,13 @@ export function buildGlobalStructuredData() {
     {
       "@context": "https://schema.org",
       "@type": "SiteNavigationElement",
-      name: ["Discover", "Search", "Compare", "Categories", "News", "Blog"],
+      name: ["Discover", "Search", "AI Tools", "Prompt Tools", "Prompts", "Compare", "Categories", "News", "Blog"],
       url: [
         buildUrl("/"),
         buildUrl("/search"),
+        buildUrl("/search"),
+        buildUrl("/prompt-tools"),
+        buildUrl("/prompts"),
         buildUrl("/compare"),
         buildUrl("/category"),
         buildUrl("/news"),

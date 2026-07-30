@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { FaviconBadge } from "@/components/favicon-badge";
 import { Badge } from "@/components/ui/badge";
 import type { AITool, Category } from "@/lib/catalog-types";
+import { promptTools } from "@/lib/prompt-tools";
 
 type MenuTool = {
   tool: AITool;
@@ -56,6 +57,32 @@ function MenuTitle({ children }: { children: string }) {
   );
 }
 
+function PromptToolLink({
+  tool,
+  onNavigate,
+}: {
+  tool: (typeof promptTools)[number];
+  onNavigate: () => void;
+}) {
+  return (
+    <Link
+      href={tool.href}
+      onClick={onNavigate}
+      className="group block rounded-sm border border-transparent p-2.5 transition hover:border-border-accent hover:bg-brand-cyan/8"
+    >
+      <div className="flex items-center justify-between gap-2">
+        <p className="truncate text-sm font-semibold text-text-primary transition group-hover:text-brand-cyan-strong">
+          {tool.shortTitle}
+        </p>
+        <span className="shrink-0 rounded-pill bg-brand-cyan/10 px-1.5 py-0.5 text-[10px] font-semibold tracking-wide text-brand-cyan-strong uppercase">
+          {tool.category}
+        </span>
+      </div>
+      <p className="mt-1 line-clamp-2 text-xs leading-5 text-text-muted">{tool.description}</p>
+    </Link>
+  );
+}
+
 export function AiToolsMenu({ data }: { data: AiToolsMenuData }) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -89,7 +116,7 @@ export function AiToolsMenu({ data }: { data: AiToolsMenuData }) {
         type="button"
         aria-expanded={open}
         onClick={toggle}
-        className="inline-flex cursor-pointer items-center gap-2 rounded-pill px-4 py-2 text-sm text-text-secondary transition hover:bg-brand-cyan/10 hover:text-text-primary"
+        className="inline-flex cursor-pointer items-center gap-2 rounded-pill px-4 py-2 text-sm font-semibold text-text-primary transition hover:bg-brand-cyan/10 hover:text-brand-cyan-strong"
       >
         AI Tools
         <svg
@@ -140,7 +167,7 @@ export function AiToolsMenu({ data }: { data: AiToolsMenuData }) {
             </div>
 
             {/* Tool rails */}
-            <div className="grid gap-6 p-5 sm:grid-cols-3">
+            <div className="grid gap-6 p-5 sm:grid-cols-2 xl:grid-cols-4">
               <div>
                 <MenuTitle>Editor&apos;s picks</MenuTitle>
                 <div className="space-y-0.5">
@@ -162,6 +189,14 @@ export function AiToolsMenu({ data }: { data: AiToolsMenuData }) {
                 <div className="space-y-0.5">
                   {data.fresh.map(({ tool, badge }) => (
                     <ToolLink key={tool.slug} tool={tool} badge={badge} onNavigate={close} />
+                  ))}
+                </div>
+              </div>
+              <div>
+                <MenuTitle>Prompt tools</MenuTitle>
+                <div className="space-y-0.5">
+                  {promptTools.slice(0, 5).map((tool) => (
+                    <PromptToolLink key={tool.slug} tool={tool} onNavigate={close} />
                   ))}
                 </div>
               </div>
@@ -189,6 +224,13 @@ export function AiToolsMenu({ data }: { data: AiToolsMenuData }) {
               className="rounded-pill border border-border-subtle px-3.5 py-1.5 text-sm text-text-secondary transition hover:border-border-accent hover:text-text-primary"
             >
               Curated collections
+            </Link>
+            <Link
+              href="/prompt-tools"
+              onClick={close}
+              className="rounded-pill border border-border-subtle px-3.5 py-1.5 text-sm text-text-secondary transition hover:border-border-accent hover:text-text-primary"
+            >
+              Prompt tools
             </Link>
             <Badge variant="brand" className="ml-auto hidden sm:inline-flex">
               {data.categories.reduce((sum, c) => sum + c.count, 0)}+ tools indexed
