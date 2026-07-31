@@ -16,7 +16,7 @@ import { FadeInSection, StaggerGrid, StaggerItem } from "@/components/ui/motion"
 import { getRankings } from "@/lib/engagement";
 import { finderQuestions } from "@/lib/home-content";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { getToolCatalog } from "@/lib/tool-catalog";
+import { getCategories, getComparisons, getToolCatalog } from "@/lib/tool-catalog";
 import { getRouteSeo } from "@/services/seo.service";
 
 export const revalidate = 300;
@@ -57,9 +57,9 @@ export default function Home() {
         </FadeInSection>
       </section>
 
-      <FadeInSection>
+      <Suspense fallback={<StatsFallback />}>
         <TrustedStatsSection />
-      </FadeInSection>
+      </Suspense>
 
       <Suspense fallback={<RailFallback />}>
         <FeaturedToolsSection />
@@ -130,6 +130,21 @@ function RailFallback() {
             key={index}
             className="h-52 animate-pulse rounded-card-lg border border-border-subtle bg-surface-1"
           />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function StatsFallback() {
+  return (
+    <section aria-label="AiverseWorld platform statistics loading" className="border-y border-border-subtle py-8">
+      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <div key={index} className="space-y-2">
+            <div className="skeleton-shimmer h-10 w-24 rounded-pill" />
+            <div className="skeleton-shimmer h-4 w-36 rounded-pill" />
+          </div>
         ))}
       </div>
     </section>
@@ -225,11 +240,29 @@ function AiPlatformVisualization() {
   );
 }
 
-function TrustedStatsSection() {
+function formatStatCount(value: number) {
+  if (value <= 0) {
+    return "Live";
+  }
+
+  if (value >= 1000) {
+    return `${Math.floor(value / 1000)}k+`;
+  }
+
+  return `${value}+`;
+}
+
+async function TrustedStatsSection() {
+  const [catalog, categoryCatalog, comparisonCatalog] = await Promise.all([
+    getToolCatalog(1, REVALIDATE_SECONDS),
+    getCategories(REVALIDATE_SECONDS),
+    getComparisons(500, REVALIDATE_SECONDS),
+  ]);
+
   const stats = [
-    ["140+", "Verified AI tools"],
-    ["40+", "Practical categories"],
-    ["500+", "Comparison paths"],
+    [formatStatCount(catalog.pagination.total), "Verified AI tools"],
+    [formatStatCount(categoryCatalog.categories.length), "Practical categories"],
+    [formatStatCount(comparisonCatalog.comparisons.length), "Comparison paths"],
     ["Daily", "Catalog updates"],
   ];
 
