@@ -8,6 +8,7 @@ import { ConsentedScript } from "@/components/consented-script";
 import { ConsentMode } from "@/components/consent-mode";
 import { CookieConsent } from "@/components/cookie-consent";
 import { CompareBar } from "@/components/engagement/compare-tray";
+import { GoogleAnalytics } from "@/components/google-analytics";
 import { Providers } from "@/components/providers";
 import { SiteShell } from "@/components/site-shell";
 import { googleAuthEnabled } from "@/lib/auth-config";
@@ -17,6 +18,7 @@ import { buildGlobalStructuredData, jsonLd } from "@/lib/structured-data";
 import { getRouteSeo } from "@/services/seo.service";
 import { headers } from "next/headers";
 import { getServerSession } from "next-auth";
+import { Suspense } from "react";
 
 import "./globals.css";
 
@@ -120,6 +122,12 @@ export default async function RootLayout({
               <ChatSupportGate enabled={googleAuthEnabled} />
             )}
             <ConsentedAnalytics />
+            <Suspense fallback={null}>
+              <GoogleAnalytics
+                gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-6WWCPX15CX"}
+                nonce={nonce}
+              />
+            </Suspense>
           </>
         )}
       </body>
