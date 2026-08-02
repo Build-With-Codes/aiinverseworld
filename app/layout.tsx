@@ -29,6 +29,7 @@ const bodyFont = Inter({
 });
 
 const rootMetadata = buildMetadata(getRouteSeo("/"));
+const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-8RHHLW4YVF";
 
 export const metadata: Metadata = {
   ...rootMetadata,
@@ -88,6 +89,25 @@ export default async function RootLayout({
         />
         <ConsentMode nonce={nonce} />
         <script
+          async
+          id="google-analytics-loader"
+          nonce={nonce}
+          src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaMeasurementId)}`}
+        />
+        <script
+          id="google-analytics-config"
+          nonce={nonce}
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              window.gtag = window.gtag || function(){window.dataLayer.push(arguments);}
+              window.gtag("js", new Date());
+              window.gtag("config", ${JSON.stringify(gaMeasurementId)});
+            `,
+          }}
+        />
+        <script
           id="aiverseworld-global-schema"
           nonce={nonce}
           suppressHydrationWarning
@@ -123,10 +143,7 @@ export default async function RootLayout({
             )}
             <ConsentedAnalytics />
             <Suspense fallback={null}>
-              <GoogleAnalytics
-                gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? "G-6WWCPX15CX"}
-                nonce={nonce}
-              />
+              <GoogleAnalytics gaId={gaMeasurementId} />
             </Suspense>
           </>
         )}

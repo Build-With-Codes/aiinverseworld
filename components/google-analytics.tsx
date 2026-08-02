@@ -7,15 +7,13 @@ import {
   subscribeToConsent,
 } from "@/components/cookie-consent";
 import { usePathname, useSearchParams } from "next/navigation";
-import Script from "next/script";
-import { useEffect, useMemo, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useSyncExternalStore } from "react";
 
 type GoogleAnalyticsProps = {
   gaId?: string;
-  nonce?: string;
 };
 
-export function GoogleAnalytics({ gaId, nonce }: GoogleAnalyticsProps) {
+export function GoogleAnalytics({ gaId }: GoogleAnalyticsProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const consentSnapshot = useSyncExternalStore(
@@ -28,41 +26,30 @@ export function GoogleAnalytics({ gaId, nonce }: GoogleAnalyticsProps) {
     const query = searchParams.toString();
     return query ? `${pathname}?${query}` : pathname;
   }, [pathname, searchParams]);
+  const previousPagePath = useRef(pagePath);
+  const previousAnalyticsConsent = useRef(Boolean(consent?.analytics));
 
   useEffect(() => {
-    if (!gaId || !consent?.analytics || typeof window.gtag !== "function") {
+    const analyticsAllowed = Boolean(consent?.analytics);
+    const consentJustGranted = !previousAnalyticsConsent.current && analyticsAllowed;
+    const pathChanged = previousPagePath.current !== pagePath;
+
+    if (!gaId || !analyticsAllowed || typeof window.gtag !== "function") {
+      previousAnalyticsConsent.current = analyticsAllowed;
+      previousPagePath.current = pagePath;
       return;
     }
 
-    window.gtag("config", gaId, {
-      page_path: pagePath,
-      anonymize_ip: true,
-    });
+    if (consentJustGranted || pathChanged) {
+      window.gtag("config", gaId, {
+        page_path: pagePath,
+        anonymize_ip: true,
+      });
+    }
+
+    previousAnalyticsConsent.current = analyticsAllowed;
+    previousPagePath.current = pagePath;
   }, [consent?.analytics, gaId, pagePath]);
 
-  if (!gaId || !consent?.analytics) {
-    return null;
-  }
-
-  return (
-    <>
-      <Script
-        id="google-analytics-loader"
-        src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaId)}`}
-        nonce={nonce}
-        strategy="afterInteractive"
-      />
-      <Script id="google-analytics-config" nonce={nonce} strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          window.gtag = window.gtag || function(){window.dataLayer.push(arguments);}
-          window.gtag("js", new Date());
-          window.gtag("config", "${gaId}", {
-            anonymize_ip: true,
-            send_page_view: false
-          });
-        `}
-      </Script>
-    </>
-  );
+  return null;
 }
