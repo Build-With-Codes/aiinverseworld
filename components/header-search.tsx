@@ -72,9 +72,7 @@ export function HeaderSearch({ onSubmit, trendingQueries = [] }: HeaderSearchPro
           placeholder="Search tools"
           className="platform-shell-input min-w-0 flex-1 appearance-none px-0 py-0 text-[13px] placeholder:text-text-muted focus-visible:outline-none"
         />
-        <kbd className="hidden rounded-full border border-border-subtle bg-surface-1 px-1.5 py-0 text-[9px] font-semibold text-text-muted xl:inline-flex">
-          Ctrl K
-        </kbd>
+    
       </form>
 
       {trendingQueries.length > 0 ? (
