@@ -151,13 +151,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </div>
           </div>
 
-          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-card-lg border border-border-subtle shadow-card">
+          <div className="relative mx-auto aspect-[16/10] w-full max-w-5xl overflow-hidden rounded-card-lg border border-border-subtle shadow-card sm:aspect-[16/8.5] lg:aspect-[16/7.5]">
             {post.cover ? (
               <MediaImage
                 media={post.cover}
                 fill
                 priority
-                sizes="(min-width:1024px) 900px, 100vw"
+                sizes="(min-width:1280px) 1024px, (min-width:768px) 90vw, 100vw"
                 fallback={coverFallback}
               />
             ) : (
