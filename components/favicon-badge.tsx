@@ -31,6 +31,7 @@ export function FaviconBadge({
           alt={`${name} favicon`}
           fill
           sizes="48px"
+          unoptimized
           className={`h-full w-full object-contain ${imgClassName}`}
           onError={() => setFailed(true)}
         />
