@@ -39,5 +39,15 @@ export function BookCoverImage({
     );
   }
 
-  return <Image src={src} alt={alt} fill sizes={sizes} className={className} onError={() => setFailed(true)} />;
+  return (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      sizes={sizes}
+      unoptimized
+      className={className}
+      onError={() => setFailed(true)}
+    />
+  );
 }

@@ -391,6 +391,7 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
                           alt={video.title}
                           fill
                           sizes="(min-width: 1024px) 30vw, (min-width: 768px) 45vw, 100vw"
+                          unoptimized
                           className="object-cover transition duration-300 group-hover:scale-105"
                         />
                         <span className="absolute bottom-3 left-3 rounded-sm bg-surface-0/90 px-2 py-1 text-xs font-semibold text-text-primary">

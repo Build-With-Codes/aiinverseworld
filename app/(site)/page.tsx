@@ -320,7 +320,7 @@ async function FeaturedToolsSection() {
 }
 
 async function PopularCategoriesSection() {
-  const catalog = await getToolCatalog(1, REVALIDATE_SECONDS);
+  const catalog = await getCategories(REVALIDATE_SECONDS);
   const topCategories = [...catalog.categories].sort((a, b) => b.count - a.count).slice(0, 6);
 
   return (
