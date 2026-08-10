@@ -122,6 +122,7 @@ export async function SiteShell({ children }: SiteShellProps) {
                   alt="AiverseWorld logo"
                   fill
                   sizes="44px"
+                  unoptimized
                   className="object-contain"
                   priority
                 />
@@ -180,6 +181,7 @@ export async function SiteShell({ children }: SiteShellProps) {
                     alt="AiverseWorld logo"
                     fill
                     sizes="44px"
+                    unoptimized
                     className="object-contain"
                   />
                 </div>
