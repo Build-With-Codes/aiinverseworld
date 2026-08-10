@@ -142,9 +142,7 @@ export async function SiteShell({ children }: SiteShellProps) {
               <NavLink href="/" label="Discover" />
               <AiToolsMenu data={aiToolsMenuData} />
               <NavLink href="/prompts" label="Prompts" />
-              <NavLink href="/prompt-tools" label="Prompt Tools" />
               <NavLink href="/compare" label="Compare" />
-              <NavLink href="/jobs" label="Jobs" />
               <NavLink href="/blog" label="Blog" />
             </nav>
 
