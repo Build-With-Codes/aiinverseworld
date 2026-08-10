@@ -38,17 +38,24 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL(normalizedPath, request.url), 308);
   }
 
-  const nonce = btoa(crypto.randomUUID());
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-nonce", nonce);
-  if (pathname.startsWith("/admin")) {
-    requestHeaders.set("x-route-section", "admin");
-  }
-
+  // Static CSP — no per-request nonce, and no x-route-section header
+  // (the admin/public split is now resolved by route groups at the file
+  // level: app/(site)/ vs app/admin/, not by a runtime pathname check).
+  // Neither the root layout nor app/(site)/layout.tsx calls headers()
+  // anymore, so pages are free to be static/ISR per their own `revalidate`
+  // export instead of forced dynamic on every request. Inline scripts
+  // (theme init, consent mode, per-page JSON-LD) rely on 'unsafe-inline'
+  // instead of a nonce, since per-page JSON-LD content varies per page and
+  // can't be hash-allowlisted at build time. Nonce + 'strict-dynamic' is
+  // stronger against XSS, but Next.js requires dynamic rendering to use it
+  // — not worth trading away caching for, given every inline script here is
+  // first-party authored, never user-supplied content (the one place that
+  // IS admin-authored HTML — blog content — is sanitized before render,
+  // see lib/sanitize-html.ts).
   const isDev = process.env.NODE_ENV !== "production";
   const csp = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https: http:${isDev ? " 'unsafe-eval' 'unsafe-inline'" : ""}`,
+    `script-src 'self' 'unsafe-inline' https: http:${isDev ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https:",
     "font-src 'self' data:",
@@ -68,11 +75,7 @@ export function proxy(request: NextRequest) {
     "upgrade-insecure-requests",
   ].join("; ");
 
-  const response = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  const response = NextResponse.next();
 
   response.headers.set("Content-Security-Policy", csp);
   response.headers.set("X-Content-Type-Options", "nosniff");

@@ -15,7 +15,6 @@ type ConsentedScriptProps = {
   children?: string;
   crossOrigin?: "anonymous" | "use-credentials";
   async?: boolean;
-  nonce?: string;
   dataAttributes?: Record<string, string>;
 };
 
@@ -25,7 +24,6 @@ export function ConsentedScript({
   children,
   crossOrigin,
   async,
-  nonce,
   dataAttributes,
 }: ConsentedScriptProps) {
   const consentSnapshot = useSyncExternalStore(subscribeToConsent, getConsentSnapshot, getServerConsentSnapshot);
@@ -42,7 +40,6 @@ export function ConsentedScript({
       src={src}
       crossOrigin={crossOrigin}
       async={async}
-      nonce={nonce}
       strategy="afterInteractive"
     >
       {children}

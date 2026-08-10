@@ -206,7 +206,7 @@ export function HeroSearch() {
             key={tag}
             onClick={() => selectPrompt(tag)}
             disabled={isLoading}
-            className="rounded-full bg-surface-2/78 px-3 py-2 text-xs text-text-secondary transition hover:bg-brand-cyan/10 hover:text-text-primary disabled:opacity-60"
+            className="min-h-11 rounded-full bg-surface-2/78 px-3 py-2 text-xs text-text-secondary transition hover:bg-brand-cyan/10 hover:text-text-primary disabled:opacity-60"
           >
            ✦  {tag}
           </button>

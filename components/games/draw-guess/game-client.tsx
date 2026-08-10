@@ -307,7 +307,7 @@ export function DrawGuessGameClient() {
               type="button"
               onClick={startRound}
               disabled={status === "loading"}
-              className="w-full rounded-2xl bg-white px-5 py-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 disabled:opacity-60"
+              className="w-full rounded-2xl bg-brand-electric-strong px-5 py-4 text-sm font-semibold text-white transition hover:bg-brand-electric disabled:opacity-60"
             >
               {status === "loading" ? "Starting..." : "Start Game"}
             </button>
@@ -458,7 +458,7 @@ export function DrawGuessGameClient() {
               <button
                 type="button"
                 onClick={startRound}
-                className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200"
+                className="rounded-2xl bg-brand-electric-strong px-5 py-3 text-sm font-semibold text-white transition hover:bg-brand-electric"
               >
                 Next Round
               </button>

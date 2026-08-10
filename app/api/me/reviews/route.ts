@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/auth";
 import { backendMeFetch, getSessionUserId, unauthorized } from "@/lib/me-proxy";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +24,19 @@ export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
   const userId = session?.user?.id;
   if (!userId || !session?.user?.email) return unauthorized();
+
+  // Per-user cap (not per-IP) since this is behind a real session — cheap
+  // spam/abuse guard for review submissions.
+  const { allowed, retryAfterMs } = checkRateLimit(`review-submit:${userId}`, {
+    limit: 10,
+    windowMs: 10 * 60 * 1000,
+  });
+  if (!allowed) {
+    return Response.json(
+      { error: "Too many review submissions. Try again shortly." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil(retryAfterMs / 1000)) } },
+    );
+  }
 
   const body = (await request.json()) as { toolId?: string; rating?: number; comment?: string };
   if (!body?.toolId) {

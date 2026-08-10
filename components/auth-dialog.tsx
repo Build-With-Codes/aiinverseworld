@@ -198,8 +198,8 @@ export function AuthDialog({
                   disabled={submitting}
                   className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
                     mode === "login"
-                      ? "bg-white text-slate-950 shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
-                      : "text-text-muted hover:bg-surface-2 hover:text-white disabled:opacity-60"
+                      ? "bg-surface-3 text-text-primary shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
+                      : "text-text-muted hover:bg-surface-2 hover:text-text-primary disabled:opacity-60"
                   }`}
                 >
                   Login
@@ -213,15 +213,15 @@ export function AuthDialog({
                   disabled={submitting}
                   className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
                     mode === "signup"
-                      ? "bg-white text-slate-950 shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
-                      : "text-text-muted hover:bg-surface-2 hover:text-white disabled:opacity-60"
+                      ? "bg-surface-3 text-text-primary shadow-[0_8px_24px_rgba(15,23,42,0.18)]"
+                      : "text-text-muted hover:bg-surface-2 hover:text-text-primary disabled:opacity-60"
                   }`}
                 >
                   Sign Up
                 </button>
               </div>
 
-              <p className="mt-4 text-sm font-medium text-white">
+              <p className="mt-4 text-sm font-medium text-text-primary">
                 {mode === "signup" ? "Create your account" : "Log in to your account"}
               </p>
 
@@ -238,7 +238,7 @@ export function AuthDialog({
                     minLength={2}
                     required={mode === "signup"}
                     disabled={submitting}
-                    className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 dark:border-border-subtle dark:bg-surface-1 dark:text-white"
+                    className="h-12 w-full rounded-xl border border-border-subtle bg-surface-1 px-4 text-sm text-text-primary outline-none transition focus:border-brand-cyan-strong focus:ring-4 focus:ring-brand-cyan/10"
                   />
                 ) : null}
                 <input
@@ -253,7 +253,7 @@ export function AuthDialog({
                   inputMode="email"
                   required
                   disabled={submitting}
-                  className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 dark:border-border-subtle dark:bg-surface-1 dark:text-white"
+                  className="h-12 w-full rounded-xl border border-border-subtle bg-surface-1 px-4 text-sm text-text-primary outline-none transition focus:border-brand-cyan-strong focus:ring-4 focus:ring-brand-cyan/10"
                 />
                 <input
                   type="password"
@@ -267,7 +267,7 @@ export function AuthDialog({
                   minLength={8}
                   required
                   disabled={submitting}
-                  className="h-12 w-full rounded-xl border border-slate-300 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/10 dark:border-border-subtle dark:bg-surface-1 dark:text-white"
+                  className="h-12 w-full rounded-xl border border-border-subtle bg-surface-1 px-4 text-sm text-text-primary outline-none transition focus:border-brand-cyan-strong focus:ring-4 focus:ring-brand-cyan/10"
                 />
                 {error ? (
                   <div role="alert" className="rounded-xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-100">
@@ -288,9 +288,9 @@ export function AuthDialog({
               </form>
 
               <div className="mt-5 flex items-center">
-                <div className="flex-1 border-t border-gray-300 dark:border-border-subtle"></div>
-                <span className="mx-3 text-xs font-medium text-gray-500 dark:text-text-muted">OR</span>
-                <div className="flex-1 border-t border-gray-300 dark:border-border-subtle"></div>
+                <div className="flex-1 border-t border-border-subtle"></div>
+                <span className="mx-3 text-xs font-medium text-text-muted">OR</span>
+                <div className="flex-1 border-t border-border-subtle"></div>
               </div>
 
               <div className="mt-4 grid gap-3">

@@ -46,6 +46,16 @@ const routeSeo: Record<string, RouteSeoInput> = {
     description: "Browse curated AI tool collections for creators, developers, students, marketers, startups, and teams.",
     keywords: ["AI tool collections", "best AI tools", "curated AI tools"],
   },
+  "/compare": {
+    title: "Compare AI Tools Side-by-Side | AiverseWorld",
+    description: "Compare AI tools head-to-head on pricing, features, platform support, and free-plan availability before you commit.",
+    keywords: ["compare AI tools", "AI tool comparison", "AI software vs AI software"],
+  },
+  "/category": {
+    title: "Browse AI Tools by Category | AiverseWorld",
+    description: "Explore every AI tool category in the catalog, from assistants and coding tools to video, audio, and enterprise platforms.",
+    keywords: ["AI tool categories", "browse AI tools", "AI software categories"],
+  },
   "/best-ai-tools": {
     title: "Best AI Tools 2026 | AiverseWorld",
     description: "Explore editor-curated AI tools across writing, coding, image, video, research, automation, and productivity.",
@@ -100,11 +110,6 @@ const routeSeo: Record<string, RouteSeoInput> = {
     title: "Submit a Business Problem | AiverseWorld",
     description: "Share a business problem and help AiverseWorld map real-world needs to useful AI tools and workflows.",
     keywords: ["submit business problem", "AI solution request", "AI workflow help"],
-  },
-  "/english-speaking-tutor": {
-    title: "AI English Speaking Tutor | AiverseWorld",
-    description: "Practice English conversation with an AI speaking tutor designed for fluency, confidence, and daily improvement.",
-    keywords: ["AI English tutor", "English speaking practice", "AI language tutor"],
   },
   "/terms": {
     title: "Terms of Service | AiverseWorld",

@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored third-party WASM glue code — not app source, should never be linted.
+    "public/vendor/**",
   ]),
 ]);
 

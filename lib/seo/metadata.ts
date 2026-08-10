@@ -24,8 +24,10 @@ export function buildMetadata(seo: BackendSeo): Metadata {
       }
     : undefined;
 
+  const title = seo.title?.trim() ? seo.title : "AiverseWorld";
+
   return {
-    title: seo.title,
+    title,
     description: seo.description,
     keywords: seo.keywords,
     robots,

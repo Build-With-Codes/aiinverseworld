@@ -1,0 +1,81 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+
+import { formatDisplayDate, getLatestVerifiedDate, buildUrl } from "@/lib/seo";
+import { buildMetadata } from "@/lib/seo/metadata";
+import { getCategorySeo } from "@/services/seo.service";
+import { StructuredDataScript } from "@/components/structured-data-script";
+import { getCategoryContent } from "@/lib/category-content";
+import { getCategoryWithTools } from "@/lib/tool-catalog";
+import { CategoryPageClient } from "./client";
+
+type CategoryPageProps = {
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ page?: string }>;
+};
+
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const seo = await getCategorySeo(slug);
+  if (!seo) notFound();
+  return buildMetadata(seo);
+}
+
+export default async function CategoryPage({ params, searchParams }: CategoryPageProps) {
+  const { slug } = await params;
+  const { page: pageParam } = (await searchParams) ?? {};
+  const page = Math.max(1, Number(pageParam) || 1);
+  const result = await getCategoryWithTools(slug, page, 24);
+  if (!result) notFound();
+  const category = result.category;
+  const tools = result.tools;
+  const dateModified = getLatestVerifiedDate(tools);
+  const content = getCategoryContent(category);
+
+  return (
+    <>
+      <StructuredDataScript
+        id="category-schema"
+        data={[
+          {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: `${category.name} tools`,
+            url: buildUrl(`/category/${slug}`),
+            description: category.description,
+            dateModified,
+            hasPart: tools.slice(0, 10).map((tool) => ({
+              "@type": "SoftwareApplication",
+              name: tool.name,
+              url: buildUrl(`/tool/${tool.slug}`),
+              dateModified: tool.lastVerified,
+            })),
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: content.faqs.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: { "@type": "Answer", text: faq.answer },
+            })),
+          },
+        ]}
+      />
+      <CategoryPageClient
+        category={category}
+        tools={tools}
+        pagination={
+          result?.pagination ?? {
+            page,
+            limit: 24,
+            total: 0,
+            totalPages: 1,
+          }
+        }
+        lastUpdated={{ date: dateModified, label: formatDisplayDate(dateModified) }}
+        content={content}
+      />
+    </>
+  );
+}

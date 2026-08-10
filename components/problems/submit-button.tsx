@@ -9,7 +9,7 @@ export function SubmitProblemButton() {
     <button
       type="submit"
       disabled={pending}
-      className="w-full rounded-2xl bg-white px-5 py-4 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-60"
+      className="w-full rounded-2xl bg-brand-electric px-5 py-4 text-sm font-semibold text-white transition hover:bg-brand-electric-strong disabled:cursor-not-allowed disabled:opacity-60"
     >
       {pending ? "Submitting..." : "Submit Problem"}
     </button>

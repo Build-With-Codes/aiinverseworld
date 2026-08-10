@@ -51,7 +51,7 @@ export function HeaderSearch({ onSubmit, trendingQueries = [] }: HeaderSearchPro
         <button
           type="submit"
           aria-label="Submit search"
-          className="flex h-5 w-5 shrink-0 items-center justify-center text-brand-electric-strong transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:text-text-primary group-focus-within:text-brand-cyan-strong"
+          className="flex h-9 w-9 shrink-0 items-center justify-center text-brand-electric-strong transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:text-text-primary group-focus-within:text-brand-cyan-strong"
         >
           <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4">
             <path

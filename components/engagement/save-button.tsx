@@ -21,7 +21,7 @@ function buttonClass(variant: "icon" | "full", saved: boolean) {
         : "border-border-strong bg-surface-3 text-text-primary hover:border-border-accent"
     }`;
   }
-  return `inline-flex h-9 w-9 items-center justify-center rounded-full border backdrop-blur-xl transition ${
+  return `inline-flex h-11 w-11 items-center justify-center rounded-full border backdrop-blur-xl transition ${
     saved
       ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong"
       : "border-border-subtle bg-surface-2/90 text-text-muted hover:border-border-accent hover:text-brand-cyan-strong"

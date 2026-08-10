@@ -5,11 +5,13 @@ import { ADMIN_API_KEY, AIVERSE_WORLD_BASE_URL } from "@/lib/service-urls";
 
 export { ADMIN_COOKIE_NAME };
 
-/** Matches the backend's `assertAdmin` dev-permissive behavior exactly. */
+/**
+ * Fails closed in every environment: an unconfigured ADMIN_API_KEY must
+ * never grant access, even in local dev — matches the backend's assertAdmin
+ * (also now fail-closed).
+ */
 export function isValidAdminPassword(password: string): boolean {
-  if (!ADMIN_API_KEY) {
-    return process.env.NODE_ENV !== "production" && password.length > 0;
-  }
+  if (!ADMIN_API_KEY) return false;
   return password === ADMIN_API_KEY;
 }
 

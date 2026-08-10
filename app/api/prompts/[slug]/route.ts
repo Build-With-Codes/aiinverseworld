@@ -12,6 +12,7 @@ export async function GET(_request: Request, context: RouteContext) {
   try {
     const response = await fetch(`${AIVERSE_JOBS_BASE_URL}/prompts/${encodeURIComponent(slug)}`, {
       cache: "no-store",
+      signal: AbortSignal.timeout(8000),
     });
 
     return new Response(await response.text(), {

@@ -1,7 +1,5 @@
-import { authOptions } from "@/auth";
-import { AccountMenu } from "@/components/account-menu";
 import { AiToolsMenu, type AiToolsMenuData } from "@/components/ai-tools-menu";
-import { AuthDialog } from "@/components/auth-dialog";
+import { HeaderAuth } from "@/components/header-auth";
 import { HeaderScrollShell } from "@/components/header-scroll-shell";
 import { HeaderSearch } from "@/components/header-search";
 import { MobileMenu } from "@/components/mobile-menu";
@@ -15,7 +13,6 @@ import { getCategories, getNewestTools } from "@/lib/tool-catalog";
 import logoImage from "@/public/logo.webp";
 import Image from "next/image";
 import Link from "next/link";
-import { getServerSession } from "next-auth";
 import type { ReactNode } from "react";
 
 // SiteShell renders on every page, so any no-store fetch here would force
@@ -108,8 +105,7 @@ const footerGroups = [
 ];
 
 export async function SiteShell({ children }: SiteShellProps) {
-  const [session, aiToolsMenuData, mostSearchedTools] = await Promise.all([
-    getServerSession(authOptions),
+  const [aiToolsMenuData, mostSearchedTools] = await Promise.all([
     buildAiToolsMenuData(),
     getRankings("most-searched", 6, REVALIDATE_SECONDS),
   ]);
@@ -146,6 +142,7 @@ export async function SiteShell({ children }: SiteShellProps) {
               <NavLink href="/" label="Discover" />
               <AiToolsMenu data={aiToolsMenuData} />
               <NavLink href="/prompts" label="Prompts" />
+              <NavLink href="/prompt-tools" label="Prompt Tools" />
               <NavLink href="/compare" label="Compare" />
               <NavLink href="/jobs" label="Jobs" />
               <NavLink href="/blog" label="Blog" />
@@ -160,28 +157,12 @@ export async function SiteShell({ children }: SiteShellProps) {
               </div>
 
               <div className="hidden md:block">
-                {session?.user ? (
-                  <AccountMenu
-                    name={session.user.name}
-                    email={session.user.email}
-                    image={session.user.image}
-                  />
-                ) : (
-                  <AuthDialog
-                    callbackUrl="/"
-                    enabled={googleAuthEnabled}
-                    triggerClassName="min-h-11 cursor-pointer rounded-button bg-brand-electric px-4 py-2 text-sm font-semibold text-white shadow-card transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:-translate-y-0.5 hover:bg-brand-electric-strong hover:shadow-card-hover"
-                  />
-                )}
+                <HeaderAuth />
               </div>
 
               <MobileMenu
                 navItems={navItems}
                 authEnabled={googleAuthEnabled}
-                isSignedIn={Boolean(session?.user)}
-                userName={session?.user?.name}
-                userEmail={session?.user?.email}
-                userImage={session?.user?.image}
                 trendingQueries={trendingQueries}
               />
             </div>
@@ -238,7 +219,7 @@ export async function SiteShell({ children }: SiteShellProps) {
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="block text-sm text-text-muted transition hover:text-text-primary"
+                      className="block py-1 text-sm text-text-muted transition hover:text-text-primary"
                     >
                       {link.label}
                     </Link>

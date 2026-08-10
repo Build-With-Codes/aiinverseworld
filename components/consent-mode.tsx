@@ -1,12 +1,7 @@
-type ConsentModeProps = {
-  nonce?: string;
-};
-
-export function ConsentMode({ nonce }: ConsentModeProps) {
+export function ConsentMode() {
   return (
     <script
       id="google-consent-mode"
-      nonce={nonce}
       suppressHydrationWarning
       dangerouslySetInnerHTML={{
         __html: `

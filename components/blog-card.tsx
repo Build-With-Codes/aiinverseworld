@@ -24,9 +24,13 @@ function gradientFor(category: string) {
 type BlogCardProps = {
   post: BlogCardData;
   featured?: boolean;
+  /** Heading level for the article title. Defaults to "h3" (grid card under an h2
+   * section heading). Pass "h2" for a featured card with no h2 section heading above it. */
+  headingLevel?: "h2" | "h3";
 };
 
-export function BlogCard({ post, featured = false }: BlogCardProps) {
+export function BlogCard({ post, featured = false, headingLevel = "h3" }: BlogCardProps) {
+  const Heading = headingLevel;
   const gradient = gradientFor(post.category);
   const coverFallback = (
     <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${gradient}`}>
@@ -68,13 +72,13 @@ export function BlogCard({ post, featured = false }: BlogCardProps) {
           <Badge variant="brand">{post.category}</Badge>
           <span className="text-caption text-text-muted">{post.readTime} read</span>
         </div>
-        <h3
+        <Heading
           className={`font-semibold text-text-primary transition group-hover:text-brand-cyan-strong ${
             featured ? "text-heading-1" : "text-heading-2 line-clamp-2"
           }`}
         >
           {post.title}
-        </h3>
+        </Heading>
         <p className={`text-body mt-2 text-text-secondary ${featured ? "" : "line-clamp-2"}`}>
           {post.description}
         </p>

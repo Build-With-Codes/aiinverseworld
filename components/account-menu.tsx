@@ -77,7 +77,7 @@ export function AccountMenu({ name, email, image, onClose }: AccountMenuProps) {
         ref={buttonRef}
         type="button"
         onClick={handleToggle}
-        className="flex cursor-pointer items-center gap-3 rounded-full border border-border-subtle bg-surface-2 px-3 py-2 transition hover:border-border-accent hover:bg-brand-cyan/10 hover:text-white w-full"
+        className="flex min-h-11 w-full cursor-pointer items-center gap-3 rounded-full border border-border-subtle bg-surface-2 px-3 py-2 transition hover:border-border-accent hover:bg-brand-cyan/10 hover:text-white"
       >
         {image ? (
           <Image

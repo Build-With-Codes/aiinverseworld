@@ -63,9 +63,9 @@ export function ThemeToggle() {
   return (
     <button
       type="button"
-      aria-label="Toggle color theme"
+      aria-label={`${theme === "light" ? "Light" : "Dark"} theme, switch to ${theme === "light" ? "dark" : "light"}`}
       onClick={handleToggle}
-      className="theme-toggle group inline-flex cursor-pointer items-center gap-2 rounded-full border px-2 py-2 text-xs font-medium transition hover:border-border-accent hover:bg-brand-cyan/10 hover:text-text-primary sm:gap-3 sm:px-3 sm:text-sm"
+      className="theme-toggle group inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-2 py-2 text-xs font-medium transition hover:border-border-accent hover:bg-brand-cyan/10 hover:text-text-primary sm:gap-3 sm:px-3 sm:text-sm"
     >
       <span className="theme-toggle__label min-w-0 text-left sm:min-w-12">
         {theme === "light" ? "Light" : "Dark"}

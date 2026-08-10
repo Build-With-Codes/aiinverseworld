@@ -9,6 +9,20 @@ export type PromptToolSlug =
   | "midjourney-prompt-builder"
   | "flux-prompt-builder";
 
+/**
+ * Real product taxonomy (not the fine-grained `category` field below, which
+ * is near-unique per tool and barely produces useful groupings). Drives
+ * sidebar sectioning and related-tool matching — see section 10/11 of the
+ * prompt-tools design pass.
+ */
+export type PromptToolGroup = "calculator" | "builder" | "transformer";
+
+export const promptToolGroupLabels: Record<PromptToolGroup, string> = {
+  calculator: "AI Calculators",
+  builder: "Prompt Builders",
+  transformer: "Prompt Utilities",
+};
+
 export type PromptTool = {
   slug: PromptToolSlug;
   title: string;
@@ -16,6 +30,7 @@ export type PromptTool = {
   description: string;
   eyebrow: string;
   category: string;
+  group: PromptToolGroup;
   href: string;
   primaryAction: string;
   outcome: string;
@@ -40,6 +55,7 @@ export const promptTools: PromptTool[] = [
     description: "Estimate tokens, words, characters, and reading size before sending a prompt to an AI model.",
     eyebrow: "Measure prompt size",
     category: "Analysis",
+    group: "calculator",
     href: "/prompt-tools/token-counter",
     primaryAction: "Count tokens",
     outcome: "Fast prompt size estimate",
@@ -62,6 +78,7 @@ export const promptTools: PromptTool[] = [
     description: "Estimate API cost from input tokens, output tokens, request volume, and model pricing.",
     eyebrow: "Plan usage cost",
     category: "Finance",
+    group: "calculator",
     href: "/prompt-tools/cost-calculator",
     primaryAction: "Calculate cost",
     outcome: "Daily and monthly API estimate",
@@ -84,6 +101,7 @@ export const promptTools: PromptTool[] = [
     description: "Check how much room your prompt, documents, and expected answer need inside a model context window.",
     eyebrow: "Fit long prompts",
     category: "Planning",
+    group: "calculator",
     href: "/prompt-tools/context-window-calculator",
     primaryAction: "Check fit",
     outcome: "Context fit and remaining room",
@@ -106,6 +124,7 @@ export const promptTools: PromptTool[] = [
     description: "Convert rough notes into a clean prompt structure with role, task, context, constraints, and output format.",
     eyebrow: "Structure messy drafts",
     category: "Writing",
+    group: "transformer",
     href: "/prompt-tools/prompt-formatter",
     primaryAction: "Format prompt",
     outcome: "Clean production prompt",
@@ -128,6 +147,7 @@ export const promptTools: PromptTool[] = [
     description: "Remove filler, duplicate spacing, vague phrasing, and conflicting instructions from prompt drafts.",
     eyebrow: "Reduce prompt noise",
     category: "Quality",
+    group: "transformer",
     href: "/prompt-tools/prompt-cleaner",
     primaryAction: "Clean prompt",
     outcome: "Shorter, clearer prompt",
@@ -150,6 +170,7 @@ export const promptTools: PromptTool[] = [
     description: "Create reusable prompt templates with variables, audience, task, constraints, and acceptance criteria.",
     eyebrow: "Build reusable prompts",
     category: "Systems",
+    group: "builder",
     href: "/prompt-tools/template-builder",
     primaryAction: "Build template",
     outcome: "Reusable prompt template",
@@ -172,6 +193,7 @@ export const promptTools: PromptTool[] = [
     description: "Design reliable system prompts with role, operating rules, safety boundaries, output contracts, and escalation logic.",
     eyebrow: "Define AI behavior",
     category: "Agents",
+    group: "builder",
     href: "/prompt-tools/system-prompt-builder",
     primaryAction: "Build system prompt",
     outcome: "Production-ready behavior spec",
@@ -194,6 +216,7 @@ export const promptTools: PromptTool[] = [
     description: "Generate compact visual prompts with subject, style, composition, lighting, lens, mood, and aspect ratio.",
     eyebrow: "Create cinematic image prompts",
     category: "Image",
+    group: "builder",
     href: "/prompt-tools/midjourney-prompt-builder",
     primaryAction: "Build image prompt",
     outcome: "Polished Midjourney prompt",
@@ -216,6 +239,7 @@ export const promptTools: PromptTool[] = [
     description: "Create direct, high-adherence image prompts with commercial styling, composition, material details, and negative prompts.",
     eyebrow: "Build precise image prompts",
     category: "Image",
+    group: "builder",
     href: "/prompt-tools/flux-prompt-builder",
     primaryAction: "Build FLUX prompt",
     outcome: "Clear visual generation brief",
@@ -338,9 +362,15 @@ export function getPromptTool(slug: PromptToolSlug) {
   return promptToolMap.get(slug);
 }
 
+/**
+ * Same-family tools first (a calculator suggests other calculators, a
+ * builder suggests other builders) — matches the real product taxonomy
+ * (PromptToolGroup), not the fine-grained per-tool `category` field, which
+ * is near-unique and rarely produces a genuine match.
+ */
 export function getRelatedPromptTools(slug: PromptToolSlug, limit = 3) {
   const current = getPromptTool(slug);
-  const sameCategory = promptTools.filter((tool) => tool.slug !== slug && tool.category === current?.category);
-  const others = promptTools.filter((tool) => tool.slug !== slug && tool.category !== current?.category);
-  return [...sameCategory, ...others].slice(0, limit);
+  const sameGroup = promptTools.filter((tool) => tool.slug !== slug && tool.group === current?.group);
+  const others = promptTools.filter((tool) => tool.slug !== slug && tool.group !== current?.group);
+  return [...sameGroup, ...others].slice(0, limit);
 }

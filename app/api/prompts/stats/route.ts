@@ -6,6 +6,7 @@ export async function GET() {
   try {
     const response = await fetch(`${AIVERSE_JOBS_BASE_URL}/prompts/stats`, {
       cache: "no-store",
+      signal: AbortSignal.timeout(8000),
     });
 
     return new Response(await response.text(), {

@@ -925,9 +925,9 @@ export function HandDetectGameClient() {
     if (!container) return;
 
     if (!document.fullscreenElement) {
-      container.requestFullscreen?.().catch(() => {
-        console.log("Fullscreen request failed");
-      });
+      // Fullscreen rejection is a normal, expected outcome (missing user
+      // gesture, unsupported browser, etc.) — not worth logging in production.
+      container.requestFullscreen?.().catch(() => {});
     } else {
       document.exitFullscreen?.();
     }
@@ -957,7 +957,7 @@ export function HandDetectGameClient() {
             <button
               type="button"
               onClick={status === "crashed" ? restartDrive : startCamera}
-              className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white px-7 py-4 text-base font-semibold text-slate-950 shadow-[0_18px_60px_rgba(2,6,23,0.45)] transition hover:bg-cyan-200"
+              className="absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-brand-electric-strong px-7 py-4 text-base font-semibold text-white shadow-[0_18px_60px_rgba(2,6,23,0.45)] transition hover:bg-brand-electric"
             >
               Start Game
             </button>

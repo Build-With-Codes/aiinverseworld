@@ -1,24 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 
-import { authOptions } from "@/auth";
-import { ChatSupportGate } from "@/components/chat-support-gate";
-import { ConsentedAnalytics } from "@/components/consented-analytics";
-import { ConsentedScript } from "@/components/consented-script";
 import { ConsentMode } from "@/components/consent-mode";
-import { CookieConsent } from "@/components/cookie-consent";
-import { CompareBar } from "@/components/engagement/compare-tray";
-import { GoogleAnalytics } from "@/components/google-analytics";
 import { Providers } from "@/components/providers";
-import { SiteShell } from "@/components/site-shell";
-import { googleAuthEnabled } from "@/lib/auth-config";
 import { siteUrl } from "@/lib/seo";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { buildGlobalStructuredData, jsonLd } from "@/lib/structured-data";
 import { getRouteSeo } from "@/services/seo.service";
-import { headers } from "next/headers";
-import { getServerSession } from "next-auth";
-import { Suspense } from "react";
 
 import "./globals.css";
 
@@ -54,14 +42,28 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
+/**
+ * True root layout — deliberately minimal. No headers()/getServerSession()
+ * here or anywhere in this file's own render path, so it never forces
+ * routes into dynamic rendering. The admin/public split is resolved by
+ * route groups (app/(site)/ vs app/admin/) at the file-system level, not by
+ * runtime logic here — each group brings its own layout underneath this
+ * one. Session state for the few UI pieces that need it (header account
+ * menu, mobile menu, chat widget) is fetched client-side inside those
+ * specific components (see HeaderAuth, MobileMenu, ChatWidgetGate) —
+ * Providers gets session={null} and getSession() calls broadcast the real
+ * value to every useSession() consumer in the tree once resolved.
+ */
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [session, requestHeaders] = await Promise.all([getServerSession(authOptions), headers()]);
-  const nonce = requestHeaders.get("x-nonce") ?? undefined;
-  const isAdminSection = requestHeaders.get("x-route-section") === "admin";
   const structuredData = buildGlobalStructuredData();
 
   return (
@@ -74,7 +76,6 @@ export default async function RootLayout({
       <head>
         <script
           id="theme-init"
-          nonce={nonce}
           suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `
@@ -87,16 +88,14 @@ export default async function RootLayout({
             `,
           }}
         />
-        <ConsentMode nonce={nonce} />
+        <ConsentMode />
         <script
           async
           id="google-analytics-loader"
-          nonce={nonce}
           src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(gaMeasurementId)}`}
         />
         <script
           id="google-analytics-config"
-          nonce={nonce}
           suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: `
@@ -109,44 +108,13 @@ export default async function RootLayout({
         />
         <script
           id="aiverseworld-global-schema"
-          nonce={nonce}
           suppressHydrationWarning
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: jsonLd(structuredData) }}
         />
-        {/* REMOVED: Next.js <Script> component and invalid meta tags are removed from <head> */}
       </head>
       <body className="min-h-full" suppressHydrationWarning>
-        {isAdminSection ? (
-          <Providers session={session}>{children}</Providers>
-        ) : (
-          <>
-            <ConsentedScript
-              async
-              id="google-adsense"
-              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1921034562411070"
-              crossOrigin="anonymous"
-              nonce={nonce}
-            />
-
-            <Providers session={session}>
-              <SiteShell>{children}</SiteShell>
-              <CompareBar />
-            </Providers>
-            <CookieConsent />
-            {session?.user ? (
-              <ConsentedScript id="chatbase-widget" nonce={nonce}>
-                {`(function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="oqIeeF-NRJYMKRywqI8DE";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();`}
-              </ConsentedScript>
-            ) : (
-              <ChatSupportGate enabled={googleAuthEnabled} />
-            )}
-            <ConsentedAnalytics />
-            <Suspense fallback={null}>
-              <GoogleAnalytics gaId={gaMeasurementId} />
-            </Suspense>
-          </>
-        )}
+        <Providers session={null}>{children}</Providers>
       </body>
     </html>
   );

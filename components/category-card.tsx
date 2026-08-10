@@ -6,10 +6,14 @@ import type { Category } from "@/lib/catalog-types";
 
 type CategoryCardProps = {
   category: Category;
+  /** Heading level for the card title. Defaults to "h3" (section heading -> card title).
+   * Pass "h2" when the card grid has no h2 section heading above it (e.g. directly under an h1). */
+  headingLevel?: "h2" | "h3";
 };
 
-export function CategoryCard({ category }: CategoryCardProps) {
+export function CategoryCard({ category, headingLevel = "h3" }: CategoryCardProps) {
   const tone = getCategoryTone(category.slug);
+  const Heading = headingLevel;
 
   return (
     <Link
@@ -27,7 +31,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
           →
         </span>
       </div>
-      <h3 className="text-heading-1 mt-5 text-text-primary">{category.name}</h3>
+      <Heading className="text-heading-1 mt-5 text-text-primary">{category.name}</Heading>
       <p className="text-body mt-2 text-text-secondary">{category.description}</p>
       <span className={`text-caption mt-4 inline-block font-semibold ${tone.text}`}>
         {category.count} listed tools

@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { getSession } from "next-auth/react";
+import type { Session } from "next-auth";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -18,10 +20,6 @@ type NavItem = {
 type MobileMenuProps = {
   navItems: NavItem[];
   authEnabled: boolean;
-  isSignedIn: boolean;
-  userName?: string | null;
-  userEmail?: string | null;
-  userImage?: string | null;
   trendingQueries?: string[];
 };
 
@@ -36,16 +34,31 @@ const accountLinks = [
 export function MobileMenu({
   navItems,
   authEnabled,
-  isSignedIn,
-  userName,
-  userEmail,
-  userImage,
   trendingQueries,
 }: MobileMenuProps) {
   const [open, setOpen] = useState(false);
+  const [session, setSession] = useState<Session | null | undefined>(undefined);
   const contentRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const isOpenRef = useRef(false);
+  const isSignedIn = Boolean(session?.user);
+  const userName = session?.user?.name;
+  const userEmail = session?.user?.email;
+  const userImage = session?.user?.image;
+
+  useEffect(() => {
+    let active = true;
+    getSession()
+      .then((value) => {
+        if (active) setSession(value);
+      })
+      .catch(() => {
+        if (active) setSession(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleToggle = useCallback(() => {
     isOpenRef.current = !isOpenRef.current;
@@ -129,7 +142,7 @@ export function MobileMenu({
                     <button
                       type="button"
                       onClick={handleClose}
-                      className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-border-subtle bg-surface-2 text-base font-semibold leading-none text-text-secondary transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:border-border-strong hover:text-text-primary"
+                      className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-border-subtle bg-surface-2 text-base font-semibold leading-none text-text-secondary transition duration-[var(--motion-hover)] ease-[var(--ease-premium)] hover:border-border-strong hover:text-text-primary"
                       aria-label="Close menu"
                     >
                       X
@@ -157,7 +170,9 @@ export function MobileMenu({
                   </div>
 
                   <div className="mt-5 border-t border-border-subtle pt-5">
-                    {isSignedIn ? (
+                    {session === undefined ? (
+                      <div className="h-11 w-full animate-pulse rounded-button bg-surface-3" aria-hidden />
+                    ) : isSignedIn ? (
                       <div>
                         <p className="text-eyebrow mb-2 text-text-muted">Account</p>
                         <div className="rounded-card border border-border-subtle bg-surface-2 p-4">

@@ -39,7 +39,7 @@ export function AddToCompareButton({ entry, variant = "full" }: AddToCompareButt
                 ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong"
                 : "border-border-strong bg-surface-3 text-text-primary hover:border-border-accent"
             }`
-          : `inline-flex h-10 w-10 items-center justify-center rounded-full border transition disabled:opacity-40 ${
+          : `inline-flex h-11 w-11 items-center justify-center rounded-full border transition disabled:opacity-40 ${
               inTray
                 ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong"
                 : "border-border-subtle bg-surface-2 text-text-muted hover:border-border-accent"

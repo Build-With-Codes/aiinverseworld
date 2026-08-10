@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
             value:
               "camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=()",
           },
+          {
+            // Legacy header some scanners still check for. The CSP set in
+            // proxy.ts is the real defense; explicitly disabling the
+            // deprecated browser XSS auditor is the current OWASP-recommended
+            // value (the auditor itself has been a source of XSS bugs).
+            key: "X-XSS-Protection",
+            value: "0",
+          },
         ],
       },
     ];

@@ -65,7 +65,7 @@ export function ToolsCsvImportForm() {
         />
         <label
           htmlFor="tools-csv-input"
-          className={`cursor-pointer rounded-pill bg-white px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-cyan-200 ${
+          className={`cursor-pointer rounded-pill bg-brand-electric px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-electric-strong ${
             importing ? "pointer-events-none opacity-60" : ""
           }`}
         >

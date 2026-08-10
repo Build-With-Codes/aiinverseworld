@@ -5,37 +5,37 @@ const TONE_CLASSES: Record<CategoryTone, { icon: string; badge: string; ring: st
     icon: "text-cyan-300",
     badge: "border-cyan-400/25 bg-cyan-400/10",
     ring: "group-hover:border-cyan-400/50",
-    text: "text-cyan-300",
+    text: "category-tone-text text-cyan-300",
   },
   emerald: {
     icon: "text-emerald-300",
     badge: "border-emerald-400/25 bg-emerald-400/10",
     ring: "group-hover:border-emerald-400/50",
-    text: "text-emerald-300",
+    text: "category-tone-text text-emerald-300",
   },
   violet: {
     icon: "text-violet-300",
     badge: "border-violet-400/25 bg-violet-400/10",
     ring: "group-hover:border-violet-400/50",
-    text: "text-violet-300",
+    text: "category-tone-text text-violet-300",
   },
   blue: {
     icon: "text-blue-300",
     badge: "border-blue-400/25 bg-blue-400/10",
     ring: "group-hover:border-blue-400/50",
-    text: "text-blue-300",
+    text: "category-tone-text text-blue-300",
   },
   amber: {
     icon: "text-amber-300",
     badge: "border-amber-400/25 bg-amber-400/10",
     ring: "group-hover:border-amber-400/50",
-    text: "text-amber-300",
+    text: "category-tone-text text-amber-300",
   },
   rose: {
     icon: "text-rose-300",
     badge: "border-rose-400/25 bg-rose-400/10",
     ring: "group-hover:border-rose-400/50",
-    text: "text-rose-300",
+    text: "category-tone-text text-rose-300",
   },
 };
 

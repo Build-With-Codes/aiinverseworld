@@ -188,12 +188,26 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  /* Safety net: no single overflowing element (a stray fixed-width table,
+     an unwrapped image, an absolutely-positioned dropdown) should ever be
+     able to widen the whole page and cause horizontal scroll on mobile. */
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* max-width only (not height:auto) — several components render fixed
+   width+height <Image> avatars/icons where forcing height:auto would
+   distort the aspect ratio; max-width alone still prevents overflow. */
+img,
+svg {
+  max-width: 100%;
 }
 
 /* ---- Typography scale ---- */
@@ -415,6 +429,27 @@ html[data-theme="light"] .platform-search-shell {
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.92),
     0 14px 42px rgba(15, 23, 42, 0.07);
+}
+
+/* Category tone accents are tuned for dark surfaces; darken them in light theme
+   so they meet WCAG AA contrast (4.5:1) against light card backgrounds. */
+html[data-theme="light"] .category-tone-text.text-cyan-300 {
+  color: var(--color-cyan-700, #0e7490);
+}
+html[data-theme="light"] .category-tone-text.text-emerald-300 {
+  color: var(--color-emerald-700, #047857);
+}
+html[data-theme="light"] .category-tone-text.text-violet-300 {
+  color: var(--color-violet-700, #6d28d9);
+}
+html[data-theme="light"] .category-tone-text.text-blue-300 {
+  color: var(--color-blue-700, #1d4ed8);
+}
+html[data-theme="light"] .category-tone-text.text-amber-300 {
+  color: var(--color-amber-800, #92400e);
+}
+html[data-theme="light"] .category-tone-text.text-rose-300 {
+  color: var(--color-rose-700, #be123c);
 }
 
 /* ---- Premium surface ---- */
@@ -1147,6 +1182,13 @@ html[data-theme="light"] input::placeholder {
   stroke-dashoffset: 1000;
   animation: draw-guess-stroke 1.1s ease forwards;
   vector-effect: non-scaling-stroke;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .draw-guess-stroke {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
 }
 
 @keyframes draw-guess-stroke {
