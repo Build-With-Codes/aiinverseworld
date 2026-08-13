@@ -4,7 +4,7 @@ export const AIVERSE_WORLD_BASE_URL =
   process.env.AIVERSE_WORLD_BASE_URL ??
   process.env.NEXT_PUBLIC_AIVERSE_WORLD_BASE_URL ??
   (isProduction
-    ? "https://aiverseworld-backend.onrender.com"
+    ? "https://aiverseworld-backend-djpy.onrender.com"
     : "http://localhost:3001");
 
 export const AIVERSE_AUTH_BASE_URL =
