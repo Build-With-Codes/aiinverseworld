@@ -79,6 +79,7 @@ export function TrendingProjectCard({
               src={image}
               alt={`${project.owner} avatar`}
               fill
+              unoptimized
               sizes="56px"
               className="object-cover"
             />
