@@ -13,6 +13,7 @@ export async function GET() {
       },
     });
   } catch (error) {
+    console.error("[trending-projects] Failed to load trending projects", error);
     return Response.json(
       {
         updatedAt: new Date().toISOString(),

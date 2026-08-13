@@ -50,12 +50,15 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default async function TrendingPage() {
-  const data = await getTrendingProjectsData().catch((error) => ({
-    updatedAt: new Date().toISOString(),
-    projects: [],
-    isStale: true,
-    message: "Trending projects are being prepared. Please check back shortly.",
-  }));
+  const data = await getTrendingProjectsData().catch((error) => {
+    console.error("[trending-projects] Failed to render trending projects", error);
+    return {
+      updatedAt: new Date().toISOString(),
+      projects: [],
+      isStale: true,
+      message: "Trending projects are being prepared. Please check back shortly.",
+    };
+  });
 
   const structuredData = [
     {

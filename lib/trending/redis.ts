@@ -56,11 +56,16 @@ function shouldUseTls(url: URL) {
   return url.protocol === "rediss:" || url.hostname.endsWith("upstash.io") || process.env.REDIS_TLS === "true";
 }
 
-async function redisCommand(parts: string[]) {
+function getRedisUrl() {
   const rawUrl = process.env.REDIS_URL?.trim();
   if (!rawUrl) throw new Error("Missing required environment variable: REDIS_URL");
 
-  const url = new URL(rawUrl);
+  const cliUrl = rawUrl.match(/(?:^|\s)-u\s+(['"]?)(redis(?:s)?:\/\/\S+)\1/i)?.[2];
+  return (cliUrl ?? rawUrl).replace(/^['"]|['"]$/g, "");
+}
+
+async function redisCommand(parts: string[]) {
+  const url = new URL(getRedisUrl());
   const port = Number(url.port || 6379);
   const password = decodeURIComponent(url.password || "");
   const username = decodeURIComponent(url.username || "default");
