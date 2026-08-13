@@ -22,6 +22,9 @@ class RespParser {
     if (prefix === "$") {
       const length = Number(this.readLine());
       if (length === -1) return null;
+      if (this.offset + length + 2 > this.data.length) {
+        throw new Error("Redis returned an incomplete response");
+      }
       const value = this.data.toString("utf8", this.offset, this.offset + length);
       this.offset += length + 2;
       return value;
@@ -32,7 +35,7 @@ class RespParser {
       return Array.from({ length }, () => this.parse());
     }
 
-      throw new Error("Redis returned an unsupported response");
+    throw new Error("Redis returned an unsupported response");
   }
 
   private readLine() {
@@ -44,6 +47,15 @@ class RespParser {
     this.offset = end + 2;
     return value;
   }
+}
+
+function parseRedisReplies(buffer: Buffer, count: number) {
+  let result: unknown = null;
+  const parser = new RespParser(buffer);
+  for (let index = 0; index < count; index += 1) {
+    result = parser.parse();
+  }
+  return result;
 }
 
 function encodeCommand(parts: string[]) {
@@ -105,21 +117,27 @@ async function redisCommand(parts: string[]) {
 
     socket.on("data", (chunk) => {
       chunks.push(chunk);
+      try {
+        const result = parseRedisReplies(Buffer.concat(chunks), commands.length);
+        socket.end();
+        finish(undefined, result);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "";
+        if (message.includes("empty response") || message.includes("incomplete response")) {
+          return;
+        }
+        socket.destroy();
+        finish(error);
+      }
     });
 
     socket.once(readyEvent, () => {
-      socket.write(payload, () => {
-        socket.end();
-      });
+      socket.write(payload);
     });
 
     socket.once("end", () => {
       try {
-        let result: unknown = null;
-        const parser = new RespParser(Buffer.concat(chunks));
-        for (let index = 0; index < commands.length; index += 1) {
-          result = parser.parse();
-        }
+        const result = parseRedisReplies(Buffer.concat(chunks), commands.length);
         finish(undefined, result);
       } catch (error) {
         finish(error);
