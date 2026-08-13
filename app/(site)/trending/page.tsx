@@ -8,6 +8,7 @@ import { TrendingClient } from "@/app/(site)/trending/trending-client";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+export const maxDuration = 60;
 
 export const metadata: Metadata = buildMetadata({
   title: "Trending AI Projects | Open-Source AI Tools & GitHub Projects",
