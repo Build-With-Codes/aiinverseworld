@@ -55,9 +55,8 @@ const navItems = [
   { href: "/", label: "Discover" },
   { href: "/search", label: "Search" },
   { href: "/trending", label: "Trending Projects" },
-  { href: "/prompts", label: "Prompt Library" },
+  { href: "/news", label: "AI News" },
   { href: "/compare", label: "Compare" },
-  { href: "/news", label: "News" },
   { href: "/blog", label: "Blog" },
   { href: "/problems/submit", label: "Submit Problem" },
 ];
@@ -143,7 +142,7 @@ export async function SiteShell({ children }: SiteShellProps) {
               <NavLink href="/" label="Discover" />
               <AiToolsMenu data={aiToolsMenuData} />
               <NavLink href="/trending" label="Trending" />
-              <NavLink href="/prompts" label="Prompts" />
+              <NavLink href="/news" label="AI News" />
               <NavLink href="/compare" label="Compare" />
               <NavLink href="/blog" label="Blog" />
             </nav>

@@ -7,6 +7,13 @@ import { useMemo, useState } from "react";
 import type { NewsArticle } from "@/lib/news";
 
 const preferredCategories = ["All News", "AI Research", "Models & LLMs", "Open Source", "AI Tools", "Startups"];
+const sortOptions = [
+  { value: "recent", label: "Most Recent" },
+  { value: "oldest", label: "Oldest First" },
+  { value: "source", label: "Source A-Z" },
+] as const;
+
+type SortOption = (typeof sortOptions)[number]["value"];
 
 function relativeTime(value: string) {
   const timestamp = new Date(value).getTime();
@@ -131,11 +138,22 @@ export function NewsClient({
     return [...ordered, ...remaining];
   }, [articles]);
   const [activeCategory, setActiveCategory] = useState("All News");
+  const [sortBy, setSortBy] = useState<SortOption>("recent");
 
   const filteredArticles = useMemo(() => {
-    if (activeCategory === "All News") return articles;
-    return articles.filter((article) => article.category === activeCategory);
-  }, [activeCategory, articles]);
+    const visibleArticles =
+      activeCategory === "All News" ? articles : articles.filter((article) => article.category === activeCategory);
+
+    return [...visibleArticles].sort((a, b) => {
+      if (sortBy === "source") {
+        return a.sourceName.localeCompare(b.sourceName);
+      }
+
+      const aTime = new Date(a.publishedAt).getTime();
+      const bTime = new Date(b.publishedAt).getTime();
+      return sortBy === "oldest" ? aTime - bTime : bTime - aTime;
+    });
+  }, [activeCategory, articles, sortBy]);
 
   const topStories = filteredArticles.slice(0, 3);
   const latestStories = filteredArticles.slice(3, 15);
@@ -199,8 +217,21 @@ export function NewsClient({
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-heading-1 text-text-primary">Latest AI News</h2>
               <div className="flex items-center gap-3 text-sm text-text-secondary">
-                <span>Sort by:</span>
-                <span className="rounded-button border border-border-subtle bg-surface-2 px-4 py-2 font-semibold text-text-primary">Most Recent</span>
+                <label htmlFor="news-sort" className="font-medium">
+                  Sort by:
+                </label>
+                <select
+                  id="news-sort"
+                  value={sortBy}
+                  onChange={(event) => setSortBy(event.target.value as SortOption)}
+                  className="h-10 rounded-button border border-border-subtle bg-surface-2 px-4 text-sm font-semibold text-text-primary outline-none transition hover:border-border-accent focus:border-border-accent focus:ring-4 focus:ring-brand-cyan/10"
+                >
+                  {sortOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">

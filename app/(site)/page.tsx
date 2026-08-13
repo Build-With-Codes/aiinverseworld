@@ -27,7 +27,7 @@ const REVALIDATE_SECONDS = 300;
 
 export default function Home() {
   return (
-    <div className="space-y-20 pb-14 pt-10">
+    <div className="space-y-12 pb-14 pt-8">
       <section className="relative grid gap-12 overflow-hidden py-6 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:py-12">
         <div className="relative space-y-8">
           {/* No FadeInSection here: this content is always above the fold and
@@ -157,16 +157,57 @@ function RailFallback() {
 
 function StatsFallback() {
   return (
-    <section aria-label="AiverseWorld platform statistics loading" className="border-y border-border-subtle py-8">
-      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+    <section
+      aria-label="AiverseWorld platform statistics loading"
+      className="rounded-card-lg border border-border-subtle bg-gradient-to-br from-surface-2 via-surface-1 to-surface-2 px-5 py-5 shadow-[0_18px_70px_rgba(2,6,23,0.14)] sm:px-7 lg:px-8 dark:border-white/10 dark:bg-[#07101f] dark:from-[#07101f] dark:via-[#081222] dark:to-[#06101d] dark:shadow-[0_18px_70px_rgba(2,6,23,0.22)]"
+    >
+      <div className="grid gap-0 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
-          <div key={index} className="space-y-2">
-            <div className="skeleton-shimmer h-10 w-24 rounded-pill" />
+          <div
+            key={index}
+            className={`space-y-3 py-4 sm:px-5 lg:px-8 ${
+              index > 0 ? "lg:border-l lg:border-border-subtle dark:lg:border-white/10" : ""
+            } ${index % 2 === 1 ? "sm:border-l sm:border-border-subtle dark:sm:border-white/10 lg:border-l" : ""}`}
+          >
+            <div className="skeleton-shimmer h-12 w-12 rounded-card" />
+            <div className="skeleton-shimmer h-11 w-24 rounded-pill" />
             <div className="skeleton-shimmer h-4 w-36 rounded-pill" />
           </div>
         ))}
       </div>
     </section>
+  );
+}
+
+function StatIcon({ index }: { index: number }) {
+  const iconClass = "h-6 w-6";
+  if (index === 1) {
+    return (
+      <svg aria-hidden className={iconClass} viewBox="0 0 24 24" fill="none">
+        <path d="M4.75 5.75h5.5v5.5h-5.5v-5.5Zm9 0h5.5v5.5h-5.5v-5.5Zm-9 7h5.5v5.5h-5.5v-5.5Zm9 0h5.5v5.5h-5.5v-5.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+  if (index === 2) {
+    return (
+      <svg aria-hidden className={iconClass} viewBox="0 0 24 24" fill="none">
+        <path d="M7.5 7.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm9 14a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm0-14a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5ZM9.6 6.4l4.8 10.2M14.4 6.4 9.6 11.6m0 0 4.8 5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+  if (index === 3) {
+    return (
+      <svg aria-hidden className={iconClass} viewBox="0 0 24 24" fill="none">
+        <path d="M5 14.5 14.5 5l4.5 4.5-9.5 9.5H5v-4.5Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+        <path d="m13.5 6 4.5 4.5M7 17l-2 2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  return (
+    <svg aria-hidden className={iconClass} viewBox="0 0 24 24" fill="none">
+      <path d="M12 3.75 18.25 6v5.25c0 4.15-2.52 7.6-6.25 9-3.73-1.4-6.25-4.85-6.25-9V6L12 3.75Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+      <path d="m9.25 12 1.8 1.8 3.9-4.05" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 
@@ -286,19 +327,55 @@ async function TrustedStatsSection() {
   ]);
 
   const stats = [
-    [formatStatCount(catalog.pagination.total), "Verified AI tools"],
-    [formatStatCount(categoryCatalog.categories.length), "Practical categories"],
-    [formatStatCount(comparisonCatalog.comparisons.length), "Comparison paths"],
-    ["Daily", "Catalog updates"],
+    {
+      value: formatStatCount(catalog.pagination.total),
+      label: "Verified AI tools",
+      description: "Handpicked and tested for quality",
+      accent: "border-brand-violet/25 bg-brand-violet/15 text-brand-violet",
+    },
+    {
+      value: formatStatCount(categoryCatalog.categories.length),
+      label: "Practical categories",
+      description: "From productivity to creativity and more",
+      accent: "border-brand-electric/25 bg-brand-electric/15 text-brand-electric-strong",
+    },
+    {
+      value: formatStatCount(comparisonCatalog.comparisons.length),
+      label: "Comparison paths",
+      description: "Find the perfect tool for your needs",
+      accent: "border-brand-violet/25 bg-brand-violet/15 text-brand-violet",
+    },
+    {
+      value: "Daily",
+      label: "Catalog updates",
+      description: "Fresh tools, trends, and insights every day",
+      accent: "border-brand-cyan/25 bg-brand-cyan/15 text-brand-cyan-strong",
+    },
   ];
 
   return (
-    <section aria-label="AiverseWorld platform statistics" className="border-y border-border-subtle py-8">
-      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map(([value, label]) => (
-          <div key={label}>
-            <p className="text-display-2 text-text-primary">{value}</p>
-            <p className="mt-1 text-sm font-medium text-text-secondary">{label}</p>
+    <section
+      aria-label="AiverseWorld platform statistics"
+      className="relative overflow-hidden rounded-card-lg border border-border-subtle bg-gradient-to-br from-surface-2 via-surface-1 to-surface-2 px-5 py-5 shadow-[0_22px_80px_rgba(2,6,23,0.12)] sm:px-7 lg:px-8 dark:border-white/10 dark:bg-[#07101f] dark:from-[#07101f] dark:via-[#081222] dark:to-[#06101d] dark:shadow-[0_22px_80px_rgba(2,6,23,0.28)]"
+    >
+      <div className="pointer-events-none absolute inset-x-0 -top-32 h-48 bg-[radial-gradient(circle_at_50%_0%,rgba(124,58,237,0.14),transparent_62%)] dark:bg-[radial-gradient(circle_at_50%_0%,rgba(124,58,237,0.26),transparent_62%)]" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-[radial-gradient(circle_at_100%_10%,rgba(34,211,238,0.08),transparent_60%)] dark:bg-[radial-gradient(circle_at_100%_10%,rgba(34,211,238,0.14),transparent_60%)]" />
+      <div className="grid gap-0 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((stat, index) => (
+          <div
+            key={stat.label}
+            className={`relative px-1 py-4 sm:px-5 lg:px-8 ${
+              index > 0 ? "lg:border-l lg:border-border-subtle dark:lg:border-white/10" : ""
+            } ${index % 2 === 1 ? "sm:border-l sm:border-border-subtle dark:sm:border-white/10 lg:border-l" : ""}`}
+          >
+            <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-card border shadow-[0_14px_34px_rgba(2,6,23,0.24)] ${stat.accent}`}>
+              <StatIcon index={index} />
+            </div>
+            <p className="text-[2.6rem] font-bold leading-none tracking-normal text-text-primary sm:text-[2.9rem]">
+              {stat.value}
+            </p>
+            <h2 className="mt-2 text-base font-bold leading-6 text-text-primary">{stat.label}</h2>
+            <p className="mt-1 max-w-48 text-sm leading-6 text-text-secondary">{stat.description}</p>
           </div>
         ))}
       </div>
