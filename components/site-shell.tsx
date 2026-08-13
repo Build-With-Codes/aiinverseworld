@@ -54,6 +54,7 @@ type SiteShellProps = {
 const navItems = [
   { href: "/", label: "Discover" },
   { href: "/search", label: "Search" },
+  { href: "/trending", label: "Trending Projects" },
   { href: "/prompts", label: "Prompt Library" },
   { href: "/compare", label: "Compare" },
   { href: "/news", label: "News" },
@@ -67,6 +68,7 @@ const footerGroups = [
     links: [
       { href: "/search", label: "Search" },
       { href: "/compare", label: "Compare" },
+      { href: "/trending", label: "Trending Projects" },
       { href: "/prompt-tools", label: "Prompt Tools" },
       { href: "/prompts", label: "Prompt Library" },
       { href: "/jobs", label: "Jobs" },
@@ -140,6 +142,7 @@ export async function SiteShell({ children }: SiteShellProps) {
             <nav className="hidden items-center gap-1 lg:flex">
               <NavLink href="/" label="Discover" />
               <AiToolsMenu data={aiToolsMenuData} />
+              <NavLink href="/trending" label="Trending" />
               <NavLink href="/prompts" label="Prompts" />
               <NavLink href="/compare" label="Compare" />
               <NavLink href="/blog" label="Blog" />
