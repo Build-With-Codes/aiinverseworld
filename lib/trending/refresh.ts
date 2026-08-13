@@ -1,3 +1,5 @@
+import { after } from "next/server";
+
 import { fetchTrendingProjectsFromGitHub } from "@/lib/trending/github";
 import { redisDel, redisGet, redisSet, redisSetNx } from "@/lib/trending/redis";
 import type { TrendingProjectsCache, TrendingProjectsResponse } from "@/lib/trending/types";
@@ -53,6 +55,16 @@ export async function startTrendingRefresh() {
   await refreshWithLock();
 }
 
+function scheduleTrendingRefresh() {
+  try {
+    after(async () => {
+      await refreshWithLock();
+    });
+  } catch {
+    void refreshWithLock().catch(() => undefined);
+  }
+}
+
 export async function getTrendingProjectsData(): Promise<TrendingProjectsResponse> {
   const cached = parseCache(await redisGet(CACHE_KEY));
 
@@ -84,7 +96,7 @@ export async function getTrendingProjectsData(): Promise<TrendingProjectsRespons
     return { ...cached, isStale: false };
   }
 
-  void startTrendingRefresh().catch(() => undefined);
+  scheduleTrendingRefresh();
 
   return {
     ...cached,

@@ -37,6 +37,9 @@ class RespParser {
 
   private readLine() {
     const end = this.data.indexOf("\r\n", this.offset);
+    if (end === -1) {
+      throw new Error("Redis returned an incomplete response");
+    }
     const value = this.data.toString("utf8", this.offset, end);
     this.offset = end + 2;
     return value;
@@ -72,14 +75,27 @@ async function redisCommand(parts: string[]) {
 
   return await new Promise<unknown>((resolve, reject) => {
     const chunks: Buffer[] = [];
-    const timer = setTimeout(() => {
+    let settled = false;
+    let timer: NodeJS.Timeout;
+
+    function finish(error?: unknown, value?: unknown) {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (error) {
+        reject(error);
+      } else {
+        resolve(value);
+      }
+    }
+
+    timer = setTimeout(() => {
       socket.destroy();
-      reject(new Error("Redis command timed out"));
+      finish(new Error("Redis command timed out"));
     }, 8_000);
 
     socket.once("error", (error) => {
-      clearTimeout(timer);
-      reject(error);
+      finish(error);
     });
 
     socket.on("data", (chunk) => {
@@ -93,16 +109,21 @@ async function redisCommand(parts: string[]) {
     });
 
     socket.once("end", () => {
-      clearTimeout(timer);
       try {
         let result: unknown = null;
         const parser = new RespParser(Buffer.concat(chunks));
         for (let index = 0; index < commands.length; index += 1) {
           result = parser.parse();
         }
-        resolve(result);
+        finish(undefined, result);
       } catch (error) {
-        reject(error);
+        finish(error);
+      }
+    });
+
+    socket.once("close", () => {
+      if (!settled && chunks.length === 0) {
+        finish(new Error("Redis returned an empty response"));
       }
     });
   });
