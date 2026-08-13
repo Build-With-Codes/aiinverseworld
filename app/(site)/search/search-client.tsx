@@ -17,6 +17,40 @@ type Props = {
 
 const allPricing = ["Free", "Freemium", "Subscription", "Usage-based", "Enterprise", "Custom"];
 
+function Chevron({ open }: { open: boolean }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 20 20"
+      className={`h-4 w-4 shrink-0 transition-transform duration-[var(--motion-dropdown)] ease-[var(--ease-premium)] ${open ? "rotate-180" : ""}`}
+    >
+      <path
+        d="M5.5 7.5 10 12l4.5-4.5"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+      />
+    </svg>
+  );
+}
+
+function XIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" className="h-3.5 w-3.5 shrink-0">
+      <path
+        d="M5.5 5.5l9 9m0-9l-9 9"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.8"
+      />
+    </svg>
+  );
+}
+
 export function SearchClient({ initialTools, categories, initialQuery, pagination }: Props) {
   const firstRenderRef = useRef(true);
   const [tools, setTools] = useState(initialTools);
@@ -212,9 +246,10 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
           <div className="relative">
             <button
               onClick={() => toggleDropdown("category")}
-              className={`rounded-2xl border px-4 py-2.5 text-sm transition ${category ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong" : "border-border-subtle bg-surface-1 text-slate-200 hover:border-border-accent"}`}
+              className={`inline-flex items-center gap-1.5 rounded-2xl border px-4 py-2.5 text-sm transition ${category ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong" : "border-border-subtle bg-surface-1 text-slate-200 hover:border-border-accent"}`}
             >
-              {category || "Category"} v
+              {category || "Category"}
+              <Chevron open={activeDropdown === "category"} />
             </button>
             {activeDropdown === "category" && (
               <div className="absolute left-0 top-[calc(100%+8px)] z-50 min-w-[180px] rounded-sm border border-border-subtle bg-surface-1 p-2 shadow-xl">
@@ -229,9 +264,10 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
           <div className="relative">
             <button
               onClick={() => toggleDropdown("pricing")}
-              className={`rounded-2xl border px-4 py-2.5 text-sm transition ${pricing ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong" : "border-border-subtle bg-surface-1 text-slate-200 hover:border-border-accent"}`}
+              className={`inline-flex items-center gap-1.5 rounded-2xl border px-4 py-2.5 text-sm transition ${pricing ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong" : "border-border-subtle bg-surface-1 text-slate-200 hover:border-border-accent"}`}
             >
-              {pricing || "Pricing"} v
+              {pricing || "Pricing"}
+              <Chevron open={activeDropdown === "pricing"} />
             </button>
             {activeDropdown === "pricing" && (
               <div className="absolute left-0 top-[calc(100%+8px)] z-50 min-w-[160px] rounded-sm border border-border-subtle bg-surface-1 p-2 shadow-xl">
@@ -246,9 +282,10 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
           <div className="relative">
             <button
               onClick={() => toggleDropdown("platform")}
-              className={`rounded-2xl border px-4 py-2.5 text-sm transition ${platform ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong" : "border-border-subtle bg-surface-1 text-slate-200 hover:border-border-accent"}`}
+              className={`inline-flex items-center gap-1.5 rounded-2xl border px-4 py-2.5 text-sm transition ${platform ? "border-border-accent bg-brand-cyan/10 text-brand-cyan-strong" : "border-border-subtle bg-surface-1 text-slate-200 hover:border-border-accent"}`}
             >
-              {platform || "Platform"} v
+              {platform || "Platform"}
+              <Chevron open={activeDropdown === "platform"} />
             </button>
             {activeDropdown === "platform" && (
               <div className="absolute left-0 top-[calc(100%+8px)] z-50 min-w-[160px] rounded-sm border border-border-subtle bg-surface-1 p-2 shadow-xl">
@@ -275,8 +312,12 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
           ))}
 
           {hasFilters && (
-            <button onClick={clearAll} className="rounded-2xl border border-border-subtle px-4 py-2.5 text-sm text-text-muted transition hover:text-white">
-              Clear all x
+            <button
+              onClick={clearAll}
+              className="inline-flex items-center gap-1.5 rounded-2xl border border-border-subtle px-4 py-2.5 text-sm text-text-muted transition hover:text-white"
+            >
+              Clear all
+              <XIcon />
             </button>
           )}
 
