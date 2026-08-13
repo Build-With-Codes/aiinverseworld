@@ -52,6 +52,7 @@ export function NewsCard({ article }: NewsCardProps) {
           src={article.imageUrl}
           alt={article.title}
           fill
+          unoptimized
           sizes="(max-width: 1024px) 100vw, 33vw"
           className="object-cover"
         />

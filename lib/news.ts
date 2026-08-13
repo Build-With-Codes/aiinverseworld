@@ -1,3 +1,5 @@
+import { getNewsData } from "@/lib/news/refresh";
+
 export type NewsArticle = {
   id: string;
   slug: string;
@@ -19,36 +21,15 @@ export type NewsArticle = {
   };
 };
 
-type NewsResponse = {
-  data: NewsArticle[];
-  legal?: {
-    summaryOnly: boolean;
-    attributionRequired: boolean;
-    note: string;
-  };
-};
-
 export async function getNewsArticles(limit = 6, category?: string, revalidate?: number) {
-  const searchParams = new URLSearchParams({ limit: String(limit) });
+  const data = await getNewsData().catch((error) => {
+    console.error("[news] Failed to load news cache", error);
+    return { articles: [] };
+  });
 
-  if (category) {
-    searchParams.set("category", category);
-  }
+  const articles = category
+    ? data.articles.filter((article) => article.category.toLowerCase() === category.toLowerCase())
+    : data.articles;
 
-  try {
-    const response = await fetch(
-      `${AIVERSE_WORLD_BASE_URL}/api/news?${searchParams.toString()}`,
-      revalidate !== undefined ? { next: { revalidate } } : { cache: "no-store" },
-    );
-
-    if (!response.ok) {
-      return [];
-    }
-
-    const payload = (await response.json()) as NewsResponse;
-    return payload.data ?? [];
-  } catch {
-    return [];
-  }
+  return articles.slice(0, limit);
 }
-import { AIVERSE_WORLD_BASE_URL } from "@/lib/service-urls";
