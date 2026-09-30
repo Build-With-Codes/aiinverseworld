@@ -158,8 +158,16 @@ export async function getCategoryWithTools(slug: string, page = 1, limit = 24) {
   };
 }
 
+// Best-lists are editorially curated (title/description copy) — no local
+// fallback exists for them, so a backend outage always ends empty regardless
+// of how long we wait. Fail fast instead of burning the default 8s timeout.
+const NO_FALLBACK_TIMEOUT_MS = 3000;
+
 export async function getBestLists(revalidate?: number) {
-  const payload = await apiGet<DataListResponse<BestList>>("/api/tools/best", { revalidate });
+  const payload = await apiGet<DataListResponse<BestList>>("/api/tools/best", {
+    revalidate,
+    timeoutMs: NO_FALLBACK_TIMEOUT_MS,
+  });
 
   return {
     lists: payload?.data ?? [],
@@ -168,7 +176,9 @@ export async function getBestLists(revalidate?: number) {
 
 export async function getBestListWithTools(slug: string, page = 1, limit = 24) {
   const params = new URLSearchParams({ page: String(page), limit: String(limit) });
-  const payload = await apiGet<BestListResponse>(`/api/tools/best/${slug}?${params.toString()}`);
+  const payload = await apiGet<BestListResponse>(`/api/tools/best/${slug}?${params.toString()}`, {
+    timeoutMs: NO_FALLBACK_TIMEOUT_MS,
+  });
 
   if (!payload?.data) {
     return null;
