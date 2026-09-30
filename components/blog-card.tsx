@@ -50,7 +50,7 @@ export function BlogCard({ post, featured = false, headingLevel = "h3" }: BlogCa
       {/* Cover */}
       <div
         className={`relative overflow-hidden ${
-          featured ? "aspect-[16/10] sm:aspect-auto sm:w-1/2" : "aspect-[16/9]"
+          featured ? "aspect-[2/1] sm:aspect-auto sm:w-2/5" : "aspect-[16/9]"
         }`}
       >
         {post.cover ? (

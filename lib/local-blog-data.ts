@@ -75,8 +75,16 @@ function mapRowToPost(headerIndex: Map<string, number>, row: string[]): BlogPost
   const description = get("description");
   const publishedAt = toIsoDate(get("publishedAt"));
 
+  // The site's CSP only allows https/data/blob image sources — an
+  // http:// URL (a handful of these rows still point at a local dev
+  // upload path) would be blocked by the browser on every single load,
+  // everywhere, not just here. Treating it as absent up front avoids a
+  // guaranteed-failing request and lets the real placeholder show
+  // immediately instead of after a failed load.
+  const isUsableImageUrl = (url: string) => url.startsWith("https://") || url.startsWith("/");
   const media = loadMediaMap().get(get("coverMediaId"));
-  const coverImage = get("coverImage") || media?.url || undefined;
+  const rawCoverImage = get("coverImage") || media?.url || "";
+  const coverImage = isUsableImageUrl(rawCoverImage) ? rawCoverImage : undefined;
   const cover: MediaRef | undefined = coverImage
     ? {
         url: coverImage,
