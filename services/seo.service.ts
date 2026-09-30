@@ -1,6 +1,7 @@
 import { getPromptBySlug } from "@/lib/prompts-api";
 import { apiGet, apiGetResult } from "@/lib/api-service";
 import { getLocalBlogPost } from "@/lib/local-blog-data";
+import { getLocalCollectionSeo } from "@/lib/local-collections-data";
 import { getLocalCategories, getLocalComparisonBySlug, getLocalToolBySlug } from "@/lib/local-tools-data";
 import { buildCategoryMeta, buildComparisonMeta, buildToolMeta, buildUrl, defaultOgImage } from "@/lib/seo";
 import { AIVERSE_JOBS_BASE_URL } from "@/lib/service-urls";
@@ -327,7 +328,18 @@ export async function getBestListSeo(slug: string): Promise<BackendSeo | null> {
 }
 
 export async function getCollectionSeo(slug: string): Promise<BackendSeo | null> {
-  return getWorldSeo({ type: "collection", slug });
+  const result = await apiGetResult<{ data?: BackendSeo | null }>(
+    `/api/seo?type=collection&slug=${encodeURIComponent(slug)}`,
+    { revalidate: 300, timeoutMs: 5000 },
+  );
+
+  if (result.status === "unreachable") {
+    const seo = getLocalCollectionSeo(slug);
+    if (!seo) return null;
+    return { title: seo.title, description: seo.description, canonical: buildUrl(`/collections/${slug}`) };
+  }
+
+  return result.status === "ok" ? (result.data.data ?? null) : null;
 }
 
 export async function getProblemSeo(id: string): Promise<BackendSeo | null> {

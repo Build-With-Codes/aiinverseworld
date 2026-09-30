@@ -1,10 +1,11 @@
-import { apiGet } from "@/lib/api-service";
+import { apiGet, apiGetResult } from "@/lib/api-service";
 import type {
   AITool,
   CollectionDetail,
   CollectionSummary,
   Spotlight,
 } from "@/lib/catalog-types";
+import { getLocalCollection, getLocalCollections } from "@/lib/local-collections-data";
 
 // ── Server-side discovery fetchers (public backend endpoints) ────────────
 // Used in Server Components. All tolerate backend failure by returning empty.
@@ -64,17 +65,27 @@ export async function getSpotlights(revalidate?: number) {
 }
 
 export async function getCollections(revalidate?: number) {
-  const payload = await apiGet<DataResponse<CollectionSummary[]>>(
+  const result = await apiGetResult<DataResponse<CollectionSummary[]>>(
     `/api/tools/collections`,
     { revalidate, timeoutMs: NO_FALLBACK_TIMEOUT_MS },
   );
-  return payload?.data ?? [];
+
+  if (result.status === "unreachable") {
+    return getLocalCollections();
+  }
+
+  return result.status === "ok" ? (result.data.data ?? []) : [];
 }
 
 export async function getCollection(slug: string) {
-  const payload = await apiGet<DataResponse<CollectionDetail | null>>(
+  const result = await apiGetResult<DataResponse<CollectionDetail | null>>(
     `/api/tools/collections/${encodeURIComponent(slug)}`,
     { timeoutMs: NO_FALLBACK_TIMEOUT_MS },
   );
-  return payload?.data ?? null;
+
+  if (result.status === "unreachable") {
+    return getLocalCollection(slug);
+  }
+
+  return result.status === "ok" ? (result.data.data ?? null) : null;
 }
