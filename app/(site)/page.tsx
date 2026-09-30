@@ -49,7 +49,7 @@ export default function Home() {
             </p>
           </div>
 
-          <FadeInSection delay={0.1}>
+          <FadeInSection delay={0.1} id="ai-finder" className="scroll-mt-24">
             <Suspense fallback={<HeroSearchFallback />}>
               <HeroSearch />
             </Suspense>
