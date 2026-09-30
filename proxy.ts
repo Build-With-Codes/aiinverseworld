@@ -88,7 +88,16 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     {
-      source: "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|ads.txt|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico|wasm|js)$).*)",
+      // creative/ is excluded deliberately: those static files (public/creative/*.html)
+      // are meant to be embedded in an ad-slot iframe (see components/ads/ad-frame.tsx).
+      // The site-wide CSP/X-Frame-Options this middleware sets include
+      // frame-ancestors 'none' / X-Frame-Options: DENY, which would make the browser
+      // refuse to render them at all as soon as they're framed — breaking every ad
+      // slot silently (the framed page never even starts executing, so nothing here
+      // is a fill/network problem). Matching everything else keeps this path on
+      // Next's own defaults instead of a second, hand-maintained CSP.
+      source:
+        "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|ads.txt|creative/|.*\\.(?:png|jpg|jpeg|gif|webp|svg|ico|wasm|js)$).*)",
     },
   ],
 };
