@@ -6,22 +6,22 @@ import type {
   Spotlight,
 } from "@/lib/catalog-types";
 import { getLocalCollection, getLocalCollections } from "@/lib/local-collections-data";
+import { getLocalSpotlights, getLocalTrendingTools } from "@/lib/local-tools-data";
 
 // ── Server-side discovery fetchers (public backend endpoints) ────────────
 // Used in Server Components. All tolerate backend failure by returning empty.
 
 type DataResponse<T> = { data?: T };
 
-// None of these have a local fallback (they're analytics/curation-derived —
-// real save/compare/search counts, editorial picks — which can't be
-// replicated from the static catalog CSV without fabricating numbers). That
-// means a backend outage always ends in an empty array here regardless of
-// how long we wait, so there's no reason to burn the default 8s timeout
-// finding that out — every page renders through SiteShell, which awaits
-// several of these in parallel, so a slow failure here was adding several
-// real seconds to every single page load for nothing. A short timeout gets
-// to the same (empty) result without the wait, and still gives a live
-// backend generous room to answer.
+// getRankings/getRelatedTools have no local fallback (real per-user
+// save/compare/search counts and real similarity data — nothing to
+// reconstruct from the static catalog CSV). getTrending/getSpotlights below
+// DO fall back now (to real popularity/rating rank, honestly labeled as
+// that rather than claiming to be true analytics or editorial curation) —
+// see lib/local-tools-data.ts. None of this changes the timeout logic: a
+// short timeout still matters for getRankings/getRelatedTools since they can
+// never do better than empty on a backend outage regardless of how long we
+// wait.
 const NO_FALLBACK_TIMEOUT_MS = 3000;
 
 export async function getTrending(
@@ -29,11 +29,16 @@ export async function getTrending(
   limit = 12,
   revalidate?: number,
 ) {
-  const payload = await apiGet<DataResponse<AITool[]>>(
+  const result = await apiGetResult<DataResponse<AITool[]>>(
     `/api/tools/trending?window=${window}&limit=${limit}`,
     { revalidate, timeoutMs: NO_FALLBACK_TIMEOUT_MS },
   );
-  return payload?.data ?? [];
+
+  if (result.status === "unreachable") {
+    return getLocalTrendingTools(limit);
+  }
+
+  return result.status === "ok" ? (result.data.data ?? []) : [];
 }
 
 export async function getRankings(
@@ -57,11 +62,16 @@ export async function getRelatedTools(toolId: string, limit = 6) {
 }
 
 export async function getSpotlights(revalidate?: number) {
-  const payload = await apiGet<DataResponse<Spotlight[]>>(`/api/tools/spotlights`, {
+  const result = await apiGetResult<DataResponse<Spotlight[]>>(`/api/tools/spotlights`, {
     revalidate,
     timeoutMs: NO_FALLBACK_TIMEOUT_MS,
   });
-  return payload?.data ?? [];
+
+  if (result.status === "unreachable") {
+    return getLocalSpotlights();
+  }
+
+  return result.status === "ok" ? (result.data.data ?? []) : [];
 }
 
 export async function getCollections(revalidate?: number) {

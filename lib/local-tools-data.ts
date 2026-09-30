@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import type { AITool, Category } from "@/lib/catalog-types";
+import type { AITool, Category, Spotlight } from "@/lib/catalog-types";
 import { buildHeaderIndex, parseCsv } from "@/lib/csv-parser";
 import type { Pagination } from "@/lib/tool-catalog";
 
@@ -306,6 +306,30 @@ export function queryLocalTools(query: LocalToolQuery): { data: AITool[]; pagina
     pagination: { page, limit, total, totalPages: Math.max(1, Math.ceil(total / limit)) },
     filters: { categories: allCategories },
   };
+}
+
+// ── Local "featured" / "trending" (real rank, generic framing) ───────────
+// Real editorial picks and real analytics-derived trending can't be
+// reconstructed locally — there's no curation record or save/search counts
+// in the CSV. What follows is honestly a different thing: the highest-rated
+// and highest-popularity real tools, labeled plainly rather than claiming to
+// be hand-picked or analytics-driven, so it never overstates what it is.
+export function getLocalSpotlights(limit = 3): Spotlight[] {
+  const tools = [...getLocalTools()]
+    .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0) || (b.popularityScore ?? 0) - (a.popularityScore ?? 0))
+    .slice(0, Math.max(1, limit));
+
+  return tools.map((tool) => ({
+    key: tool.slug,
+    emoji: "⭐",
+    label: "Top rated",
+    blurb: tool.shortDescription,
+    tool,
+  }));
+}
+
+export function getLocalTrendingTools(limit = 12): AITool[] {
+  return queryLocalTools({ sort: "popular", limit }).data;
 }
 
 export function getLocalCategoryWithTools(
