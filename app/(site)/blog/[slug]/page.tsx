@@ -247,6 +247,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 </div>
               </section>
             ) : null}
+
+            <AdSlot placement="blog-lower" />
           </div>
 
           {/* Sticky rail */}

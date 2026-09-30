@@ -6,12 +6,19 @@ import type { AdFormat, AdPlacementFormats, AdPlacementId } from "@/lib/ads/type
  * breakpoint.
  */
 export const AD_PLACEMENTS: Record<AdPlacementId, AdPlacementFormats> = {
-  "site-top": { desktop: "728x90", mobile: "320x50" },
   "site-bottom": { desktop: "300x250", mobile: "300x250" },
+  "home-mid": { desktop: "728x90", mobile: "320x50" },
+  "home-lower": { desktop: "300x250", mobile: "300x250" },
   "tool-mid": { desktop: "native", mobile: "native" },
+  "tool-lower": { desktop: "300x250", mobile: "300x250" },
   "blog-mid": { desktop: "native", mobile: "native" },
+  "blog-lower": { desktop: "300x250", mobile: "300x250" },
   "category-mid": { desktop: "728x90", mobile: "320x50" },
-  "search-mid": { desktop: "160x300", mobile: null },
+  "category-lower": { desktop: "300x250", mobile: "300x250" },
+  "search-mid": { desktop: "160x300", mobile: "300x250" },
+  "search-lower": { desktop: "728x90", mobile: "320x50" },
+  "compare-mid": { desktop: "300x250", mobile: "300x250" },
+  "compare-lower": { desktop: "728x90", mobile: "320x50" },
 };
 
 /**

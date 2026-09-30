@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AdSlot } from "@/components/ads/ad-slot";
 import { ToolCard } from "@/components/tool-card";
 import { SectionHeading } from "@/components/section-heading";
 import { ToolGridSkeleton } from "@/components/loading-skeletons";
@@ -334,10 +335,23 @@ export function SearchClient({ initialTools, categories, initialQuery, paginatio
       ) : tools.length > 0 ? (
         <>
           <section className="grid gap-6 lg:grid-cols-3">
-            {tools.map((tool) => (
+            {tools.slice(0, 3).map((tool) => (
               <ToolCard key={tool.id} tool={tool} />
             ))}
           </section>
+
+          {tools.length > 3 ? <AdSlot placement="search-mid" className="max-w-xs" /> : null}
+
+          {tools.length > 3 ? (
+            <section className="grid gap-6 lg:grid-cols-3">
+              {tools.slice(3).map((tool) => (
+                <ToolCard key={tool.id} tool={tool} />
+              ))}
+            </section>
+          ) : null}
+
+          <AdSlot placement="search-lower" />
+
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-border-subtle bg-surface-2 p-5 text-sm text-text-secondary">
             <span>
               Page {currentPagination.page} of {currentPagination.totalPages} | {currentPagination.total} tools

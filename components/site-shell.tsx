@@ -170,10 +170,6 @@ export async function SiteShell({ children }: SiteShellProps) {
           </HeaderScrollShell>
         </header>
 
-        <div className="mt-4">
-          <AdSlot placement="site-top" />
-        </div>
-
         <main className="flex-1">
           {children}
         </main>

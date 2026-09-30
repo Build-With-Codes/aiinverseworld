@@ -6,12 +6,19 @@ export type AdFormat = "728x90" | "468x60" | "320x50" | "300x250" | "160x300" | 
  * these — never a raw ad-network component — via `<AdSlot placement="..." />`.
  */
 export type AdPlacementId =
-  | "site-top"
   | "site-bottom"
+  | "home-mid"
+  | "home-lower"
   | "tool-mid"
+  | "tool-lower"
   | "blog-mid"
+  | "blog-lower"
   | "category-mid"
-  | "search-mid";
+  | "category-lower"
+  | "search-mid"
+  | "search-lower"
+  | "compare-mid"
+  | "compare-lower";
 
 export interface AdPlacementFormats {
   desktop: AdFormat;

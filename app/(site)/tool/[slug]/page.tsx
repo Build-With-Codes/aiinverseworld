@@ -506,6 +506,8 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
         </FadeInSection>
       </section>
 
+      <AdSlot placement="tool-lower" />
+
       {/* 9. Pricing analysis */}
       <div className={cardClass({ padding: "lg", radius: "card-lg" })}>
         <SectionHeading

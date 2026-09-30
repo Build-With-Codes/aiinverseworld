@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AdSlot } from "@/components/ads/ad-slot";
 import { ToolGridSkeleton } from "@/components/loading-skeletons";
 import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
@@ -240,6 +241,8 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated, c
         </div>
       ) : null}
 
+      <AdSlot placement="category-mid" />
+
       {/* Best tools — filterable grid */}
       <div className={cardClass({ padding: "lg", radius: "card-lg" })}>
         <SectionHeading eyebrow="Best Tools" title={`Filter ${category.name} tools`} description={category.description} />
@@ -411,6 +414,8 @@ export function CategoryPageClient({ category, tools, pagination, lastUpdated, c
           secondaryAction={{ label: "Browse all categories", href: "/category" }}
         />
       )}
+
+      <AdSlot placement="category-lower" />
 
       {/* Comparison */}
       {comparisonTools.length === 2 ? (

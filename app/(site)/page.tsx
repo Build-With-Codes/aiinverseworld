@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { AdSlot } from "@/components/ads/ad-slot";
+
 import { CategoryCard } from "@/components/category-card";
 import { FaviconBadge } from "@/components/favicon-badge";
 import { HeroSearch } from "@/components/hero-search";
@@ -71,6 +73,8 @@ export default function Home() {
         <FeaturedToolsSection />
       </Suspense>
 
+      <AdSlot placement="home-mid" />
+
       <Suspense fallback={<SectionFallback rows={2} />}>
         <PopularCategoriesSection />
       </Suspense>
@@ -78,6 +82,8 @@ export default function Home() {
       <Suspense fallback={<SectionFallback />}>
         <RecentlyAddedSection />
       </Suspense>
+
+      <AdSlot placement="home-lower" />
 
       <PromptStudioSection />
       <FaqTeaserSection />

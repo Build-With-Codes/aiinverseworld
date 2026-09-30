@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
+import { AdSlot } from "@/components/ads/ad-slot";
 import { ComparisonTable } from "@/components/comparison-table";
 import { SectionHeading } from "@/components/section-heading";
 import { buildUrl, formatDisplayDate, getLatestVerifiedDate } from "@/lib/seo";
@@ -76,6 +77,8 @@ export default async function ComparePage({ params }: ComparePageProps) {
         <ComparisonTable tools={[pair.left, pair.right]} />
       </section>
 
+      <AdSlot placement="compare-mid" />
+
       <section className="grid gap-6 lg:grid-cols-2">
         <div className="rounded-card-lg border border-border-subtle bg-surface-2 p-7">
           <h2 className="text-2xl font-semibold text-white">{pair.left.name} best for</h2>
@@ -98,6 +101,8 @@ export default async function ComparePage({ params }: ComparePageProps) {
           </div>
         </div>
       </section>
+
+      <AdSlot placement="compare-lower" />
     </div>
   );
 }
