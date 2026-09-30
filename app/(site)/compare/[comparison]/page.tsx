@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/ads/ad-slot";
 import { ComparisonTable } from "@/components/comparison-table";
 import { SectionHeading } from "@/components/section-heading";
-import { buildUrl, formatDisplayDate, getLatestVerifiedDate } from "@/lib/seo";
+import { buildBreadcrumbSchema, buildUrl, formatDisplayDate, getLatestVerifiedDate } from "@/lib/seo";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { getCompareSeo } from "@/services/seo.service";
 import { getComparisonWithTools, getToolOptions } from "@/lib/tool-catalog";
@@ -39,22 +39,29 @@ export default async function ComparePage({ params }: ComparePageProps) {
     <div className="space-y-10 pb-10 pt-10">
       <StructuredDataScript
         id="comparison-schema"
-        data={{
-          "@context": "https://schema.org",
-          "@type": "WebPage",
-          name: `${pair.left.name} vs ${pair.right.name}`,
-          url: buildUrl(`/compare/${comparison}`),
-          dateModified,
-          mainEntity: {
-            "@type": "ItemList",
-            itemListElement: [pair.left, pair.right].map((tool, index) => ({
-              "@type": "ListItem",
-              position: index + 1,
-              name: tool.name,
-              url: buildUrl(`/tool/${tool.slug}`),
-            })),
+        data={[
+          {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            name: `${pair.left.name} vs ${pair.right.name}`,
+            url: buildUrl(`/compare/${comparison}`),
+            dateModified,
+            mainEntity: {
+              "@type": "ItemList",
+              itemListElement: [pair.left, pair.right].map((tool, index) => ({
+                "@type": "ListItem",
+                position: index + 1,
+                name: tool.name,
+                url: buildUrl(`/tool/${tool.slug}`),
+              })),
+            },
           },
-        }}
+          buildBreadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "Compare", path: "/compare" },
+            { name: `${pair.left.name} vs ${pair.right.name}`, path: `/compare/${comparison}` },
+          ]),
+        ]}
       />
       <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
         <SectionHeading

@@ -240,19 +240,22 @@ export async function getJobsSeo(): Promise<BackendSeo> {
 }
 
 export async function getSearchSeo(query?: string): Promise<BackendSeo> {
-  return (
-    (await getWorldSeo({ type: "search", query })) ?? {
-      title: query ? `Search Results for ${query} | AiverseWorld` : "Search AI Tools | AiverseWorld",
-      description: query
-        ? `Search AiverseWorld for ${query} across AI tools, categories, pricing models, platforms, and workflow use cases.`
-        : "Search and filter AI tools by category, pricing model, platform, API support, and workflow fit.",
-      keywords: query
-        ? [query, "AI tool search", "AI software directory"]
-        : ["search AI tools", "AI tool finder", "compare AI tools", "AI software directory"],
-      canonical: query ? buildUrl(`/search?q=${encodeURIComponent(query)}`) : buildUrl("/search"),
-      ogImage: defaultOgImage,
-    }
-  );
+  const seo = (await getWorldSeo({ type: "search", query })) ?? {
+    title: query ? `Search Results for ${query} | AiverseWorld` : "Search AI Tools | AiverseWorld",
+    description: query
+      ? `Search AiverseWorld for ${query} across AI tools, categories, pricing models, platforms, and workflow use cases.`
+      : "Search and filter AI tools by category, pricing model, platform, API support, and workflow fit.",
+    keywords: query
+      ? [query, "AI tool search", "AI software directory"]
+      : ["search AI tools", "AI tool finder", "compare AI tools", "AI software directory"],
+    ogImage: defaultOgImage,
+  };
+
+  // Always canonicalize to the bare /search route, never the query string —
+  // otherwise every distinct ?q= value self-canonicalizes as its own page,
+  // diluting authority instead of consolidating it. Applied unconditionally,
+  // including over whatever the backend's own SEO payload set.
+  return { ...seo, canonical: buildUrl("/search") };
 }
 
 export function getRouteSeo(path: string): BackendSeo {

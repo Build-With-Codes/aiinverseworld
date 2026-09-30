@@ -9,7 +9,7 @@ import { AdSlot } from "@/components/ads/ad-slot";
 import { ToolCard } from "@/components/tool-card";
 import { SectionHeading } from "@/components/section-heading";
 import { StructuredDataScript } from "@/components/structured-data-script";
-import { buildUrl, defaultOpenGraphImage, formatDisplayDate, getLatestVerifiedDate } from "@/lib/seo";
+import { buildBreadcrumbSchema, buildUrl, defaultOpenGraphImage, formatDisplayDate, getLatestVerifiedDate } from "@/lib/seo";
 import { getBestLists, getBestListWithTools } from "@/lib/tool-catalog";
 
 type BestPageProps = {
@@ -83,6 +83,10 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
                 },
               ],
             },
+            buildBreadcrumbSchema([
+              { name: "Home", path: "/" },
+              { name: list.title, path: `/best/${slug}` },
+            ]),
           ]}
       />
 

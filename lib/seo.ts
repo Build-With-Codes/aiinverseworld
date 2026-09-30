@@ -74,3 +74,17 @@ export function buildComparisonMeta(leftName: string, rightName: string, slug: s
   const description = `Compare ${leftName} and ${rightName} on pricing, features, platforms, and use cases. Find the best fit for your workflow.`;
   return { title, description, url: buildUrl(`/compare/${slug}`) };
 }
+
+/** JSON-LD BreadcrumbList matching the visual <Breadcrumb> trail on a page. */
+export function buildBreadcrumbSchema(items: Array<{ name: string; path: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: buildUrl(item.path),
+    })),
+  };
+}
