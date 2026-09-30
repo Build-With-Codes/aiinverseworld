@@ -25,7 +25,17 @@ function isRetryableNetworkError(error: unknown) {
   );
 }
 
-export async function apiGet<T>(path: string, options: ApiGetOptions = {}) {
+// Distinguishes "the backend answered and said no" (not-found — a 4xx from a
+// reachable service, which must be respected as authoritative) from "the
+// backend didn't answer at all" (unreachable — network error, timeout, or a
+// 5xx). Only the latter is ever a legitimate reason to fall back to local
+// data; callers that don't care about the distinction can keep using apiGet.
+export type ApiResult<T> =
+  | { status: "ok"; data: T }
+  | { status: "not-found" }
+  | { status: "unreachable" };
+
+export async function apiGetResult<T>(path: string, options: ApiGetOptions = {}): Promise<ApiResult<T>> {
   const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   const url = `${AIVERSE_WORLD_BASE_URL}${normalizedPath}`;
   const timeoutMs = options.timeoutMs ?? 8000;
@@ -64,10 +74,10 @@ export async function apiGet<T>(path: string, options: ApiGetOptions = {}) {
       console.warn(
         `[api-service] ${normalizedPath} returned ${response.status} ${response.statusText}`,
       );
-      return undefined;
+      return { status: response.status >= 500 ? "unreachable" : "not-found" };
     }
 
-    return (await response.json()) as T;
+    return { status: "ok", data: (await response.json()) as T };
   } catch (error) {
     const reason =
       error instanceof Error && error.name === "AbortError"
@@ -76,6 +86,11 @@ export async function apiGet<T>(path: string, options: ApiGetOptions = {}) {
           ? error.message
           : "unknown error";
     console.warn(`[api-service] ${normalizedPath} failed: ${reason}`);
-    return undefined;
+    return { status: "unreachable" };
   }
+}
+
+export async function apiGet<T>(path: string, options: ApiGetOptions = {}) {
+  const result = await apiGetResult<T>(path, options);
+  return result.status === "ok" ? result.data : undefined;
 }

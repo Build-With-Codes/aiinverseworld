@@ -11,6 +11,7 @@ import { AuthDialog } from "@/components/auth-dialog";
 import { GoogleSignOutButton } from "@/components/google-auth-button";
 import { HeaderSearch } from "@/components/header-search";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { authUiEnabled } from "@/lib/auth-config";
 
 type NavItem = {
   href: string;
@@ -47,6 +48,7 @@ export function MobileMenu({
   const userImage = session?.user?.image;
 
   useEffect(() => {
+    if (!authUiEnabled) return;
     let active = true;
     getSession()
       .then((value) => {
@@ -169,6 +171,7 @@ export function MobileMenu({
                     </div>
                   </div>
 
+                  {authUiEnabled && (
                   <div className="mt-5 border-t border-border-subtle pt-5">
                     {session === undefined ? (
                       <div className="h-11 w-full animate-pulse rounded-button bg-surface-3" aria-hidden />
@@ -224,6 +227,7 @@ export function MobileMenu({
                       />
                     )}
                   </div>
+                  )}
                 </div>
               </div>
             </div>,

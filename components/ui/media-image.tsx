@@ -42,9 +42,14 @@ export function MediaImage({
   const blur = media.blurDataUrl
     ? ({ placeholder: "blur" as const, blurDataURL: media.blurDataUrl })
     : {};
-  // Local/dev fallback assets are served over http from the API; skip the
-  // optimizer for those. Production R2 assets are https and get optimized.
-  const unoptimized = media.url.startsWith("http://");
+  // Always bypass Vercel's optimizer for these — they're already served as
+  // pre-optimized webp, and routing them through /_next/image adds a single
+  // shared point of failure: once the account's Image Optimization quota is
+  // exhausted, every image on that pipeline 402s at once (confirmed this
+  // exact failure mode on the logo, favicons, book covers, and YouTube
+  // thumbnails earlier — this component was the one place still assuming
+  // https R2 URLs were safe to optimize).
+  const unoptimized = true;
 
   const image = fill ? (
     <Image

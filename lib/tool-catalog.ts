@@ -1,5 +1,14 @@
-import { apiGet } from "@/lib/api-service";
+import { apiGet, apiGetResult } from "@/lib/api-service";
 import type { AITool, BestList, Category, Comparison } from "@/lib/catalog-types";
+import {
+  getLocalCategories,
+  getLocalCategoryWithTools,
+  getLocalComparisonBySlug,
+  getLocalToolById,
+  getLocalToolBySlug,
+  queryLocalComparisons,
+  queryLocalTools,
+} from "@/lib/local-tools-data";
 
 type ToolListResponse = {
   data?: AITool[];
@@ -83,7 +92,14 @@ function buildCategories(tools: AITool[]): Category[] {
 }
 
 export async function getToolCatalog(limit = 200, revalidate?: number, page = 1) {
-  const payload = await apiGet<ToolListResponse>(`/api/tools?limit=${limit}&page=${page}`, { revalidate });
+  const result = await apiGetResult<ToolListResponse>(`/api/tools?limit=${limit}&page=${page}`, { revalidate });
+
+  if (result.status === "unreachable") {
+    const local = queryLocalTools({ limit, page });
+    return { tools: local.data, categories: buildCategories(local.data), pagination: local.pagination };
+  }
+
+  const payload = result.status === "ok" ? result.data : undefined;
   const tools = payload?.data ?? [];
 
   return {
@@ -99,27 +115,38 @@ export async function getToolCatalog(limit = 200, revalidate?: number, page = 1)
 }
 
 export async function getToolBySlug(slug: string) {
-  const payload = await apiGet<DataResponse<AITool>>(`/api/tools/slug/${slug}`);
-  return payload?.data ?? null;
+  const result = await apiGetResult<DataResponse<AITool>>(`/api/tools/slug/${slug}`);
+  if (result.status === "unreachable") return getLocalToolBySlug(slug);
+  return result.status === "ok" ? (result.data.data ?? null) : null;
 }
 
 export async function getToolById(id: string) {
-  const payload = await apiGet<DataResponse<AITool>>(`/api/tools/id/${id}`);
-  return payload?.data ?? null;
+  const result = await apiGetResult<DataResponse<AITool>>(`/api/tools/id/${id}`);
+  if (result.status === "unreachable") return getLocalToolById(id);
+  return result.status === "ok" ? (result.data.data ?? null) : null;
 }
 
 export async function getCategories(revalidate?: number) {
-  const payload = await apiGet<DataListResponse<Category>>("/api/tools/categories", { revalidate });
+  const result = await apiGetResult<DataListResponse<Category>>("/api/tools/categories", { revalidate });
+
+  if (result.status === "unreachable") {
+    return { categories: getLocalCategories() };
+  }
 
   return {
-    categories: payload?.data ?? [],
+    categories: result.status === "ok" ? (result.data.data ?? []) : [],
   };
 }
 
 export async function getCategoryWithTools(slug: string, page = 1, limit = 24) {
   const params = new URLSearchParams({ page: String(page), limit: String(limit) });
-  const payload = await apiGet<CategoryResponse>(`/api/tools/categories/${slug}?${params.toString()}`);
+  const result = await apiGetResult<CategoryResponse>(`/api/tools/categories/${slug}?${params.toString()}`);
 
+  if (result.status === "unreachable") {
+    return getLocalCategoryWithTools(slug, page, limit);
+  }
+
+  const payload = result.status === "ok" ? result.data : undefined;
   if (!payload?.data) {
     return null;
   }
@@ -155,18 +182,27 @@ export async function getBestListWithTools(slug: string, page = 1, limit = 24) {
 }
 
 export async function getComparisons(limit = 120, revalidate?: number) {
-  const payload = await apiGet<DataListResponse<Comparison>>(`/api/tools/comparisons?limit=${limit}`, {
+  const result = await apiGetResult<DataListResponse<Comparison>>(`/api/tools/comparisons?limit=${limit}`, {
     revalidate,
   });
 
+  if (result.status === "unreachable") {
+    return { comparisons: queryLocalComparisons(limit) };
+  }
+
   return {
-    comparisons: payload?.data ?? [],
+    comparisons: result.status === "ok" ? (result.data.data ?? []) : [],
   };
 }
 
 export async function getComparisonWithTools(slug: string) {
-  const payload = await apiGet<ComparisonResponse>(`/api/tools/comparisons/${slug}`);
+  const result = await apiGetResult<ComparisonResponse>(`/api/tools/comparisons/${slug}`);
 
+  if (result.status === "unreachable") {
+    return getLocalComparisonBySlug(slug);
+  }
+
+  const payload = result.status === "ok" ? result.data : undefined;
   if (!payload?.left || !payload.right) {
     return null;
   }
@@ -180,8 +216,16 @@ export async function getComparisonWithTools(slug: string) {
 
 export async function getComparisonByIds(leftId: string, rightId: string) {
   const params = new URLSearchParams({ leftId, rightId });
-  const payload = await apiGet<ComparisonResponse>(`/api/tools/compare?${params.toString()}`);
+  const result = await apiGetResult<ComparisonResponse>(`/api/tools/compare?${params.toString()}`);
 
+  if (result.status === "unreachable") {
+    const left = getLocalToolById(leftId);
+    const right = getLocalToolById(rightId);
+    if (!left || !right) return null;
+    return { comparison: undefined, left, right };
+  }
+
+  const payload = result.status === "ok" ? result.data : undefined;
   if (!payload?.left || !payload.right) {
     return null;
   }
@@ -230,12 +274,29 @@ export async function searchTools(options: {
   if (options.apiOnly) params.set("apiOnly", "true");
   if (options.openSourceOnly) params.set("openSourceOnly", "true");
 
-  const payload = await apiGet<ToolListResponse>(`/api/tools?${params.toString()}`);
-  const tools = payload?.data ?? [];
+  const result = await apiGetResult<ToolListResponse>(`/api/tools?${params.toString()}`);
   const categoryResult = await getCategories();
 
+  if (result.status === "unreachable") {
+    const local = queryLocalTools({
+      page: options.page ?? 1,
+      limit: options.limit ?? 100,
+      category: options.category,
+      pricing: options.pricing,
+      platform: options.platform,
+      freeOnly: options.freeOnly,
+      apiOnly: options.apiOnly,
+      openSourceOnly: options.openSourceOnly,
+      search: options.query,
+      sort: options.query ? "popular" : "rank",
+    });
+    return { tools: local.data, categories: categoryResult.categories, pagination: local.pagination };
+  }
+
+  const payload = result.status === "ok" ? result.data : undefined;
+
   return {
-    tools,
+    tools: payload?.data ?? [],
     categories: categoryResult.categories,
     pagination: payload?.pagination ?? emptyPagination,
   };
@@ -243,10 +304,15 @@ export async function searchTools(options: {
 
 /** Most recently verified tools — used for "New" badges in the mega menu. */
 export async function getNewestTools(limit = 6, revalidate?: number) {
-  const payload = await apiGet<ToolListResponse>(`/api/tools?limit=${limit}&sort=newest`, {
+  const result = await apiGetResult<ToolListResponse>(`/api/tools?limit=${limit}&sort=newest`, {
     revalidate,
   });
-  return payload?.data ?? [];
+
+  if (result.status === "unreachable") {
+    return queryLocalTools({ limit, sort: "newest" }).data;
+  }
+
+  return result.status === "ok" ? (result.data.data ?? []) : [];
 }
 
 export async function recommendTools(query: string, limit = 8, revalidate?: number) {

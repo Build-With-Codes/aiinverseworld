@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 import { ComparisonTable } from "@/components/comparison-table";
 import { SectionHeading } from "@/components/section-heading";
@@ -16,7 +17,8 @@ type ComparePageProps = {
 export async function generateMetadata({ params }: ComparePageProps): Promise<Metadata> {
   const { comparison } = await params;
   const seo = await getCompareSeo(comparison);
-  return seo ? buildMetadata(seo) : { title: "Comparison not found | AiverseWorld" };
+  if (!seo) notFound();
+  return buildMetadata(seo);
 }
 
 export default async function ComparePage({ params }: ComparePageProps) {
@@ -27,19 +29,7 @@ export default async function ComparePage({ params }: ComparePageProps) {
   ]);
 
   if (!pair) {
-    return (
-      <div className="space-y-10 pb-10 pt-10">
-        <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8">
-          <SectionHeading
-            level="h1"
-            eyebrow="Compare"
-            title="No comparison data available"
-            description="Comparison data is unavailable right now. Please try again shortly."
-          />
-          <CompareSelector currentLeft="" currentRight="" toolOptions={toolOptions} />
-        </section>
-      </div>
-    );
+    notFound();
   }
   const dateModified = getLatestVerifiedDate([pair.left, pair.right]);
   const dateModifiedLabel = formatDisplayDate(dateModified);

@@ -2,6 +2,10 @@ export const googleAuthEnabled = Boolean(
   process.env.AUTH_GOOGLE_ID && process.env.AUTH_GOOGLE_SECRET,
 );
 
+// Temporary kill switch: hides the header/mobile Login/Sign Up button
+// entirely. Flip back to true once login is needed again.
+export const authUiEnabled = false;
+
 export const authSecretConfigured = Boolean(
   process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
 );

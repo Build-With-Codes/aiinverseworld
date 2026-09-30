@@ -6,7 +6,7 @@ import type { Session } from "next-auth";
 
 import { AccountMenu } from "@/components/account-menu";
 import { AuthDialog } from "@/components/auth-dialog";
-import { googleAuthEnabled } from "@/lib/auth-config";
+import { authUiEnabled, googleAuthEnabled } from "@/lib/auth-config";
 
 /**
  * Desktop header auth slot. Session is fetched client-side via the
@@ -20,6 +20,7 @@ export function HeaderAuth() {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
 
   useEffect(() => {
+    if (!authUiEnabled) return;
     let active = true;
     getSession()
       .then((value) => {
@@ -32,6 +33,8 @@ export function HeaderAuth() {
       active = false;
     };
   }, []);
+
+  if (!authUiEnabled) return null;
 
   if (session === undefined) {
     return <div className="h-11 w-24 animate-pulse rounded-button bg-surface-3" aria-hidden />;

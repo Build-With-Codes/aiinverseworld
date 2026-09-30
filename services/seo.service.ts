@@ -1,6 +1,8 @@
 import { getPromptBySlug } from "@/lib/prompts-api";
-import { apiGet } from "@/lib/api-service";
-import { buildUrl, defaultOgImage } from "@/lib/seo";
+import { apiGet, apiGetResult } from "@/lib/api-service";
+import { getLocalBlogPost } from "@/lib/local-blog-data";
+import { getLocalCategories, getLocalComparisonBySlug, getLocalToolBySlug } from "@/lib/local-tools-data";
+import { buildCategoryMeta, buildComparisonMeta, buildToolMeta, buildUrl, defaultOgImage } from "@/lib/seo";
 import { AIVERSE_JOBS_BASE_URL } from "@/lib/service-urls";
 import type { BackendSeo } from "@/lib/seo/types";
 
@@ -199,7 +201,22 @@ async function getJobSeo(params: Record<string, string | undefined>) {
 }
 
 export async function getToolSeo(slug: string): Promise<BackendSeo | null> {
-  return getWorldSeo({ type: "tool", slug });
+  const result = await apiGetResult<{ data?: BackendSeo | null }>(
+    `/api/seo?type=tool&slug=${encodeURIComponent(slug)}`,
+    { revalidate: 300, timeoutMs: 5000 },
+  );
+
+  if (result.status === "unreachable") {
+    // Backend down, not "this tool doesn't exist" — the tool itself already
+    // degrades to local data (lib/local-tools-data.ts), so metadata should
+    // too, rather than 404ing a page whose content is actually available.
+    const tool = getLocalToolBySlug(slug);
+    if (!tool) return null;
+    const meta = buildToolMeta(tool);
+    return { title: meta.title, description: meta.description, canonical: meta.url };
+  }
+
+  return result.status === "ok" ? (result.data.data ?? null) : null;
 }
 
 export async function getPromptSeo(slug: string): Promise<BackendSeo | null> {
@@ -254,15 +271,55 @@ export function getRouteSeo(path: string): BackendSeo {
 }
 
 export async function getBlogPostSeo(slug: string): Promise<BackendSeo | null> {
-  return getWorldSeo({ type: "blog", slug });
+  const result = await apiGetResult<{ data?: BackendSeo | null }>(
+    `/api/seo?type=blog&slug=${encodeURIComponent(slug)}`,
+    { revalidate: 300, timeoutMs: 5000 },
+  );
+
+  if (result.status === "unreachable") {
+    const post = getLocalBlogPost(slug);
+    if (!post) return null;
+    return {
+      title: post.seoTitle || post.title,
+      description: post.metaDescription || post.description,
+      canonical: buildUrl(`/blog/${post.slug}`),
+      ogImage: post.coverImage || defaultOgImage,
+    };
+  }
+
+  return result.status === "ok" ? (result.data.data ?? null) : null;
 }
 
 export async function getCategorySeo(slug: string): Promise<BackendSeo | null> {
-  return getWorldSeo({ type: "category", slug });
+  const result = await apiGetResult<{ data?: BackendSeo | null }>(
+    `/api/seo?type=category&slug=${encodeURIComponent(slug)}`,
+    { revalidate: 300, timeoutMs: 5000 },
+  );
+
+  if (result.status === "unreachable") {
+    const category = getLocalCategories().find((c) => c.slug === slug);
+    if (!category) return null;
+    const meta = buildCategoryMeta(category.name, category.slug, category.description);
+    return { title: meta.title, description: meta.description, canonical: meta.url };
+  }
+
+  return result.status === "ok" ? (result.data.data ?? null) : null;
 }
 
 export async function getCompareSeo(comparison: string): Promise<BackendSeo | null> {
-  return getWorldSeo({ type: "compare", slug: comparison });
+  const result = await apiGetResult<{ data?: BackendSeo | null }>(
+    `/api/seo?type=compare&slug=${encodeURIComponent(comparison)}`,
+    { revalidate: 300, timeoutMs: 5000 },
+  );
+
+  if (result.status === "unreachable") {
+    const pair = getLocalComparisonBySlug(comparison);
+    if (!pair) return null;
+    const meta = buildComparisonMeta(pair.left.name, pair.right.name, comparison);
+    return { title: meta.title, description: meta.description, canonical: meta.url };
+  }
+
+  return result.status === "ok" ? (result.data.data ?? null) : null;
 }
 
 export async function getBestListSeo(slug: string): Promise<BackendSeo | null> {

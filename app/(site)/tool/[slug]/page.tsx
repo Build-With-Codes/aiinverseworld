@@ -1,3 +1,4 @@
+import { AdSlot } from "@/components/ads/ad-slot";
 import { StructuredDataScript } from "@/components/structured-data-script";
 import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
@@ -199,7 +200,11 @@ export async function generateMetadata({ params }: ToolDetailPageProps): Promise
 export default async function ToolDetailPage({ params, searchParams }: ToolDetailPageProps) {
   const { slug } = await params;
   const { id } = (await searchParams) ?? {};
-  const tool = id ? await getToolById(id) : await getToolBySlug(slug);
+  // id is preferred (fast primary-key lookup on a reachable backend), but
+  // falls back to the slug lookup whenever it comes up empty — including
+  // when the backend is down and only the local (id-less) catalog can
+  // answer, since that always resolves by slug.
+  const tool = id ? ((await getToolById(id)) ?? (await getToolBySlug(slug))) : await getToolBySlug(slug);
 
   if (!tool || tool.slug !== slug) {
     notFound();
@@ -321,6 +326,8 @@ export default async function ToolDetailPage({ params, searchParams }: ToolDetai
           </div>
         </div>
       </FadeInSection>
+
+      <AdSlot placement="tool-mid" />
 
       {/* Sticky action bar — stays reachable through the long read */}
       {/* 2. Overview */}

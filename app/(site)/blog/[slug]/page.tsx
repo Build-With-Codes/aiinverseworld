@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { AdSlot } from "@/components/ads/ad-slot";
 import { ArticleToc } from "@/components/blog/article-toc";
 import { BookRecommendations } from "@/components/book-recommendations";
 import { BlockRenderer } from "@/components/blog/block-renderer";
@@ -182,6 +183,8 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <div dangerouslySetInnerHTML={{ __html: sanitizeAdminHtml(htmlData!.html) }} />
               )}
             </article>
+
+            <AdSlot placement="blog-mid" />
 
             <div className="lg:hidden">
               <BookRecommendations books={books} title="Books for deeper reading" variant="sidebar" />

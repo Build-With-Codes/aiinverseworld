@@ -1,3 +1,4 @@
+import { AdSlot } from "@/components/ads/ad-slot";
 import { AiToolsMenu, type AiToolsMenuData } from "@/components/ai-tools-menu";
 import { HeaderAuth } from "@/components/header-auth";
 import { HeaderScrollShell } from "@/components/header-scroll-shell";
@@ -169,9 +170,17 @@ export async function SiteShell({ children }: SiteShellProps) {
           </HeaderScrollShell>
         </header>
 
+        <div className="mt-4">
+          <AdSlot placement="site-top" />
+        </div>
+
         <main className="flex-1">
           {children}
         </main>
+
+        <div className="mt-10">
+          <AdSlot placement="site-bottom" />
+        </div>
 
         <footer className="mt-16 border-t border-border-subtle py-8">
           <div className="grid gap-8 lg:grid-cols-[1.15fr_repeat(4,minmax(0,0.55fr))]">
