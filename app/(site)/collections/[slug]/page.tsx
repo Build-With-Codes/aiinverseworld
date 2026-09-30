@@ -4,6 +4,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { getCollectionSeo } from "@/services/seo.service";
 import { notFound } from "next/navigation";
 
+import { AdSlot } from "@/components/ads/ad-slot";
 import { SectionHeading } from "@/components/section-heading";
 import { ToolCard } from "@/components/tool-card";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
@@ -102,6 +103,8 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
         </StaggerGrid>
       </div>
 
+      <AdSlot placement="collection-mid" />
+
       {/* Comparison */}
       {comparisonTools.length >= 2 ? (
         <div>
@@ -129,6 +132,8 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
           </ul>
         </EditorialBlock>
       ) : null}
+
+      <AdSlot placement="collection-lower" />
 
       {/* FAQs */}
       {collection.faqs.length > 0 ? (

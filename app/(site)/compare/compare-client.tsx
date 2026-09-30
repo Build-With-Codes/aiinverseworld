@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import Link from "next/link";
+import { AdSlot } from "@/components/ads/ad-slot";
 import { ComparisonTable } from "@/components/comparison-table";
 import { FaviconBadge } from "@/components/favicon-badge";
 import { SectionHeading } from "@/components/section-heading";
@@ -35,6 +36,16 @@ export function CompareClient({
     const q = query.toLowerCase();
     return comparisons.filter((c) => c.title.toLowerCase().includes(q));
   }, [comparisons, query]);
+
+  const remainingChunks = useMemo(() => {
+    const remaining = filtered.slice(6);
+    const chunkSize = 5;
+    const chunks: Comparison[][] = [];
+    for (let i = 0; i < remaining.length; i += chunkSize) {
+      chunks.push(remaining.slice(i, i + chunkSize));
+    }
+    return chunks;
+  }, [filtered]);
 
   return (
     <div className="space-y-10 pb-10 pt-6">
@@ -103,49 +114,68 @@ export function CompareClient({
           </label>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((c) => (
-            <Link
-              key={c.slug}
-              href={`/compare/${c.slug}`}
-              className="group flex flex-col gap-4 rounded-card border border-border-subtle bg-surface-2/72 p-5 transition duration-[var(--motion-hover)] hover:-translate-y-0.5 hover:border-border-accent hover:bg-surface-2 hover:shadow-card"
-            >
-              {c.left && c.right ? (
-                <div className="flex items-center gap-3">
-                  <FaviconBadge
-                    name={c.left.name}
-                    faviconUrl={c.left.favicon}
-                    className="h-11 w-11 shrink-0 rounded-xl"
-                    imgClassName="p-1.5"
-                    labelClassName="text-xs"
-                  />
-                  <span
-                    aria-hidden
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-border-accent bg-surface-3 text-[10px] font-bold text-brand-cyan-strong"
-                  >
-                    VS
-                  </span>
-                  <FaviconBadge
-                    name={c.right.name}
-                    faviconUrl={c.right.favicon}
-                    className="h-11 w-11 shrink-0 rounded-xl"
-                    imgClassName="p-1.5"
-                    labelClassName="text-xs"
-                  />
-                </div>
-              ) : null}
-              <div>
-                <p className="font-semibold text-text-primary transition group-hover:text-brand-cyan-strong">
-                  {c.title}
-                </p>
-                <p className="mt-1.5 text-sm leading-6 text-text-muted line-clamp-2">{c.summary}</p>
-              </div>
-            </Link>
+          {filtered.slice(0, 6).map((c) => (
+            <ComparisonCard key={c.slug} c={c} />
           ))}
         </div>
+
+        {filtered.length > 6 ? <AdSlot placement="compare-index-mid" className="my-6" /> : null}
+
+        {remainingChunks.map((chunk, index) => (
+          <Fragment key={index}>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {chunk.map((c) => (
+                <ComparisonCard key={c.slug} c={c} />
+              ))}
+            </div>
+            <AdSlot placement="compare-index-lower" className="my-6" />
+          </Fragment>
+        ))}
+
         {filtered.length === 0 && (
           <p className="border-y border-border-subtle py-10 text-center text-sm text-text-muted">No comparisons match your search.</p>
         )}
       </section>
     </div>
+  );
+}
+
+function ComparisonCard({ c }: { c: Comparison }) {
+  return (
+    <Link
+      href={`/compare/${c.slug}`}
+      className="group flex flex-col gap-4 rounded-card border border-border-subtle bg-surface-2/72 p-5 transition duration-[var(--motion-hover)] hover:-translate-y-0.5 hover:border-border-accent hover:bg-surface-2 hover:shadow-card"
+    >
+      {c.left && c.right ? (
+        <div className="flex items-center gap-3">
+          <FaviconBadge
+            name={c.left.name}
+            faviconUrl={c.left.favicon}
+            className="h-11 w-11 shrink-0 rounded-xl"
+            imgClassName="p-1.5"
+            labelClassName="text-xs"
+          />
+          <span
+            aria-hidden
+            className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-border-accent bg-surface-3 text-[10px] font-bold text-brand-cyan-strong"
+          >
+            VS
+          </span>
+          <FaviconBadge
+            name={c.right.name}
+            faviconUrl={c.right.favicon}
+            className="h-11 w-11 shrink-0 rounded-xl"
+            imgClassName="p-1.5"
+            labelClassName="text-xs"
+          />
+        </div>
+      ) : null}
+      <div>
+        <p className="font-semibold text-text-primary transition group-hover:text-brand-cyan-strong">
+          {c.title}
+        </p>
+        <p className="mt-1.5 text-sm leading-6 text-text-muted line-clamp-2">{c.summary}</p>
+      </div>
+    </Link>
   );
 }

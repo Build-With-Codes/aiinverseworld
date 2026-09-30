@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { AdSlot } from "@/components/ads/ad-slot";
 import { BlogCard } from "@/components/blog-card";
 import { SectionHeading } from "@/components/section-heading";
 import { StructuredDataScript } from "@/components/structured-data-script";
@@ -105,10 +106,20 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
             {selectedTopic ? `More in ${selectedTopic}` : "Latest articles"}
           </h2>
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {restPosts.map((post) => (
+            {restPosts.slice(0, 6).map((post) => (
               <BlogCard key={post.slug} post={post} />
             ))}
           </div>
+
+          {restPosts.length > 6 ? <AdSlot placement="blog-index-mid" className="my-6" /> : null}
+
+          {restPosts.length > 6 ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {restPosts.slice(6).map((post) => (
+                <BlogCard key={post.slug} post={post} />
+              ))}
+            </div>
+          ) : null}
         </FadeInSection>
       ) : null}
 

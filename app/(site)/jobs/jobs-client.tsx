@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 
+import { AdSlot } from "@/components/ads/ad-slot";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -606,7 +607,8 @@ export function JobsClient() {
                 const summary = getJobSummary(job);
 
                 return (
-                  <article key={job.id ?? `${job.title}-${index}`} className="group border-b border-border-subtle bg-surface-2 p-4 transition last:border-b-0 hover:bg-surface-3 sm:p-5">
+                  <Fragment key={job.id ?? `${job.title}-${index}`}>
+                  <article className="group border-b border-border-subtle bg-surface-2 p-4 transition last:border-b-0 hover:bg-surface-3 sm:p-5">
                     <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_15rem] xl:items-start">
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
@@ -660,6 +662,8 @@ export function JobsClient() {
                       </div>
                     </div>
                   </article>
+                  {index === 2 && jobs.length > 3 ? <AdSlot placement="jobs-mid" /> : null}
+                  </Fragment>
                 );
               })}
             </div>
@@ -669,6 +673,8 @@ export function JobsClient() {
               <p className="mt-2 text-sm text-text-muted">Try a broader role, a lighter salary range, or another future-tech category.</p>
             </div>
           )}
+
+          {!isLoading && !error && jobs.length > 0 ? <AdSlot placement="jobs-lower" /> : null}
 
           {!isLoading && !error && totalPages > 1 ? (
             <nav className="flex flex-col gap-3 border-t border-border-subtle pt-4 sm:flex-row sm:items-center sm:justify-between" aria-label="Jobs pagination">

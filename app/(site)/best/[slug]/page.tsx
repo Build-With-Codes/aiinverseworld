@@ -5,6 +5,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { getBestListSeo } from "@/services/seo.service";
 import Link from "next/link";
 
+import { AdSlot } from "@/components/ads/ad-slot";
 import { ToolCard } from "@/components/tool-card";
 import { SectionHeading } from "@/components/section-heading";
 import { StructuredDataScript } from "@/components/structured-data-script";
@@ -106,18 +107,30 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
       </section>
 
       {tools.length > 0 ? (
-        <section className="grid gap-6 lg:grid-cols-3">
-          {tools.map((tool, i) => (
-            <div key={tool.slug} className="relative">
-              {i < 3 && (
+        <>
+          <section className="grid gap-6 lg:grid-cols-3">
+            {tools.slice(0, 3).map((tool, i) => (
+              <div key={tool.slug} className="relative">
                 <div className="absolute -top-3 -left-3 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-border-accent bg-brand-cyan/10 text-xs font-bold text-brand-cyan-strong">
                   #{i + 1}
                 </div>
-              )}
-              <ToolCard tool={tool} />
-            </div>
-          ))}
-        </section>
+                <ToolCard tool={tool} />
+              </div>
+            ))}
+          </section>
+
+          {tools.length > 3 ? <AdSlot placement="best-mid" /> : null}
+
+          {tools.length > 3 ? (
+            <section className="grid gap-6 lg:grid-cols-3">
+              {tools.slice(3).map((tool) => (
+                <div key={tool.slug} className="relative">
+                  <ToolCard tool={tool} />
+                </div>
+              ))}
+            </section>
+          ) : null}
+        </>
       ) : (
         <div className="rounded-card border border-border-subtle bg-surface-2 p-10 text-center text-sm text-text-muted">
           No tools found for this list.
@@ -160,6 +173,8 @@ export default async function BestPage({ params, searchParams }: BestPageProps) 
           ))}
         </div>
       </section>
+
+      <AdSlot placement="best-lower" />
     </div>
   );
 }

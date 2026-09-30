@@ -4,6 +4,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { getRouteSeo } from "@/services/seo.service";
 import Link from "next/link";
 
+import { AdSlot } from "@/components/ads/ad-slot";
 import { AiSolveVote } from "@/components/problems/ai-solve-vote";
 import { SectionHeading } from "@/components/section-heading";
 import { getProblems } from "@/lib/problem-store";
@@ -132,7 +133,7 @@ export default async function ProblemsPage({ searchParams }: ProblemsPageProps) 
         </form>
 
         <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
-          {problems.map((problem) => (
+          {problems.slice(0, 3).map((problem) => (
             <article
               key={problem.id}
               className="rounded-card border border-border-subtle bg-surface-2 p-6"
@@ -173,6 +174,55 @@ export default async function ProblemsPage({ searchParams }: ProblemsPageProps) 
             </article>
           ))}
         </div>
+
+        {problems.length > 3 ? <AdSlot placement="problems-mid" /> : null}
+
+        {problems.length > 3 ? (
+          <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
+            {problems.slice(3).map((problem) => (
+              <article
+                key={problem.id}
+                className="rounded-card border border-border-subtle bg-surface-2 p-6"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-semibold tracking-[0.22em] text-brand-cyan-strong uppercase">
+                      {problem.industry}
+                    </p>
+                    <h2 className="mt-3 text-2xl font-semibold text-white">
+                      {problem.title}
+                    </h2>
+                  </div>
+                  <div className="rounded-2xl border border-amber-300/25 bg-amber-300/10 px-3 py-2 text-sm font-semibold text-amber-100">
+                    {problem.painScore}/10
+                  </div>
+                </div>
+
+                <p className="mt-4 line-clamp-4 text-sm leading-7 text-text-secondary">
+                  {problem.description}
+                </p>
+
+                <div className="mt-5">
+                  <AiSolveVote problem={problem} compact />
+                </div>
+
+                <div className="mt-5 flex items-center justify-between gap-3 text-sm text-text-muted">
+                  <span>{problem.frequency}</span>
+                  <span>{problem.industry}</span>
+                </div>
+
+                <Link
+                  href={`/problems/${problem.id}`}
+                  className="mt-6 inline-flex rounded-full border border-border-accent bg-brand-cyan/10 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:border-border-accent hover:bg-brand-cyan/10"
+                >
+                  View Details
+                </Link>
+              </article>
+            ))}
+          </div>
+        ) : null}
+
+        <AdSlot placement="problems-lower" />
 
         <div className="mt-8 flex flex-wrap items-center justify-between gap-3 text-sm text-text-secondary">
           <span>

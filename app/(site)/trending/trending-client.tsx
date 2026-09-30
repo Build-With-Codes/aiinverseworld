@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { AdSlot } from "@/components/ads/ad-slot";
 import { compactNumber, relativeTime } from "@/components/trending/format";
 import { TrendingProjectCard } from "@/components/trending/trending-project-card";
 import type { TrendingProject, TrendingProjectsResponse } from "@/lib/trending/types";
@@ -227,6 +228,8 @@ export function TrendingClient({ initialData }: { initialData: TrendingProjectsR
             </div>
           </section>
 
+          <AdSlot placement="trending-mid" />
+
           <section className="space-y-5">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
@@ -291,6 +294,8 @@ export function TrendingClient({ initialData }: { initialData: TrendingProjectsR
               </div>
             ) : null}
           </section>
+
+          <AdSlot placement="trending-lower" />
         </>
       )}
     </div>

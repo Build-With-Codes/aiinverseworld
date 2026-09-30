@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { AdSlot } from "@/components/ads/ad-slot";
 import { SectionHeading } from "@/components/section-heading";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { cardClass } from "@/components/ui/card";
@@ -46,6 +47,8 @@ export default async function CollectionsPage() {
           </Link>
         ))}
       </div>
+
+      <AdSlot placement="collections-mid" />
     </div>
   );
 }

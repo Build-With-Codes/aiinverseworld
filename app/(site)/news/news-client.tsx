@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
+import { AdSlot } from "@/components/ads/ad-slot";
 import type { NewsArticle } from "@/lib/news";
 
 const preferredCategories = ["All News", "AI Research", "Models & LLMs", "Open Source", "AI Tools", "Startups"];
@@ -213,6 +214,8 @@ export function NewsClient({
             </div>
           </section>
 
+          <AdSlot placement="news-mid" />
+
           <section className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-heading-1 text-text-primary">Latest AI News</h2>
@@ -240,6 +243,8 @@ export function NewsClient({
               ))}
             </div>
           </section>
+
+          <AdSlot placement="news-lower" />
         </>
       ) : (
         <section className="rounded-card-lg border border-border-subtle bg-surface-2 p-8 text-center">

@@ -18,7 +18,26 @@ export type AdPlacementId =
   | "search-mid"
   | "search-lower"
   | "compare-mid"
-  | "compare-lower";
+  | "compare-lower"
+  | "news-mid"
+  | "news-lower"
+  | "trending-mid"
+  | "trending-lower"
+  | "jobs-mid"
+  | "jobs-lower"
+  | "best-mid"
+  | "best-lower"
+  | "collections-mid"
+  | "collection-mid"
+  | "collection-lower"
+  | "prompts-mid"
+  | "prompts-lower"
+  | "prompt-detail-mid"
+  | "problems-mid"
+  | "problems-lower"
+  | "blog-index-mid"
+  | "compare-index-mid"
+  | "compare-index-lower";
 
 export interface AdPlacementFormats {
   desktop: AdFormat;

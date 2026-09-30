@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { AdSlot } from "@/components/ads/ad-slot";
 import { SavePromptButton } from "@/components/engagement/save-prompt-button";
 import { PromptShareButton } from "@/components/prompts/prompt-share-button";
 import { Badge } from "@/components/ui/badge";
@@ -522,12 +523,12 @@ export function PromptsClient() {
                 ))}
               </div>
             ) : null}
-            {!loading && prompts.map((prompt) => {
+            {!loading && prompts.map((prompt, index) => {
               const visual = getPromptVisual(prompt);
 
               return (
+                <Fragment key={prompt.slug}>
                 <article
-                  key={prompt.slug}
                   className="group grid gap-4 border-b border-border-subtle py-4 transition hover:bg-surface-2/45 sm:grid-cols-[5.5rem_1fr_auto]"
                 >
                   <button
@@ -577,6 +578,8 @@ export function PromptsClient() {
                     <Button href={`/prompts/${prompt.slug}`} size="sm" variant="ghost" className="rounded-sm">View Details</Button>
                   </div>
                 </article>
+                  {index === 2 && prompts.length > 3 ? <AdSlot placement="prompts-mid" /> : null}
+                </Fragment>
               );
             })}
             {!loading && prompts.length === 0 ? (
@@ -588,6 +591,8 @@ export function PromptsClient() {
               </div>
             ) : null}
           </div>
+
+          {!loading && prompts.length > 0 ? <AdSlot placement="prompts-lower" /> : null}
 
           <div className="flex items-center justify-between border-t border-border-subtle pt-4">
             <Button type="button" variant="secondary" disabled={page <= 1} onClick={() => setPage((value) => Math.max(1, value - 1))}>Previous</Button>

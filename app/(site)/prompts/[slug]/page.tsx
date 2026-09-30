@@ -1,3 +1,4 @@
+import { AdSlot } from "@/components/ads/ad-slot";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
@@ -97,6 +98,8 @@ export default async function PromptDetailPage({ params }: PromptDetailPageProps
               </div>
             </section>
           ) : null}
+
+          <AdSlot placement="prompt-detail-mid" />
         </article>
 
         <aside className="space-y-5 lg:sticky lg:top-28 lg:self-start">
